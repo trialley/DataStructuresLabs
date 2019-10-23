@@ -11,7 +11,6 @@
 #pragma once
 #include<cstring>		//memset、memcpy
 #include<cstdlib>		//malloc
-
 /*常见错误的枚举*/
 enum err { index_out_of_range }err;
 
@@ -40,9 +39,9 @@ protected:
 	T* head;		//the array head pointer
 	int maxindex;		//the length-1 of array
 	int frontindex;
-	void __exlength() {
-		T* newhead = new T[(maxindex + 1) * 2];
-		memcpy(newhead, head, sizeof(T) * (maxindex + 1));
+	void __exlength () {
+		T* newhead = new T[( maxindex + 1 ) * 2];
+		memcpy ( newhead, head, sizeof ( T ) * ( maxindex + 1 ) );
 
 		maxindex = maxindex * 2 + 1;
 
@@ -53,18 +52,18 @@ public:
 	friend class vectoritreator;
 	class vectoritreator {
 	public:
-		vectoritreator (vector* ivec, int thePosition = 0 ) {
-			index = thePosition; 
+		vectoritreator ( vector* ivec, int thePosition = 0 ) {
+			index = thePosition;
 			vec = ivec;
 		}
 
-		T& operator*() const { 
-			return (vec->head)[index];
+		T& operator*() const {
+			return ( vec->head )[index];
 		}
 		//T* operator->() const { return &*index; }
 
 		/*加法操作*/
-		vectoritreator& operator++(){
+		vectoritreator& operator++() {
 			++index;
 			return *this;
 		}
@@ -79,8 +78,8 @@ public:
 		}
 
 		/*减法操作*/
-		vectoritreator& operator--(){--index; return *this;}
-		vectoritreator operator--( int ){
+		vectoritreator& operator--() { --index; return *this; }
+		vectoritreator operator--( int ) {
 			vectoritreator old = *this;
 			--index;
 			return old;
@@ -93,22 +92,22 @@ public:
 			frontindex = -1;
 		}
 		/*逻辑判断*/
-		bool operator!=( const vectoritreator right ) const {return index != right.index;}
-		bool operator==( const vectoritreator right ) const {return index == right.index;}
+		bool operator!=( const vectoritreator right ) const { return index != right.index; }
+		bool operator==( const vectoritreator right ) const { return index == right.index; }
 	protected:
 		int index;
 		vector* vec;
 	};
 
-	vector(int n = 50) {
+	vector ( int n = 50 ) {
 		maxindex = n - 1;
 		frontindex = 0;
 
 		head = new T[n];
-		memset(head, 0, sizeof(T) * n);
+		memset ( head, 0, sizeof ( T ) * n );
 	}
 
-	~vector() {
+	~vector () {
 		delete[] head;
 	}
 	void clear ( int n = 50 ) {
@@ -121,72 +120,69 @@ public:
 		memset ( head, 0, sizeof ( T ) * n );
 	}
 
-	T& operator [] (int i) {
-		if (i >= frontindex) {
-			throw index_out_of_range;
-		}
-
-		return head[i];
-	}
-
-	T get ( int i ) const{
+	T& operator [] ( int i ) {
 		if ( i >= frontindex ) {
 			throw index_out_of_range;
 		}
 
 		return head[i];
 	}
-	void push(T in) {
-		if (frontindex == maxindex) {
-			__exlength();
+
+	T get ( int i ) const {
+		if ( i >= frontindex ) {
+			throw index_out_of_range;
+		}
+
+		return head[i];
+	}
+	void push ( T in ) {
+		if ( frontindex == maxindex ) {
+			__exlength ();
 		}
 
 		head[frontindex++] = in;
 	}
-	void del(int i) {
-		if (i >= frontindex) {
+	void del ( int i ) {
+		if ( i >= frontindex ) {
 			//err= index_out_of_range
 			throw index_out_of_range;
 		}
 
-		for (int j = i; j < frontindex; j++) {
+		for ( int j = i; j < frontindex; j++ ) {
 			head[j] = head[j + 1];
 		}
 
 		frontindex--;
 
 	}
-	void insert(int i, T in) {
-		if (i > frontindex) {
+	void insert ( int i, T in ) {
+		if ( i > frontindex ) {
 			throw index_out_of_range;
 		}
 
 		//判断后移是否越界
-		if (frontindex + 1 > maxindex) {
-			__exlength();
+		if ( frontindex + 1 > maxindex ) {
+			__exlength ();
 		}
 		//向后复制时需要总尾开始，否则第一个元素将会覆盖全部
-		for (int j = frontindex; j >= i; j--) {
+		for ( int j = frontindex; j >= i; j-- ) {
 			head[j + 1] = head[j];
 		}
 
 		head[i] = in;
 		frontindex++;
 	}
-	int find(T target) {
-		for (int i = 0; i <= frontindex; i++) {
-			if (head[i] == target) {
+	int find ( T target ) {
+		for ( int i = 0; i <= frontindex; i++ ) {
+			if ( head[i] == target ) {
 				return i;
 			}
 		}
 		return -1;
 	}
-	int getlength()const { return frontindex; }
-	int getmaxlength() const{ return maxindex + 1; }
+	int getlength ()const { return frontindex; }
+	int getmaxlength () const { return maxindex + 1; }
 
-	vectoritreator begin () { return vectoritreator (this, 0 ); }
-	vectoritreator end () { return vectoritreator ( this,maxindex ); }
+	vectoritreator begin () { return vectoritreator ( this, 0 ); }
+	vectoritreator end () { return vectoritreator ( this, maxindex ); }
 };
-
-template <class T>
-using arrayList = vector<T>;

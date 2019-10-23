@@ -4,20 +4,10 @@
 *  @brief    稀疏矩阵类与加乘等的实现                                          *
 *  @license  GNU General Public License (GPL)                                *
 *****************************************************************************/
-/*
-实验目的
-掌握稀疏矩阵结构的描述及操作的实现。
-实验内容
-1、创建稀疏矩阵类，采用行主顺序把稀疏矩阵非0元素映射到一维数组中
-   提供操作：两个稀疏矩阵相加、两个稀疏矩阵相乘、输出矩阵（以通常的阵列形式输出）。
-2、键盘输入矩阵的行数、列数；按行输入矩阵的各元素值，建立矩阵；
-3、对建立的矩阵执行相加、相乘的操作，输出操作的结果矩阵。   */
-
+#pragma once
 #include<iostream>
 #include"../实验三：数组描述线性表/vector.h"
-using namespace std;
-
-typedef enum  { not_match, sparseMatrix_index_out_of_range }sparseMatrix_err;
+typedef enum { not_match, sparseMatrix_index_out_of_range }sparseMatrix_err;
 template<class T>
 class sparseMatrix {
 public:
@@ -48,7 +38,7 @@ public:
 
 		_rows = raw.getRows ();
 		_cols = raw.getCols ();
-		_terms.clear();
+		_terms.clear ();
 		for ( int r = 0; r < _rows; r++ ) {
 			for ( int c = 0; c < _cols; c++ ) {
 				set ( r + 1, c + 1, raw.get ( r + 1, c + 1 ) );
@@ -57,6 +47,11 @@ public:
 		return *this;
 	}
 
+	void reShape ( int n, int m ) {
+		_terms.clear ();
+		_rows = n;
+		_cols = m;
+	}
 	/*输出矩阵，传入输出流的引用*/
 	void show ( ostream& out )const {
 		for ( int r = 0; r < _rows; r++ ) {
@@ -82,7 +77,7 @@ public:
 				_terms.push ( temp );
 				return;
 			}
-		/*如果矩阵已经有非0元素，则在_terms中找到相应行、列的元素并修改*/
+			/*如果矩阵已经有非0元素，则在_terms中找到相应行、列的元素并修改*/
 		} else {
 			for ( int i = 0; i < _terms.getlength (); i++ ) {
 				if ( _terms[i].col == c && _terms[i].row == r ) {
@@ -104,7 +99,7 @@ public:
 				temp.col = c;
 				temp.row = r;
 				temp.value = value;
-				for ( int i = 0; i < _terms.getlength ();i++ ) {
+				for ( int i = 0; i < _terms.getlength (); i++ ) {
 					if ( _terms[i].col > temp.col ) {
 						_terms.insert ( i, temp );
 						return;
@@ -123,7 +118,7 @@ public:
 		}
 		/*寻找元素并返回值*/
 		for ( int i = 0; i < _terms.getlength (); i++ ) {
-			if ( _terms.get(i).col == c && _terms.get ( i ).row == r ) {
+			if ( _terms.get ( i ).col == c && _terms.get ( i ).row == r ) {
 				return _terms.get ( i ).value;
 			}
 		}
@@ -136,11 +131,11 @@ public:
 	int getCols ()const { return _cols; }
 
 	/*矩阵加法*/
-	const sparseMatrix operator + ( sparseMatrix & in ) {
+	const sparseMatrix operator + ( sparseMatrix& in ) {
 		if ( _rows != in._rows || _cols != in._cols ) {
 			throw  not_match;
 		}
-		sparseMatrix temp( _rows ,_cols);
+		sparseMatrix temp ( _rows, _cols );
 
 		int cSize = 0;
 
@@ -182,7 +177,7 @@ public:
 		return temp;
 	}
 	/*矩阵乘法*/
-	const sparseMatrix operator * (const sparseMatrix& r ) {
+	const sparseMatrix operator * ( const sparseMatrix& r ) {
 		/*首先判断能否相乘*/
 		sparseMatrix& l = *this;
 		if ( l.getCols () != r.getRows () ) {
@@ -203,28 +198,10 @@ public:
 		return temp;
 	}
 
-	/*输出运算符的重载，直接调用show函数*/
-	 friend ostream& operator << ( ostream& out, sparseMatrix& in ) {
-		in.show ( out );
-		return out;
-	}
 	/*输入运算符的重载，进行行主映射的输入*/
-	istream& operator>>( istream& in) {
-		int value_in;
-		in >> _rows >> _cols >> value_in;
-
-		_terms.clear ( value_in *2 );
-
-		node temp_term;
-		for ( int i = 0; i < value_in; i++ ) {
-			in >> temp_term.row >> temp_term.col >> temp_term.value;
-			_terms.set ( i, temp_term );
-		}
-
-		return in;
-	}
-	
-private:
+	template<class T> friend ostream& operator<<( ostream& out, const sparseMatrix<T>& in );
+	template<class T> friend istream& operator>>( istream& in, sparseMatrix<T>& temp );
+protected:
 	int _rows;
 	int _cols;
 	arrayList<node> _terms;
@@ -234,3 +211,29 @@ private:
 		}
 	}
 };
+
+/*输出运算符的重载，直接调用show函数*/
+template<class  T>
+ostream& operator << ( ostream& out, const sparseMatrix<T>& in ) {
+	in.show ( out );
+	return out;
+}
+template<class T>
+istream& operator>>( istream& in, sparseMatrix<T>& temp ) {
+
+	in >> temp._rows >> temp._cols;
+
+	temp._terms.clear ( temp._rows * temp._cols );
+
+	typename sparseMatrix<T>::node temp_term;
+	for ( int i = 0; i < temp._rows * temp._cols; i++ ) {
+		in >> temp_term.row >> temp_term.col >> temp_term.value;
+		if ( temp_term.value == 0 ) {
+			continue;
+		} else {
+			temp._terms.push ( temp_term );
+		}
+	}
+
+	return in;	// TODO: 在此处插入 return 语句
+}
