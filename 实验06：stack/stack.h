@@ -1,12 +1,16 @@
+/*****************************************************************************
+*  stack.h                                                                   *
+*  Copyright (C) 2019.10.25 TriAlley  lg139@139.com                          *
+*  @brief    栈                                                              *
+*  @license  GNU General Public License (GPL)                                *
+*****************************************************************************/
 #pragma once
 #include<cstring>//memcpy
 #include<cstdlib>//min
-#include<iostream>
 using namespace std;
-#define max(a,b) (((a) > (b)) ? (a) : (b))
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-/*stack类
 
+
+/*stack类
 public:
 	enum stack_err;			常见错误
 protected:

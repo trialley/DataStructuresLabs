@@ -1,18 +1,14 @@
-﻿#include"stack.h"
+﻿/*****************************************************************************
+*  main.cpp                                                                  *
+*  Copyright (C) 2019.10.25 TriAlley  lg139@139.com                          *
+*  @brief    栈测试                                                           *
+*  @license  GNU General Public License (GPL)                                *
+*****************************************************************************/
+#include"stack.h"
 #include"cal.h"
 #include<iostream>
 #pragma warning(disable:4996)
 using namespace std;
-/*实验六  栈
-一、实验目的
-1、掌握栈结构的定义与实现；
-2、掌握栈结构的使用。
-二、实验内容
-1、创建栈类，采用数组描述；
-2、计算数学表达式的值。
-输入数学表达式，输出表达式的计算结果。数学表达式由单个数字和运算符“+”、“-”、“*”、“/”、“(”、“) ”构成，例如 2+3*(4+5)–6/4。假定表达式输入格式合法。
-*3、以一个 m*n的长方阵表示迷宫，0和1分别表示迷宫中的通路和障碍。设计一个程序，对任意设定的迷宫，求出一条从入口到出口的通路，或得出没有通路的结论。
-   迷宫根据一个迷宫数据文件建立。迷宫数据文件由一个包含0、1的矩阵组成。迷宫的通路可以使用通路上各点的坐标序列进行展示(使用图形展示最佳)。*/
 
 struct point{
 	int _row;
@@ -120,22 +116,29 @@ int main () {
 	/*使用栈计算路径*/
 	//(1,1)是入口，(rows,cols)是出口，矩阵外围封闭
 	stack<point> paths;
-	searchMazePath (maze, rows,cols, point(1,1),point(rows,cols), paths );
+	if ( searchMazePath ( maze, rows, cols, point ( 1, 1 ), point ( rows, cols ), paths ) ) {
+		printf ( "寻找成功：\n" );
+	} else {
+		printf ( "寻找失败！\n" );
+	}
 
 	/*----------------输出路径----------------*/
+	printf ( "\n已经行走的一条道路：\n" );
 	for ( int r = 0; r < rows + 2; r++ ) {
 		for ( int c = 0; c < cols + 2; c++ ) { 
 				cout << maze[r][c];
 		}
 		cout << endl;
 	}
+	calExpression<double> cal;
 
-
-	char str[100] = "(12*5-695+94.8/(44-(95/84+848)))-(12*5-695+94.8/(44-(95/84+848)))";
+	char str[100] = "12*5-695+94.8/(44-(95/84+848))";
 	char* postfix = new char[strlen ( str ) * 2];
-	infixToPostfix ( str, postfix );
-	cout << postfix << '\n';
-	cout << calPostfix ( postfix );
+	cal.infixToPostfix ( str, postfix );
+	
+	cout << "中缀表达式：" << str << '\n';
+	cout <<"后缀表达式：" <<postfix << '\n';
+	cout <<"计算结果："<< cal.calPostfix ( postfix );
 	delete[] postfix;
 	return 0;
 }
