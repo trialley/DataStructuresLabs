@@ -5,25 +5,30 @@
 using namespace std;
 
 template<class E, class K>
-class HashTable {
+class hashTable {
 public:
-	HashTable (int divisor = 11);
-	~HashTable ()
-	{
-		delete[]ht;
-		delete[]empty;
+	hashTable (int divisor = 11) {
+		D = divisor;
+
+		ht = new E[D];
+		for (int i = 0; i < D; i++) {
+			ht=nullptr;
+		}
+	}
+	~hashTable () {
+		delete[] ht;
+		//delete[] empty;
 	}
 
 	/*元素存在则返回-1，不出在则返回插入后的下标*/
 	int  Insert (const E& e) {
 		K k = e;
 		int b = hSearch (k);
-		if (empty[b]) {
-			empty[b] = false;
+		if (ht[b]==nullptr) {
+			//empty[b] = false;
 			ht[b] = e;
 			return b;
-		}
-		else {
+		} else {
 			return -1;
 		}
 		//return *this;
@@ -31,10 +36,10 @@ public:
 	/*返回下标，不含有返回-1*/
 	int  NewSearch (const K& k) const {
 		int b = hSearch (k);
-		if (empty[b] || ht[b] != k)
-			return -1;          //为空或者找到了起始桶即hSearch中i的位置
-		else {
+		if (ht[b]!=nullptr && ht[b] == k)
 			return b;
+		else {
+			return -1;          //为空或者找到了起始桶即hSearch中i的位置
 		}
 	}
 	int  Delete (const E& e) {
@@ -68,8 +73,7 @@ public:
 					z = i;
 					//cout << "good" << endl;
 
-				}
-				else if ((i != x && i < x && z < i) || (i != x && i < x && z >= x)) {
+				} else if ((i != x && i < x && z < i) || (i != x && i < x && z >= x)) {
 					empty[z] = false;
 					ht[z] = ht[i];
 					empty[i] = true;
@@ -97,41 +101,30 @@ private:
 	E* ht;     //散列数组
 	bool* empty;   //看是否为空的一维数组
 };
-template<class E, class K>
-HashTable<E, K>::HashTable (int divisor) {
-	D = divisor;
 
-	ht = new E[D];
-	empty = new bool[D];
-
-	for (int i = 0; i < D; i++) {
-		empty[i] = true;
-	}
-}
-
-int main (){
+int main () {
 #pragma warning(disable:4996)
-	freopen ( "input.txt", "r", stdin );
-	int d, m, a, b,pos;
+	freopen ("input.txt", "r", stdin);
+	int d, m, a, b, pos;
 	cin >> d >> m;
-	HashTable<int, int> h (d);
+	hashTable<int, int> h (d);
 
 	for (int i = 1; i <= m; i++) {
 		cin >> a >> b;
-		switch (a){
+		switch (a) {
 		case 0:
 			pos = h.Insert (b);
-			if (pos==-1) {
+			if (pos == -1) {
 				cout << "Existed\n";
-			}else {
+			} else {
 				cout << pos << "\n";
 			}
 			break;
 		case 1:
 			pos = h.NewSearch (b);
 			if (pos == -1) {
-				cout << -1<<"\n";
-			}else {
+				cout << -1 << "\n";
+			} else {
 				cout << pos << "\n";
 			}
 			break;
@@ -139,7 +132,7 @@ int main (){
 			pos = h.Delete (b);
 			if (pos == -1) {
 				cout << "Not Found\n";
-			}else {
+			} else {
 				cout << pos << "\n";
 			}
 			break;
