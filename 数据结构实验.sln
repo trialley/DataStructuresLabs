@@ -51,6 +51,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "作业cp10", "作业cp10\�
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验08：dictionary", "实验08：dictionary\实验08：dictionary.vcxproj", "{48214935-D558-4A38-844B-9BC559796499}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验08：线性探查提交", "实验08：线性探查提交\实验08：线性探查提交.vcxproj", "{8C91CF5A-65D3-47E7-B2E1-731CFE2E2EF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -251,6 +253,14 @@ Global
 		{48214935-D558-4A38-844B-9BC559796499}.Release|x64.Build.0 = Release|x64
 		{48214935-D558-4A38-844B-9BC559796499}.Release|x86.ActiveCfg = Release|Win32
 		{48214935-D558-4A38-844B-9BC559796499}.Release|x86.Build.0 = Release|Win32
+		{8C91CF5A-65D3-47E7-B2E1-731CFE2E2EF5}.Debug|x64.ActiveCfg = Debug|x64
+		{8C91CF5A-65D3-47E7-B2E1-731CFE2E2EF5}.Debug|x64.Build.0 = Debug|x64
+		{8C91CF5A-65D3-47E7-B2E1-731CFE2E2EF5}.Debug|x86.ActiveCfg = Debug|Win32
+		{8C91CF5A-65D3-47E7-B2E1-731CFE2E2EF5}.Debug|x86.Build.0 = Debug|Win32
+		{8C91CF5A-65D3-47E7-B2E1-731CFE2E2EF5}.Release|x64.ActiveCfg = Release|x64
+		{8C91CF5A-65D3-47E7-B2E1-731CFE2E2EF5}.Release|x64.Build.0 = Release|x64
+		{8C91CF5A-65D3-47E7-B2E1-731CFE2E2EF5}.Release|x86.ActiveCfg = Release|Win32
+		{8C91CF5A-65D3-47E7-B2E1-731CFE2E2EF5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,6 +5,7 @@
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #pragma warning(disable:4996)
+//freopen ( "input.txt", "r", stdin );
 using namespace std;
 
 /*stack类
