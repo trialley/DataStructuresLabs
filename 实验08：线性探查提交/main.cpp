@@ -6,133 +6,137 @@ using namespace std;
 
 template<class E, class K>
 class hashTable {
-public:
-	hashTable (int divisor = 11) {
-		D = divisor;
+protected:
+	+
+private:
+	int _getPosByKey (const K& k) const {
+		int i = k % _divisor;   //找 k对应散列表的位置
+		int j = i;
+		do {
+			if (_empty_table_head[j] || _table_head[j] == k) return j;    //找到或者为空，则返回
+			j = (j + 1) % _divisor;
 
-		ht = new E[D];
-		for (int i = 0; i < D; i++) {
-			ht=nullptr;
+		} while (j != i);           //若又回到i，则退出循环
+		return j;
+	}
+	int _divisor;   //散列函数的除数
+	E* _table_head;     //散列数组
+	bool* _empty_table_head;   //看是否为空的一维数组
+
+public:
+	hashTable (int divisorin = 11):_divisor(divisorin){
+
+		_table_head = new E[_divisor];
+		_empty_table_head = new bool[_divisor];
+
+		for (int i = 0; i < _divisor; i++) {
+			_empty_table_head[i] = true;
 		}
 	}
-	~hashTable () {
-		delete[] ht;
-		//delete[] empty;
+	~hashTable (){
+		delete[]_table_head;
+		delete[]_empty_table_head;
 	}
 
 	/*元素存在则返回-1，不出在则返回插入后的下标*/
-	int  Insert (const E& e) {
+	int  insertGetPos (const E& e) {
 		K k = e;
-		int b = hSearch (k);
-		if (ht[b]==nullptr) {
-			//empty[b] = false;
-			ht[b] = e;
+		int b = _getPosByKey (k);
+		if (_empty_table_head[b]) {
+			_empty_table_head[b] = false;
+			_table_head[b] = e;
 			return b;
-		} else {
+		}else {
 			return -1;
 		}
 		//return *this;
 	}
 	/*返回下标，不含有返回-1*/
-	int  NewSearch (const K& k) const {
-		int b = hSearch (k);
-		if (ht[b]!=nullptr && ht[b] == k)
-			return b;
+	int  getPosByKey (const K& k) const {
+		int b = _getPosByKey (k);
+		if (_empty_table_head[b] || _table_head[b] != k)
+			return -1;
 		else {
-			return -1;          //为空或者找到了起始桶即hSearch中i的位置
+			return b;
 		}
 	}
-	int  Delete (const E& e) {
+	int  deleteGetNum (const E& e) {
 		K k = e;
-		int b = hSearch (k);
+		int b = _getPosByKey (k);
 		int Count = 0;
-		if (empty[b]) {
+		if (_empty_table_head[b]) {
 			//cout << "Not Found" << endl;
 			return -1;
 		}
 
-		else if (ht[b] == k) {
+		else if (_table_head[b] == k) {
 
-			empty[b] = true;
+			_empty_table_head[b] = true;
 			int i = b;
 			int z = b;
 			int x;
 
 			do {
-				i = (i + 1) % D;   //当前元素的实际位置
-				if (empty[i]) {    //看下一个是否为空
+				i = (i + 1) % _divisor;   //当前元素的实际位置
+				if (_empty_table_head[i]) {    //看下一个是否为空
 					break;
 				}
-				x = ht[i] % D;
+				x = _table_head[i] % _divisor;
 				//cout << "x的值为："<<x << endl; //当前元素本应该在的位置
 				if (i != x && x <= z && i > z) {     //被挤走
-					empty[z] = false;
-					ht[z] = ht[i];
-					empty[i] = true;
+					_empty_table_head[z] = false;
+					_table_head[z] = _table_head[i];
+					_empty_table_head[i] = true;
 					Count++;
 					z = i;
 					//cout << "good" << endl;
 
-				} else if ((i != x && i < x && z < i) || (i != x && i < x && z >= x)) {
-					empty[z] = false;
-					ht[z] = ht[i];
-					empty[i] = true;
+				}
+				else if ((i != x && i < x && z < i) || (i != x && i < x && z >= x)) {
+					_empty_table_head[z] = false;
+					_table_head[z] = _table_head[i];
+					_empty_table_head[i] = true;
 					Count++;
 					z = i;
 				}
-			} while (!empty[i + 1] && (i + 1) != b);
+			} while (!_empty_table_head[i + 1] && (i + 1) != b);
 
 			return Count;
-			//cout << Count << endl;
 		}
 	}
-private:
-	int hSearch (const K& k) const {
-		int i = k % D;   //找 k对应散列表的位置
-		int j = i;
-		do {
-			if (empty[j] || ht[j] == k) return j;    //找到或者为空，则返回
-			j = (j + 1) % D;
-
-		} while (j != i);           //若又回到i，则退出循环
-		return j;
-	}
-	int D;   //散列函数的除数
-	E* ht;     //散列数组
-	bool* empty;   //看是否为空的一维数组
 };
 
-int main () {
+int main (){
 #pragma warning(disable:4996)
-	freopen ("input.txt", "r", stdin);
-	int d, m, a, b, pos;
+	freopen ( "input.txt", "r", stdin );
+	int d, m, a, b,pos;
 	cin >> d >> m;
 	hashTable<int, int> h (d);
 
 	for (int i = 1; i <= m; i++) {
 		cin >> a >> b;
-		switch (a) {
+		switch (a){
 		case 0:
-			pos = h.Insert (b);
-			if (pos == -1) {
+			pos = h.insertGetPos (b);
+			if (pos==-1) {
 				cout << "Existed\n";
-			} else {
+			}else {
 				cout << pos << "\n";
 			}
 			break;
 		case 1:
-			pos = h.NewSearch (b);
+			pos = h.getPosByKey (b);
 			if (pos == -1) {
-				cout << -1 << "\n";
-			} else {
+				cout << -1<<"\n";
+			}else {
 				cout << pos << "\n";
 			}
 			break;
 		case 2:
-			pos = h.Delete (b);
+			pos = h.deleteGetNum (b);
 			if (pos == -1) {
 				cout << "Not Found\n";
-			} else {
+			}else {
 				cout << pos << "\n";
 			}
 			break;
