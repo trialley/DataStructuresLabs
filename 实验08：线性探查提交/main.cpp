@@ -119,7 +119,7 @@ public:
 			for (;;) {
 				current_pos++;//将下一个元素设置为当前元素
 				current_pos = current_pos % _divisor;   //当前元素的实际位置
-				if (_empty_table_head[current_pos]|| current_pos == delete_pos) {    //当前桶为空或，为空说明前面的元素都在正确位置，直接分返回
+				if (_empty_table_head[current_pos]) {    //当前桶为空或，为空说明前面的元素都在正确位置，直接分返回
 					return move_count;
 				} else {
 					original_pos = myhash(_table_head[current_pos]->key) % _divisor;//下一个桶的元素本应该在哪里
