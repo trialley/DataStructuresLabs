@@ -125,9 +125,8 @@ public:
 					original_pos = myhash(_table_head[current_pos]->key) % _divisor;//下一个桶的元素本应该在哪里
 					//cout << "original_pos的值为："<<original_pos << endl; //当前元素本应该在的位置
 					if (
-							(current_pos != original_pos && original_pos <= last_pos && current_pos > last_pos)||
-							(current_pos != original_pos && current_pos < original_pos && last_pos < current_pos) || 
-							(current_pos != original_pos && current_pos < original_pos && last_pos >= original_pos)
+							(original_pos <= last_pos && current_pos > last_pos)||
+							(current_pos < original_pos && (last_pos < current_pos|| original_pos <= last_pos))
 						) {
 						_empty_table_head[last_pos] = false;
 						_table_head[last_pos] = _table_head[current_pos];
