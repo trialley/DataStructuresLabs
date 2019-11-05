@@ -1,7 +1,6 @@
 # pragma once
 #include<iostream>
 using namespace std;
-
 /*debug专用宏*/
 #ifdef DEBUG
 #define dprintf printf
@@ -9,6 +8,7 @@ using namespace std;
 #define dprintf /\
 / printf
 #endif
+
 
 /*对应各种数据类型的哈希函数，此处只写int的哈希函数*/
 template <class K> class myhash;
@@ -61,7 +61,7 @@ public:
 	~myhashTable (){
 		dprintf ("调用析构函数:\n");
 		for (int i = 0; i < _divisor; i++) {
-			delete _table_head[i];
+			//delete _table_head[i];
 		}
 		delete[] _table_head;
 		delete[] _empty_table_head;
@@ -124,17 +124,18 @@ public:
 				} else {
 					original_pos = myhash(_table_head[current_pos]->key) % _divisor;//下一个桶的元素本应该在哪里
 					//cout << "original_pos的值为："<<original_pos << endl; //当前元素本应该在的位置
-					if (
-							(original_pos <= last_pos && current_pos > last_pos)||
-							(current_pos < original_pos && (last_pos < current_pos|| original_pos <= last_pos))
+					if (current_pos!= original_pos
+							//(original_pos <= last_pos && current_pos > last_pos)||
+							//(current_pos < original_pos && (last_pos < current_pos|| original_pos <= last_pos))
 						) {
+	
+						continue;
+					} else {
 						_empty_table_head[last_pos] = false;
 						_table_head[last_pos] = _table_head[current_pos];
 						_empty_table_head[current_pos] = true;
 						move_count++;
 						last_pos = current_pos;
-					} else {
-						continue;
 					}
 				}
 			};
@@ -183,5 +184,3 @@ int main (){
 
 	return 0;
 }
-
-
