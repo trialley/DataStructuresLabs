@@ -4,13 +4,15 @@ using namespace std;
 
 /*对应各种数据类型的哈希函数，此处只写int的哈希函数*/
 template <class K> class myhash;
+
 template<>
 class myhash<int> {
 public:
-	size_t operator()(const int theKey) const {
-		return size_t (theKey);
-	}
+	size_t operator()(const int keyin) const {return size_t(keyin);}
 };
+
+
+/*用于存储键值的类*/
 template <class K, class E>
 class mypair {
 public:
@@ -18,6 +20,8 @@ public:
 	E data;
 	mypair (K keyin, E datain) :key (keyin), data (datain) {}
 };
+
+/*用于构成链表的结点类*/
 template <class K, class E>
 struct mynode {
 	typedef mypair< K, E> mypairType;
@@ -25,16 +29,36 @@ struct mynode {
 	mypairType element;
 	mynodeType* next;
 
-	mynode ( mypairType thePair) :element (thePair) {}
-	mynode ( mypairType thePair, mynodeType* theNext) :element (thePair), next (theNext) {}
+	mynode ( mypairType pairin) :element (pairin),next(nullptr) {}
+	mynode ( mypairType pairin, mynodeType* nextin) :element (pairin), next (nextin) {}
 };
+
+
+/*链表类
 template<class K, class E>
 class myChain {
 protected:
-	mynode<K, E>* _head;  // pointer to key mynode in chain
-	int _size;                 // number of elements in dictionary
+	mynode<K, E>* _head;							//保存链表头
+	int _size;										//保存元素个数
 public:
-	myChain () { _head = nullptr; _size = 0; }
+	myChain ();										//构造函数
+	~myChain ();									//析构函数
+	bool empty () const;							//返回是否为空
+	int size () const;								//返回元素数目
+	mypair< K, E>* find (const K& keyin) const;		//查找元素，找不到返回空指针
+	bool erase (const K& keyin);					//删除元素，无此元素返回false，删除成功返回true
+	void insert (mypair< K, E>& pairin);			//插入函数，在插入时确保有序
+	void output (ostream& out) const;				//输出链表元素
+*/
+template<class K, class E>
+class myChain {
+public:
+
+protected:
+	mynode<K, E>* _head;
+	int _size;
+public:
+	myChain ():_head(nullptr), _size(0){}
 	~myChain () {
 		while (_head != nullptr) {
 			mynode<K, E>* nextNode = _head->next;
@@ -44,100 +68,116 @@ public:
 	}
 	bool empty () const { return _size == 0; }
 	int size () const { return _size; }
-	mypair< K, E>* find (const K& theKey) const {
-		// Return pointer to matching mypair.
-		 // Return nullptr if no matching mypair.
-		mynode<K, E>* currentNode = _head;
+	mypair< K, E>* find (const K& keyin) const {
+		mynode<K, E>* c_node = _head;
 
-		// search for match with theKey
-		while (currentNode != nullptr && currentNode->element.key != theKey) {
-			currentNode = currentNode->next;
+		/*一直寻找直到找到对应元素*/
+		while (c_node != nullptr && c_node->element.key != keyin) {
+			c_node = c_node->next;
 		}
 
-		// verify match
-		if (currentNode != nullptr && currentNode->element.key == theKey)
-			// yes, found match
-			return &currentNode->element;
-
-		// no match
-		return nullptr;
+		/*如果值不为空，则*/
+		if (c_node != nullptr && c_node->element.key == keyin) {
+			return &c_node->element;
+		} else {
+			return nullptr;
+		}
 	}
-	bool erase (const K& theKey) {
+	bool erase (const K& keyin) {
 		mynode<K, E>* p = _head;
 		mynode<K, E>* tp = nullptr;
 
-// search for match with theKey
-		while (p != nullptr && p->element.key < theKey) {
+		while (p != nullptr && p->element.key < keyin) {
 			tp = p;
 			p = p->next;
 		}
 
-		// verify match
-		if (p != nullptr && p->element.key == theKey) {// found a match
-		   // remove p from the chain
-			if (tp == nullptr) _head = p->next;  // p is key mynode
+		if (p != nullptr && p->element.key == keyin) {
+			if (tp == nullptr) _head = p->next;
 			else tp->next = p->next;
-
 			delete p;
 			_size--;
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
-	void insert ( mypair< K, E>& thePair) {
-		// Insert thePair into the dictionary. Overwrite existing
-		// mypair, if any, with same key.
-		mynode<K, E>* p = _head;
-		mynode<K, E>* tp = nullptr; // tp trails p
 
-	// move tp so that thePair can be inserted after tp
-		while (p != nullptr && p->element.key < thePair.key) {
-			tp = p;
-			p = p->next;
-		}
-
-		// check if there is a matching mypair
-		if (p != nullptr && p->element.key == thePair.key) {// replace old value
-			p->element.data = thePair.data;
+	/*插入函数，在插入时确保有序*/
+	void insert ( mypair< K, E>& pairin) {
+		if (_head == nullptr) {
+			_head = new mynode<K, E> (pairin);
+			_size++;
 			return;
+		} else {
+			mynode<K, E>* nodep = _head;
+			mynode<K, E>* p_nodep = nullptr;
+			/*查看是否已有此元素*/
+			while (nodep != nullptr && nodep->element.key < pairin.key) {
+				p_nodep = nodep;
+				nodep = nodep->next;
+			}
+			if (nodep != nullptr && nodep->element.key == pairin.key) {
+				//已有则插入则修改该位置元素
+				nodep->element.data = pairin.data;
+				return;
+			} else {
+				//无则插入新元素
+				p_nodep->next = new mynode<K, E> (pairin, nodep);
+				_size++;
+				return;
+			}
 		}
-
-		// no match, set up mynode for thePair
-		mynode<K, E>* newNode = new mynode<K, E> (thePair, p);
-
-		// insert newNode just after tp
-		if (tp == nullptr) _head = newNode;
-		else tp->next = newNode;
-
-		_size++;
-		return;
 	}
+	/*输出链表元素*/
 	void output (ostream& out) const {
-		out << "  chain:  ";
-		for (mynode<K, E>* currentNode = _head;
-			currentNode != nullptr;
-			currentNode = currentNode->next) {
-			out << currentNode->element.key << " "<< currentNode->element.data << "  ";
+		for (mynode<K, E>* c_node = _head;
+			c_node != nullptr;
+			c_node = c_node->next) {
+			out << c_node->element.key << ":"<< c_node->element.data << "  ";
 		}
-
 	}
 };
 
+/*输出链表元素的重载函数*/
 template <class K, class E>
 ostream& operator<<(ostream& out, const myChain<K, E>& x) {
 	x.output (out);
 	return out;
 }
 
+/*哈希链表类
 template<class K, class E>
 class myhashChains {
 protected:
-	myChain<K, E>* _chains;  // myhash _chains
-	myhash<K> _myhash;              // maps type K to nonnegative integer
-	int _size;                 // number of elements in list
-	int _divisor;               // myhash function _divisor
+	myChain<K, E>* _chains;							//我的链表
+	myhash<K> _myhash;								//自定义的哈希函数
+	int _size;										//元素个数
+	int _divisor;									//除数，链表的个数
+	int inline _getPosByKey (const K& keyin)const;	//获取该关键词的理论位置，注意该返回值需要配个各函数进行分别分析
 public:
-	myhashChains (int divisorin = 11) {
+	myhashChains (int divisorin = 20);				//构造函数
+	~myhashChains ();								//析构函数
+	bool empty () const;							//返回是否为空
+	int size () const;								//返回元素个数
+	E* find (const K& keyin) const;					//查找关键词，返回值的指针
+	bool insert (mypair<K, E> pairin);				//插入键值对，返回插入成功失败与否
+	bool erase (const K& keyin);					//删除元素的包装
+	void output (ostream& out) const;				//输出元素
+	int getLengthByKey (const K& keyin) const;		//通过关键词获取长度，为了OJ而增加
+*/
+template<class K, class E>
+class myhashChains {
+protected:
+	myChain<K, E>* _chains;
+	myhash<K> _myhash;
+	int _size;
+	int _divisor;
+	int inline _getPosByKey (const K& keyin)const {
+		return _myhash (keyin) % _divisor;
+	}
+public:
+	myhashChains (int divisorin = 20) {
 		_size = 0;
 		_divisor = divisorin;
 		_chains = new myChain<K, E>[_divisor];
@@ -145,50 +185,59 @@ public:
 	~myhashChains () { delete[] _chains; }
 	bool empty () const { return _size == 0; }
 	int size () const { return _size; }
-	E* find (const K& theKey) const {
-		mypair< K, E>* temp = (_chains[_myhash (theKey) % _divisor].find (theKey));
+
+	/*查找关键词，返回值的指针*/
+	E* find (const K& keyin) const {
+		mypair< K, E>* temp = (_chains[_getPosByKey (keyin)].find (keyin));
 		if (temp == nullptr) {
 			return nullptr;
 		} else {
 			return &(temp->data);
 		}
 	}
-	bool insert (mypair<K, E> thePair) {
-		int homeBucket = (int)_myhash (thePair.key) % _divisor;
-		int homeSize = _chains[homeBucket].size ();
-		_chains[homeBucket].insert (thePair);
-		if (_chains[homeBucket].size () > homeSize) {
+
+	/*插入键值对，返回插入成功失败与否*/
+	bool insert (mypair<K, E> pairin) {
+		int pos = _getPosByKey (pairin.key);
+		int size = _chains[pos].size ();
+		_chains[pos].insert (pairin);
+
+		/*链表长度扩大说明插入了，没有扩大说明覆盖了*/
+		if (_chains[pos].size () > size) {
 			_size++;
-			return true;//
+			return true;
 		} else {
-			return false;//这里的逻辑有待验证
+			return false;
 		}
 	}
-	bool erase (const K& theKey) {
-		return _chains[_myhash (theKey) % _divisor].erase (theKey);
-	}
+	/*删除元素的包装*/
+	bool erase (const K& keyin) {return _chains[_getPosByKey(keyin)].erase (keyin);}
 
+	/*输出元素*/
 	void output (ostream& out) const {
-		for (int i = 0; i < _divisor; i++)
+		for (int i = 0; i < _divisor; i++) {
 			if (_chains[i].size () == 0) {
-				cout << "  chain:  NULL ";
+				cout << "Chain" << i << ": NULL ";
 			} else {
-				cout << _chains[i] << " ";
+				cout << "Chain" << i << ":" << _chains[i] << " ";
 			}
+		}
 	}
-	int getLengthByKey (K keyin) {
-		return _chains[_myhash (keyin) % _divisor].size ();
+	/*通过关键词获取长度，为了OJ而增加*/
+	int getLengthByKey (const K& keyin) const {
+		return _chains[_getPosByKey (keyin)].size ();
 	}
 };
-
+/*输出重载*/
 template <class K, class E>
 ostream& operator<<(ostream& out, const myhashChains<K, E>& x) {
 	x.output (out); return out;
 }
 
+
 int main () {
 #pragma warning(disable:4996)
-	freopen ("input.txt", "r", stdin);
+	//freopen ("input.txt", "r", stdin);
 	int d, m, a, b;
 	int* pos =nullptr;
 	int length = 0;

@@ -12,6 +12,23 @@ public:
 	}
 };
 
+
+/*template<class E, class K>
+class myhashTable {
+public:
+	struct pair;
+protected:
+	myhash<K> myhashf;
+	int _divisor;										//散列函数的除数
+	pair** _table_head;									//散列数组
+	int  _getPosByKey (const K& keyin) const;			//返回下标，不含有返回-1
+public:
+	myhashTable (int divisorin = 20);					//
+	int  insertGetPos (const K& keyin, const E& datain);//元素存在则返回-1，不出在则返回插入后的下标
+	int  deleteGetNum (const K& keyin);					//通过关键词删除键值对，返回移动次数或-1*
+	friend ostream& operator << (ostream& out, myhashTable& in)
+	int getPosByKey (const K& keyin) const;				//通过关键词获取该元素的理论位置
+*/
 template<class E, class K>
 class myhashTable {
 public:
@@ -52,7 +69,7 @@ public:
 			return pos;
 		}
 	}
-	myhashTable (int divisorin = 11):_divisor(divisorin){
+	myhashTable (int divisorin = 20):_divisor(divisorin){
 		_table_head = new pair*[_divisor];
 		for (int i = 0; i < _divisor; i++) {
 			_table_head[i] = nullptr;
@@ -63,6 +80,39 @@ public:
 
 		}
 		delete[] _table_head;
+	}
+
+	/*通过关键词删除键值对，返回移动次数或-1*/
+	int  deleteGetNum (const K& keyin) {
+		int delete_pos = _getPosByKey (keyin);
+		if (_table_head[delete_pos]==nullptr) {
+			return -1;
+		}else if (_table_head[delete_pos]->key == keyin) {
+			_table_head[delete_pos] = nullptr;//内存溢出
+
+			int current_pos = delete_pos;//当前元素当前的实际位置
+			int last_pos = delete_pos;//
+			int original_pos;//当前元素一般情况下本应该在的位置
+
+			int move_count = 0;
+			for (;;) {
+				current_pos++;//将下一个元素设置为当前元素
+				current_pos = current_pos % _divisor;   //当前元素的实际位置
+				if (_table_head[current_pos]==nullptr) {    //当前桶为空或，为空说明前面的元素都在正确位置，直接删除并返回
+					return move_count;
+				} else {
+					original_pos = myhashf(_table_head[current_pos]->key) % _divisor;//当前元素本应该在哪里
+					if (current_pos!= _getPosByKey(_table_head[current_pos]->key)) {
+						_table_head[last_pos] = _table_head[current_pos];//移动指针，无需delete
+						_table_head[current_pos] = nullptr;//内存溢出
+						move_count++;
+						last_pos = current_pos;
+					} else {
+						continue;
+					}
+				}
+			};
+		}
 	}
 
 	/*元素存在则返回-1，不出在则返回插入后的下标*/
@@ -76,51 +126,12 @@ public:
 		}
 	}
 
-	/*通过关键词删除键值对，返回移动次数或-1*/
-	int  deleteGetNum (const K& keyin) {
-		int delete_pos = _getPosByKey (keyin);
-		int move_count = 0;
-		if (_table_head[delete_pos]==nullptr) {
-			return -1;
-		}else if (_table_head[delete_pos]->key == keyin) {
-			_table_head[delete_pos] = nullptr;//内存溢出
-
-
-			int current_pos = delete_pos;//当前元素当前的实际位置
-			int last_pos = delete_pos;//
-			int original_pos;//当前元素一般情况下本应该在的位置
-
-
-			for (;;) {
-				current_pos++;//将下一个元素设置为当前元素
-				current_pos = current_pos % _divisor;   //当前元素的实际位置
-				if (_table_head[current_pos]==nullptr) {    //当前桶为空或，为空说明前面的元素都在正确位置，直接删除并返回
-					
-					return move_count;
-				} else {
-					original_pos = myhashf(_table_head[current_pos]->key) % _divisor;//当前元素本应该在哪里
-					if (current_pos!= _getPosByKey(_table_head[current_pos]->key)) {
-						_table_head[last_pos] = _table_head[current_pos];//移动指针，无需delete
-						//delete 
-						_table_head[current_pos] = nullptr;//内存溢出
-						move_count++;
-						last_pos = current_pos;
-					} else {
-
-						continue;
-					}
-				}
-			};
-		}
-	}
-
 	friend ostream& operator << (ostream& out, myhashTable& in) {
 		for (int i = 0; i < in._divisor; i++) {
 			if (in._table_head[i] == nullptr) {
 				out << "np" << " ";
 			} else {
 				out << in._table_head[i]->key << " ";
-
 			}
 		}
 		return  out;
@@ -164,7 +175,7 @@ int main (){
 			if (pos == -1) {
 				cout << "Delete Failed\n";
 			}else {
-				cout << hashtable.getSize() << "\n";
+				cout << pos << "\n";
 			}
 			break;
 		default:
