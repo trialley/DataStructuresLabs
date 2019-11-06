@@ -21,25 +21,25 @@ public:
 template <class K, class E>
 struct mynode {
 	typedef mypair< K, E> mypairType;
+	typedef mynode< K, E> mynodeType;
 	mypairType element;
-	mynode<K, E>* next;
+	mynodeType* next;
 
 	mynode ( mypairType thePair) :element (thePair) {}
-	mynode ( mypairType thePair, mynode<K, E>* theNext) :element (thePair), next (theNext) {}
+	mynode ( mypairType thePair, mynodeType* theNext) :element (thePair), next (theNext) {}
 };
 template<class K, class E>
-class sortedChain {
+class myChain {
 protected:
-	mynode<K, E>* _key_mynode;  // pointer to key mynode in chain
+	mynode<K, E>* _head;  // pointer to key mynode in chain
 	int _size;                 // number of elements in dictionary
 public:
-	sortedChain () { _key_mynode = nullptr; _size = 0; }
-	~sortedChain () {
-		// Destructor.  Delete all mynodes.
-		while (_key_mynode != nullptr) {// delete _key_mynode
-			mynode<K, E>* nextNode = _key_mynode->next;
-			delete _key_mynode;
-			_key_mynode = nextNode;
+	myChain () { _head = nullptr; _size = 0; }
+	~myChain () {
+		while (_head != nullptr) {
+			mynode<K, E>* nextNode = _head->next;
+			delete _head;
+			_head = nextNode;
 		}
 	}
 	bool empty () const { return _size == 0; }
@@ -47,7 +47,7 @@ public:
 	mypair< K, E>* find (const K& theKey) const {
 		// Return pointer to matching mypair.
 		 // Return nullptr if no matching mypair.
-		mynode<K, E>* currentNode = _key_mynode;
+		mynode<K, E>* currentNode = _head;
 
 		// search for match with theKey
 		while (currentNode != nullptr && currentNode->element.key != theKey) {
@@ -62,10 +62,9 @@ public:
 		// no match
 		return nullptr;
 	}
-	void erase (const K& theKey) {
-		// Delete the mypair, if any, whose key equals theKey.
-		mynode<K, E>* p = _key_mynode,
-			* tp = nullptr; // tp trails p
+	bool erase (const K& theKey) {
+		mynode<K, E>* p = _head;
+		mynode<K, E>* tp = nullptr;
 
 // search for match with theKey
 		while (p != nullptr && p->element.key < theKey) {
@@ -76,17 +75,19 @@ public:
 		// verify match
 		if (p != nullptr && p->element.key == theKey) {// found a match
 		   // remove p from the chain
-			if (tp == nullptr) _key_mynode = p->next;  // p is key mynode
+			if (tp == nullptr) _head = p->next;  // p is key mynode
 			else tp->next = p->next;
 
 			delete p;
 			_size--;
+			return true;
 		}
+		return false;
 	}
 	void insert ( mypair< K, E>& thePair) {
 		// Insert thePair into the dictionary. Overwrite existing
 		// mypair, if any, with same key.
-		mynode<K, E>* p = _key_mynode;
+		mynode<K, E>* p = _head;
 		mynode<K, E>* tp = nullptr; // tp trails p
 
 	// move tp so that thePair can be inserted after tp
@@ -105,75 +106,79 @@ public:
 		mynode<K, E>* newNode = new mynode<K, E> (thePair, p);
 
 		// insert newNode just after tp
-		if (tp == nullptr) _key_mynode = newNode;
+		if (tp == nullptr) _head = newNode;
 		else tp->next = newNode;
 
 		_size++;
 		return;
 	}
-	void output (ostream& out) const {// Insert the chain elements into the stream out.
+	void output (ostream& out) const {
 		out << "  chain:  ";
-		for (mynode<K, E>* currentNode = _key_mynode;
+		for (mynode<K, E>* currentNode = _head;
 			currentNode != nullptr;
-			currentNode = currentNode->next)
-			out << currentNode->element.key << " "
-			<< currentNode->element.data << "  ";
+			currentNode = currentNode->next) {
+			out << currentNode->element.key << " "<< currentNode->element.data << "  ";
+		}
+
 	}
 };
 
 template <class K, class E>
-ostream& operator<<(ostream& out, const sortedChain<K, E>& x) {
+ostream& operator<<(ostream& out, const myChain<K, E>& x) {
 	x.output (out);
 	return out;
 }
 
 template<class K, class E>
 class myhashChains {
+protected:
+	myChain<K, E>* _chains;  // myhash _chains
+	myhash<K> _myhash;              // maps type K to nonnegative integer
+	int _size;                 // number of elements in list
+	int _divisor;               // myhash function _divisor
 public:
-
-
-
-public:
-	myhashChains (int theDivisor = 11) {
-		divisor = theDivisor;
-		dSize = 0;
-
-		table = new sortedChain<K, E>[divisor];
+	myhashChains (int divisorin = 11) {
+		_size = 0;
+		_divisor = divisorin;
+		_chains = new myChain<K, E>[_divisor];
 	}
-	~myhashChains () { delete[] table; }
-	bool empty () const { return dSize == 0; }
-	int size () const { return dSize; }
-	E find (const K& theKey) const {
-		mypair< K, E>* temp = (table[myhash (theKey) % divisor].find (theKey));
+	~myhashChains () { delete[] _chains; }
+	bool empty () const { return _size == 0; }
+	int size () const { return _size; }
+	E* find (const K& theKey) const {
+		mypair< K, E>* temp = (_chains[_myhash (theKey) % _divisor].find (theKey));
 		if (temp == nullptr) {
-			return (E)0;
+			return nullptr;
 		} else {
-			return temp->data;
+			return &(temp->data);
 		}
 	}
-	void insert (mypair<K, E> thePair) {
-		int homeBucket = (int)myhash (thePair.key) % divisor;
-		int homeSize = table[homeBucket].size ();
-		table[homeBucket].insert (thePair);
-		if (table[homeBucket].size () > homeSize)
-			dSize++;
+	bool insert (mypair<K, E> thePair) {
+		int homeBucket = (int)_myhash (thePair.key) % _divisor;
+		int homeSize = _chains[homeBucket].size ();
+		_chains[homeBucket].insert (thePair);
+		if (_chains[homeBucket].size () > homeSize) {
+			_size++;
+			return true;//
+		} else {
+			return false;//这里的逻辑有待验证
+		}
 	}
-	void erase (const K& theKey) {
-		table[myhash (theKey) % divisor].erase (theKey);
+	bool erase (const K& theKey) {
+		return _chains[_myhash (theKey) % _divisor].erase (theKey);
 	}
 
 	void output (ostream& out) const {
-		for (int i = 0; i < divisor; i++)
-			if (table[i].size () == 0)
-				cout << "  chain:  NULL " ;
-			else
-				cout << table[i]<<" ";
+		for (int i = 0; i < _divisor; i++)
+			if (_chains[i].size () == 0) {
+				cout << "  chain:  NULL ";
+			} else {
+				cout << _chains[i] << " ";
+			}
 	}
-protected:
-	sortedChain<K, E>* table;  // myhash table
-	myhash<K> myhash;              // maps type K to nonnegative integer
-	int dSize;                 // number of elements in list
-	int divisor;               // myhash function divisor
+	int getLengthByKey (K keyin) {
+		return _chains[_myhash (keyin) % _divisor].size ();
+	}
 };
 
 template <class K, class E>
@@ -184,7 +189,9 @@ ostream& operator<<(ostream& out, const myhashChains<K, E>& x) {
 int main () {
 #pragma warning(disable:4996)
 	freopen ("input.txt", "r", stdin);
-	int d, m, a, b, pos=0;
+	int d, m, a, b;
+	int* pos =nullptr;
+	int length = 0;
 	cin >> d >> m;
 	myhashChains<int, int> myhashChain (d);
 
@@ -193,38 +200,38 @@ int main () {
 		cin >> a >> b;
 		switch (a) {
 		case 0:
-			cout << "插入" << b << endl;
-			myhashChain.insert (mypair<int,int>(b, b));
-			if (pos == -1) {
-				cout << "Existed\n";
+			//cout << "插入" << b << endl;
+			if (myhashChain.insert (mypair<int, int> (b, b))) {
+			
 			} else {
-				cout << pos << "\n";
+				cout << "Existed\n";
 			}
 			break;
 		case 1:
-			cout << "查找" << b << endl;
+			//cout << "查找" << b << endl;
 
 			pos = myhashChain.find(b);
-			if (pos == -1) {
-				cout << -1 << "\n";
+			if (pos == nullptr) {
+				cout << "Not Found" << "\n";
 			} else {
-				cout << pos << "\n";
+				length = myhashChain.getLengthByKey (b);
+				cout << length << "\n";
 			}
 			break;
 		case 2:
-			cout << "删除" << b << endl;
+			//cout << "删除" << b << endl;
 
-			myhashChain.erase (b);
-			if (pos == -1) {
-				cout << "Delete Failed\n";
+			length = myhashChain.getLengthByKey (b);
+			if (myhashChain.erase (b)) {
+				cout <<--length<< "\n";
 			} else {
-			//	cout << myhashChain.getSize () << "\n";
+				cout << "Delete Failed\n";
 			}
 			break;
 		default:
 			break;
 		}
-		cout << endl << endl << myhashChain << endl << endl;
+		//cout << endl << endl << myhashChain << endl << endl;
 
 	}
 
