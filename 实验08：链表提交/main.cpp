@@ -104,30 +104,29 @@ public:
 	}
 
 	/*插入函数，在插入时确保有序*/
-	void insert ( mypair< K, E>& pairin) {
-		if (_head == nullptr) {
-			_head = new mynode<K, E> (pairin);
-			_size++;
+	void insert (mypair< K, E>& thePair) {
+		mynode<K, E>* nodep = _head;
+		mynode<K, E>* pre_nodep = nullptr;
+		while (nodep != nullptr && nodep->element.key < thePair.key) {
+			pre_nodep = nodep;
+			nodep = nodep->next;
+		}
+		/*查看是否已有此元素*/
+		if (nodep != nullptr && nodep->element.key == thePair.key) {
+			//已有则插入则修改该位置元素
+			nodep->element.data = thePair.data;
 			return;
 		} else {
-			mynode<K, E>* nodep = _head;
-			mynode<K, E>* p_nodep = nullptr;
-			/*查看是否已有此元素*/
-			while (nodep != nullptr && nodep->element.key < pairin.key) {
-				p_nodep = nodep;
-				nodep = nodep->next;
-			}
-			if (nodep != nullptr && nodep->element.key == pairin.key) {
-				//已有则插入则修改该位置元素
-				nodep->element.data = pairin.data;
-				return;
-			} else {
-				//无则插入新元素
-				p_nodep->next = new mynode<K, E> (pairin, nodep);
-				_size++;
-				return;
-			}
+			//无则插入新元素
+			mynode<K, E>* newNode = new mynode<K, E> (thePair, nodep);
+
+			if (pre_nodep == nullptr) _head = newNode;
+			else pre_nodep->next = newNode;
+
+			_size++;
+			return;
 		}
+
 	}
 	/*输出链表元素*/
 	void output (ostream& out) const {
@@ -230,8 +229,8 @@ public:
 };
 /*输出重载*/
 template <class K, class E>
-ostream& operator<<(ostream& out, const myhashChains<K, E>& x) {
-	x.output (out); return out;
+ostream& operator<<(ostream& out, const myhashChains<K, E>& in) {
+	in.output (out); return out;
 }
 
 
