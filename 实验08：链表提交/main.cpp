@@ -34,7 +34,22 @@ struct mynode {
 };
 
 
-/*链表类*/
+/*链表类
+template<class K, class E>
+class myChain {
+protected:
+	mynode<K, E>* _head;							//保存链表头
+	int _size;										//保存元素个数
+public:
+	myChain ();										//构造函数
+	~myChain ();									//析构函数
+	bool empty () const;							//返回是否为空
+	int size () const;								//返回元素数目
+	mypair< K, E>* find (const K& keyin) const;		//查找元素，找不到返回空指针
+	bool erase (const K& keyin);					//删除元素，无此元素返回false，删除成功返回true
+	void insert (mypair< K, E>& pairin);			//插入函数，在插入时确保有序
+	void output (ostream& out) const;				//输出链表元素
+*/
 template<class K, class E>
 class myChain {
 public:
@@ -123,6 +138,7 @@ public:
 		}
 	}
 };
+
 /*输出链表元素的重载函数*/
 template <class K, class E>
 ostream& operator<<(ostream& out, const myChain<K, E>& x) {
@@ -130,7 +146,26 @@ ostream& operator<<(ostream& out, const myChain<K, E>& x) {
 	return out;
 }
 
-/*哈希链表类*/
+/*哈希链表类
+template<class K, class E>
+class myhashChains {
+protected:
+	myChain<K, E>* _chains;							//我的链表
+	myhash<K> _myhash;								//自定义的哈希函数
+	int _size;										//元素个数
+	int _divisor;									//除数，链表的个数
+	int inline _getPosByKey (const K& keyin)const;	//获取该关键词的理论位置，注意该返回值需要配个各函数进行分别分析
+public:
+	myhashChains (int divisorin = 20);				//构造函数
+	~myhashChains ();								//析构函数
+	bool empty () const;							//返回是否为空
+	int size () const;								//返回元素个数
+	E* find (const K& keyin) const;					//查找关键词，返回值的指针
+	bool insert (mypair<K, E> pairin);				//插入键值对，返回插入成功失败与否
+	bool erase (const K& keyin);					//删除元素的包装
+	void output (ostream& out) const;				//输出元素
+	int getLengthByKey (const K& keyin) const;		//通过关键词获取长度，为了OJ而增加
+*/
 template<class K, class E>
 class myhashChains {
 protected:
@@ -142,7 +177,7 @@ protected:
 		return _myhash (keyin) % _divisor;
 	}
 public:
-	myhashChains (int divisorin = 11) {
+	myhashChains (int divisorin = 20) {
 		_size = 0;
 		_divisor = divisorin;
 		_chains = new myChain<K, E>[_divisor];
@@ -202,7 +237,7 @@ ostream& operator<<(ostream& out, const myhashChains<K, E>& x) {
 
 int main () {
 #pragma warning(disable:4996)
-	freopen ("input.txt", "r", stdin);
+	//freopen ("input.txt", "r", stdin);
 	int d, m, a, b;
 	int* pos =nullptr;
 	int length = 0;
