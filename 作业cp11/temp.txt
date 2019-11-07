@@ -1,0 +1,272 @@
+ #include<iostream>
+#include<deque>
+using namespace std;
+
+//binary node with parent node
+template<typename T>
+class node
+{
+public:
+    node(const T &v, node<T> *L=NULL, node<T> *R=NULL, node<T> *P=NULL):left(L),right(R),par(P)
+    {
+        value = v;
+    }
+
+public:
+    T value;
+    node<T> *left, *right, *par;
+};
+
+// binary tree
+template<typename T>
+class BTree
+{
+public:
+    BTree(node<T> *R=NULL):root(R)
+    { }
+    ~BTree()
+    { 
+        if(root)
+            delall();
+    }
+
+    node<T> *findby(const T &v);    // 层次遍历,返回找到第一个结点值为v的结点指针
+    void Insert(const T &v);        // 层次遍历二叉树,将值插在遇到的第一个叶子或者子树不全的结点上
+    bool delby(const T &v);            // 层次遍历二叉树,删除遇到的第一个结点值为v的结点
+
+    node<T> *findleave(node<T> *cur); // 层次遍历二叉树,返回cur下遇到的第一个叶子结点
+    void delall();
+    void display(node<T> *r);        // 先序遍历,打印二叉树各结点的值
+
+public:
+    node<T> *root;
+};
+
+template<typename T>
+node<T> *BTree<T>::findby(const T &v)
+{
+    deque< node<T>* > Q;
+    bool isfind; // find v ==> isfind = true; not find ==> isfind = false
+    node<T> *tmp;
+
+    if(root)
+        Q.push_back(root);
+    else
+    {
+        return NULL;
+    }
+
+    isfind = false;
+    tmp = NULL;
+    while(!Q.empty() && !isfind)
+    {
+        tmp = Q.front();
+        Q.pop_front();
+
+        if(tmp->value == v)
+            isfind = true;
+        else
+        {
+            if(tmp->left)
+                Q.push_back(tmp->left);
+            if(tmp->right)
+                Q.push_back(tmp->right);
+        }
+    }
+
+    if(!isfind)
+        tmp = NULL;
+
+    return tmp;
+}
+
+template<typename T>
+void BTree<T>::Insert(const T &v)
+{
+    deque< node<T>* > Q;
+    node<T> *cur;
+
+    if(root)
+        Q.push_back(root);
+    else
+    {
+        root = new node<T>(v, NULL, NULL, NULL);
+        return;
+    }
+
+    while(!Q.empty()) // 原来是这里出错了.第一次是写了Q.empty(),应该是!Q.empty()
+    {
+        cur = Q.front();
+        Q.pop_front();
+
+        if(cur->left)
+            Q.push_back(cur->left);
+        else
+        {
+            cur->left = new node<T>(v, NULL, NULL, cur);
+            return;
+        }
+
+        if(cur->right)
+            Q.push_back(cur->right);
+        else
+        {
+            cur->right = new node<T>(v, NULL, NULL, cur);
+            return;
+        }
+    }
+}
+
+template<typename T>
+bool BTree<T>::delby(const T &v)
+{
+    node<T> *cur, *tmp;
+    bool isleave; // 判断是不是叶子结点
+
+    isleave = false;
+    cur = NULL;
+    cur = findby(v);
+    if(!cur) // 说明不存在结点值为v的结点
+        return false;
+    else
+    {
+        if(cur->left && cur->right) // 左右子树不为空
+        {
+            tmp = findleave(cur); // 通过层次遍历,找出cur下第一个叶子结点
+            tmp->left = cur->left;
+            tmp->right = cur->right;
+
+            // 改变左右子树的父结点,不过要判断cur是否为根结点
+            if(cur->left)
+                cur->left->par = tmp;
+            if(cur->right)
+                cur->right->par = tmp;
+        }
+        else if(cur->left) // 右子树为空
+            tmp = cur->left;
+        else if(cur->right) // 左子树为空
+            tmp = cur->right;
+        else // 左右子树皆为空,说明要删除的是叶子结点
+        {
+            (cur == cur->par->left) ? (cur->par->left = NULL) :(cur->par->right = NULL);
+            isleave = true;
+        }
+
+        if(!isleave)
+        {
+            tmp->par = cur->par;
+
+            if(cur->par)
+                (cur == cur->par->left) ? (cur->par->left = tmp) :(cur->par->right = tmp);
+
+            if(root == cur)
+            {
+                root = tmp;
+                root->par = NULL;
+            }
+        }
+    }
+
+    delete cur;
+
+    return true;
+}
+
+// 层次遍历二叉树,返回遇到的第一个叶子.二叉树的叶子特征:左右子树为NULL
+template<typename T>
+node<T> *BTree<T>::findleave(node<T> *cur)
+{
+    deque< node<T>* > Q;    // 用于层次遍历的双端队列
+    node<T> *tmp;            // 返回的叶子指针
+    bool isfind;            // 用来跳出while循环的flag
+
+    if(!cur)                // 假如cur为空,则返回NULL
+        return NULL;
+    else
+        Q.push_back(cur);    // 推进Q中
+
+    isfind = false;            
+    while(!Q.empty() && !isfind)    // 当队列为空或者找到叶子时终止循环
+    {
+        tmp = Q.front();
+        Q.pop_front();
+
+        if(!tmp->left && !tmp->right)
+            isfind = true;
+        else if(tmp->left)
+            Q.push_back(tmp->left);
+        else
+            Q.push_back(tmp->right);
+    }
+
+    // 处理该叶子的父结点
+    if(tmp->par)
+        (tmp == tmp->par->left) ? (tmp->par->left = NULL) : (tmp->par->right = NULL);
+
+    return tmp;
+}
+
+// 通过层次遍历删除二叉树所有结点
+template<typename T>
+void BTree<T>::delall()
+{
+    deque< node<T>* > Q;
+
+    // 假如root为空,则直接返回,不为空,则推进Q中
+    if(root)
+        Q.push_back(root);
+    else
+        return ;
+
+    while(!Q.empty())
+    {
+        root = Q.front();
+        Q.pop_front();
+
+        if(root->left)
+            Q.push_back(root->left);
+        if(root->right)
+            Q.push_back(root->right);
+
+        delete root;
+        root = NULL;
+    }
+}
+
+// 通过前序遍历打印二叉树各结点的值
+template<typename T>
+void BTree<T>::display(node<T> *r)
+{
+    if(r)
+    {
+        cout << r->value << ' ';
+        display(r->left);
+        display(r->right);
+    }
+}
+
+int main(void)
+{
+    BTree<int> BT;
+    int a[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+    for(int it = 0; it < sizeof(a) / sizeof(a[0]); it++)
+        BT.Insert(a[it]); // 第一次测试,Insert不成功,Insert 已修正
+
+    BT.display(BT.root);
+    cout << endl;
+
+    BT.delby(1);
+    BT.delby(3);
+    BT.delby(6);
+    BT.delby(2);
+    BT.delby(8);
+
+    BT.display(BT.root);
+    cout << endl;
+
+    BT.delall();
+    BT.display(BT.root);
+
+    return 0;
+}

@@ -11,7 +11,6 @@ public:
 	size_t operator()(const int keyin) const {return size_t(keyin);}
 };
 
-
 /*用于存储键值的类*/
 template <class K, class E>
 class mypair {
@@ -24,15 +23,12 @@ public:
 /*用于构成链表的结点类*/
 template <class K, class E>
 struct mynode {
-	typedef mypair< K, E> mypairType;
-	typedef mynode< K, E> mynodeType;
-	mypairType element;
-	mynodeType* next;
+	mypair< K, E>  element;
+	mynode< K, E>* next;
 
-	mynode ( mypairType pairin) :element (pairin),next(nullptr) {}
-	mynode ( mypairType pairin, mynodeType* nextin) :element (pairin), next (nextin) {}
+	mynode (mypair< K, E>  pairin) :element (pairin),next(nullptr) {}
+	mynode (mypair< K, E>  pairin, mynode< K, E>* nextin) :element (pairin), next (nextin) {}
 };
-
 
 /*链表类
 template<class K, class E>
@@ -52,8 +48,6 @@ public:
 */
 template<class K, class E>
 class myChain {
-public:
-
 protected:
 	mynode<K, E>* _head;
 	int _size;
@@ -72,8 +66,11 @@ public:
 		mynode<K, E>* c_node = _head;
 
 		/*一直寻找直到找到对应元素*/
-		while (c_node != nullptr && c_node->element.key != keyin) {
-			c_node = c_node->next;
+		for (;;) {
+			if (c_node == nullptr || c_node->element.key == keyin) {
+				break;
+			}
+				c_node = c_node->next;
 		}
 
 		/*如果值不为空，则*/
@@ -84,18 +81,18 @@ public:
 		}
 	}
 	bool erase (const K& keyin) {
-		mynode<K, E>* p = _head;
-		mynode<K, E>* tp = nullptr;
+		mynode<K, E>* nodep = _head;
+		mynode<K, E>* pre_nodep = nullptr;
 
-		while (p != nullptr && p->element.key < keyin) {
-			tp = p;
-			p = p->next;
+		while (nodep != nullptr && nodep->element.key < keyin) {
+			pre_nodep = nodep;
+			nodep = nodep->next;
 		}
 
-		if (p != nullptr && p->element.key == keyin) {
-			if (tp == nullptr) _head = p->next;
-			else tp->next = p->next;
-			delete p;
+		if (nodep != nullptr && nodep->element.key == keyin) {
+			if (pre_nodep == nullptr) _head = nodep->next;
+			else pre_nodep->next = nodep->next;
+			delete nodep;
 			_size--;
 			return true;
 		} else {
@@ -230,13 +227,14 @@ public:
 /*输出重载*/
 template <class K, class E>
 ostream& operator<<(ostream& out, const myhashChains<K, E>& in) {
-	in.output (out); return out;
+	in.output (out); 
+	return out;
 }
 
 
 int main () {
 #pragma warning(disable:4996)
-	//freopen ("input.txt", "r", stdin);
+	freopen ("input.txt", "r", stdin);
 	int d, m, a, b;
 	int* pos =nullptr;
 	int length = 0;
