@@ -59,6 +59,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "作业cp11", "作业cp11\�
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "作业cp11：课本代码", "作业cp11：课本代码\作业cp11：课本代码.vcxproj", "{E475B097-DFD5-4732-B939-D970F1335B57}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "作业cp11：数组二叉树", "作业cp11：数组二叉树\作业cp11：数组二叉树.vcxproj", "{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -291,6 +293,14 @@ Global
 		{E475B097-DFD5-4732-B939-D970F1335B57}.Release|x64.Build.0 = Release|x64
 		{E475B097-DFD5-4732-B939-D970F1335B57}.Release|x86.ActiveCfg = Release|Win32
 		{E475B097-DFD5-4732-B939-D970F1335B57}.Release|x86.Build.0 = Release|Win32
+		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Debug|x64.ActiveCfg = Debug|x64
+		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Debug|x64.Build.0 = Debug|x64
+		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Debug|x86.ActiveCfg = Debug|Win32
+		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Debug|x86.Build.0 = Debug|Win32
+		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Release|x64.ActiveCfg = Release|x64
+		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Release|x64.Build.0 = Release|x64
+		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Release|x86.ActiveCfg = Release|Win32
+		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

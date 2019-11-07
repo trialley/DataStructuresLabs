@@ -123,7 +123,6 @@ public:
 			_size++;
 			return;
 		}
-
 	}
 	/*Êä³öÁ´±íÔªËØ*/
 	void output (ostream& out) const {
