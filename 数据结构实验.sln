@@ -61,6 +61,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "作业cp11：课本代码",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "作业cp11：数组二叉树", "作业cp11：数组二叉树\作业cp11：数组二叉树.vcxproj", "{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验08：链表哈希验收", "实验08：链表哈希验收\实验08：链表哈希验收.vcxproj", "{A8EC3CAA-9453-4D2C-9021-4CF8DAA27304}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验08：线性探查验收", "实验08：线性探查验收\实验08：线性探查验收.vcxproj", "{FB005C27-BCBE-4606-B162-400BE3F16BA9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "作业cp12：课本代码", "作业cp12：课本代码\作业cp12：课本代码.vcxproj", "{821C8109-D630-45FB-B38A-BC1903EDAF09}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验09：二叉树第二题提交", "实验09：dev二叉树\实验09：dev二叉树.vcxproj", "{29900F21-565A-4D1E-A8F8-B8C2E0CD68CB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验09：二叉树验收", "实验09：二叉树验收\实验09：二叉树验收.vcxproj", "{E402A8EA-6360-4606-8457-EEC66C609D08}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -301,6 +311,46 @@ Global
 		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Release|x64.Build.0 = Release|x64
 		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Release|x86.ActiveCfg = Release|Win32
 		{C259DDAE-3249-440D-8E9C-3C0D9672E1B8}.Release|x86.Build.0 = Release|Win32
+		{A8EC3CAA-9453-4D2C-9021-4CF8DAA27304}.Debug|x64.ActiveCfg = Debug|x64
+		{A8EC3CAA-9453-4D2C-9021-4CF8DAA27304}.Debug|x64.Build.0 = Debug|x64
+		{A8EC3CAA-9453-4D2C-9021-4CF8DAA27304}.Debug|x86.ActiveCfg = Debug|Win32
+		{A8EC3CAA-9453-4D2C-9021-4CF8DAA27304}.Debug|x86.Build.0 = Debug|Win32
+		{A8EC3CAA-9453-4D2C-9021-4CF8DAA27304}.Release|x64.ActiveCfg = Release|x64
+		{A8EC3CAA-9453-4D2C-9021-4CF8DAA27304}.Release|x64.Build.0 = Release|x64
+		{A8EC3CAA-9453-4D2C-9021-4CF8DAA27304}.Release|x86.ActiveCfg = Release|Win32
+		{A8EC3CAA-9453-4D2C-9021-4CF8DAA27304}.Release|x86.Build.0 = Release|Win32
+		{FB005C27-BCBE-4606-B162-400BE3F16BA9}.Debug|x64.ActiveCfg = Debug|x64
+		{FB005C27-BCBE-4606-B162-400BE3F16BA9}.Debug|x64.Build.0 = Debug|x64
+		{FB005C27-BCBE-4606-B162-400BE3F16BA9}.Debug|x86.ActiveCfg = Debug|Win32
+		{FB005C27-BCBE-4606-B162-400BE3F16BA9}.Debug|x86.Build.0 = Debug|Win32
+		{FB005C27-BCBE-4606-B162-400BE3F16BA9}.Release|x64.ActiveCfg = Release|x64
+		{FB005C27-BCBE-4606-B162-400BE3F16BA9}.Release|x64.Build.0 = Release|x64
+		{FB005C27-BCBE-4606-B162-400BE3F16BA9}.Release|x86.ActiveCfg = Release|Win32
+		{FB005C27-BCBE-4606-B162-400BE3F16BA9}.Release|x86.Build.0 = Release|Win32
+		{821C8109-D630-45FB-B38A-BC1903EDAF09}.Debug|x64.ActiveCfg = Debug|x64
+		{821C8109-D630-45FB-B38A-BC1903EDAF09}.Debug|x64.Build.0 = Debug|x64
+		{821C8109-D630-45FB-B38A-BC1903EDAF09}.Debug|x86.ActiveCfg = Debug|Win32
+		{821C8109-D630-45FB-B38A-BC1903EDAF09}.Debug|x86.Build.0 = Debug|Win32
+		{821C8109-D630-45FB-B38A-BC1903EDAF09}.Release|x64.ActiveCfg = Release|x64
+		{821C8109-D630-45FB-B38A-BC1903EDAF09}.Release|x64.Build.0 = Release|x64
+		{821C8109-D630-45FB-B38A-BC1903EDAF09}.Release|x86.ActiveCfg = Release|Win32
+		{821C8109-D630-45FB-B38A-BC1903EDAF09}.Release|x86.Build.0 = Release|Win32
+		{29900F21-565A-4D1E-A8F8-B8C2E0CD68CB}.Debug|x64.ActiveCfg = Debug|x64
+		{29900F21-565A-4D1E-A8F8-B8C2E0CD68CB}.Debug|x64.Build.0 = Debug|x64
+		{29900F21-565A-4D1E-A8F8-B8C2E0CD68CB}.Debug|x86.ActiveCfg = Debug|Win32
+		{29900F21-565A-4D1E-A8F8-B8C2E0CD68CB}.Debug|x86.Build.0 = Debug|Win32
+		{29900F21-565A-4D1E-A8F8-B8C2E0CD68CB}.Release|x64.ActiveCfg = Release|x64
+		{29900F21-565A-4D1E-A8F8-B8C2E0CD68CB}.Release|x64.Build.0 = Release|x64
+		{29900F21-565A-4D1E-A8F8-B8C2E0CD68CB}.Release|x86.ActiveCfg = Release|Win32
+		{29900F21-565A-4D1E-A8F8-B8C2E0CD68CB}.Release|x86.Build.0 = Release|Win32
+		{E402A8EA-6360-4606-8457-EEC66C609D08}.Debug|x64.ActiveCfg = Debug|x64
+		{E402A8EA-6360-4606-8457-EEC66C609D08}.Debug|x64.Build.0 = Debug|x64
+		{E402A8EA-6360-4606-8457-EEC66C609D08}.Debug|x86.ActiveCfg = Debug|Win32
+		{E402A8EA-6360-4606-8457-EEC66C609D08}.Debug|x86.Build.0 = Debug|Win32
+		{E402A8EA-6360-4606-8457-EEC66C609D08}.Release|x64.ActiveCfg = Release|x64
+		{E402A8EA-6360-4606-8457-EEC66C609D08}.Release|x64.Build.0 = Release|x64
+		{E402A8EA-6360-4606-8457-EEC66C609D08}.Release|x86.ActiveCfg = Release|Win32
+		{E402A8EA-6360-4606-8457-EEC66C609D08}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

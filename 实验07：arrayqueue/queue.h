@@ -32,6 +32,7 @@ private:
 	typedef struct node {
 		T data;
 		node* next;
+		node () { next = nullptr; }
 	}node;
 	node* _head;
 	node* _end;
@@ -72,6 +73,7 @@ public:
 		}
 		node* n_head = _head->next;
 		delete _head;
+
 		_head = n_head;
 
 		_length--;

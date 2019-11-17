@@ -4,7 +4,6 @@ using namespace std;
 
 /*对应各种数据类型的哈希函数，此处只写int的哈希函数*/
 template <class K> class myhash;
-
 template<>
 class myhash<int> {
 public:
@@ -25,7 +24,6 @@ template <class K, class E>
 struct mynode {
 	mypair< K, E>  element;
 	mynode< K, E>* next;
-
 	mynode (mypair< K, E>  pairin) :element (pairin),next(nullptr) {}
 	mynode (mypair< K, E>  pairin, mynode< K, E>* nextin) :element (pairin), next (nextin) {}
 };
@@ -126,18 +124,18 @@ public:
 	}
 	/*输出链表元素*/
 	void output (ostream& out) const {
-		for (mynode<K, E>* c_node = _head;
-			c_node != nullptr;
-			c_node = c_node->next) {
+		mynode<K, E>* c_node = _head;
+		while(c_node != nullptr) {
 			out << c_node->element.key << ":"<< c_node->element.data << "  ";
+			c_node = c_node->next;
 		}
 	}
 };
 
 /*输出链表元素的重载函数*/
 template <class K, class E>
-ostream& operator<<(ostream& out, const myChain<K, E>& x) {
-	x.output (out);
+ostream& operator<<(ostream& out, const myChain<K, E>& in) {
+	in.output (out);
 	return out;
 }
 
@@ -161,6 +159,7 @@ public:
 	void output (ostream& out) const;				//输出元素
 	int getLengthByKey (const K& keyin) const;		//通过关键词获取长度，为了OJ而增加
 */
+
 template<class K, class E>
 class myhashChains {
 protected:
@@ -178,8 +177,6 @@ public:
 		_chains = new myChain<K, E>[_divisor];
 	}
 	~myhashChains () { delete[] _chains; }
-	bool empty () const { return _size == 0; }
-	int size () const { return _size; }
 
 	/*查找关键词，返回值的指针*/
 	E* find (const K& keyin) const {
@@ -222,6 +219,8 @@ public:
 	int getLengthByKey (const K& keyin) const {
 		return _chains[_getPosByKey (keyin)].size ();
 	}
+	bool empty () const { return _size == 0; }
+	int size () const { return _size; }
 };
 /*输出重载*/
 template <class K, class E>
@@ -229,6 +228,8 @@ ostream& operator<<(ostream& out, const myhashChains<K, E>& in) {
 	in.output (out); 
 	return out;
 }
+
+
 
 
 int main () {
