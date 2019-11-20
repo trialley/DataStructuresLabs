@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{E402A8EA-6360-4606-8457-EEC66C609D08}</ProjectGuid>
-    <RootNamespace>实验09二叉树验收</RootNamespace>
+    <ProjectGuid>{99B35E9D-4D87-4CA5-B63B-2FFF617AE118}</ProjectGuid>
+    <RootNamespace>实验10堆第一题提交</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -123,14 +123,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="mian.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="btree.h" />
-    <ClInclude Include="queue.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="input.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

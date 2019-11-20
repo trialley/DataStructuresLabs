@@ -1,18 +1,32 @@
-/*
-???  ?????
-??????
-??????????,??????;?????????
-??????
-1?????????????????????????:??????????????????????????????????????
-2?????????,???????,?????????
-3????????????????????(???????),????????????
-
-
-*/
-
 #pragma once
 #include<iostream>
-using namespace std;
+#include"queue.h"
+using std::cout;
+using std::endl;
+using std::ostream;
+
+/*class btree
+public:
+	enum err;			常见错误
+	struct node			节点结构体
+protected:
+	node* _root;		树根指针
+	int _size;			树节点数量
+
+	void deleteNodes (node* root)							删除以传入节点为根的树
+	node* _makeNodeFromPreIn (T* pre, T* in, int in_length)	以输入的前序与中序序列递归生成一颗树
+	ostream& _preOut (ostream& out, node* rootin)			前序遍历
+	ostream& _postOut (ostream& out, node* rootin)			后续遍历
+public:
+	btree ()												构造函数
+	~btree ()												析构函数，递归删除所有节点
+	void clear ()											清空此树，根节点置为空
+	void buildFromPreIn (T* pre_head_in, T* in_head_in, int length_in)暴露给外部的根据前序与中序序列生成树的函数
+	ostream& preOut (ostream& out)							暴露给外界的前序遍历接口
+	ostream& postOut (ostream& out)							暴露给外界的后序遍历接口
+	ostream& levelOut (ostream& out)						暴露给外界的层次遍历接口
+	void setRoot (node* rootin)								设置根节点
+*/
 template<class T>
 class btree {
 public:
@@ -69,6 +83,26 @@ protected:
 			return out;
 		}
 	}
+	ostream& _postOut (ostream& out, node* rootin) {
+		if (rootin == nullptr) {
+			return out;
+		} else {
+			_postOut (out, rootin->left);
+			_postOut (out, rootin->right);
+			out << rootin->data << " ";
+			return out;
+		}
+	}
+	ostream& _midOut (ostream& out, node* rootin) {
+		if (rootin == nullptr) {
+			return out;
+		} else {
+			_midOut (out, rootin->left);
+			out << rootin->data << " ";
+			_midOut (out, rootin->right);
+			return out;
+		}
+	}
 public:
 	btree () {
 		_root = nullptr;
@@ -82,7 +116,11 @@ public:
 		}
 	}
 	void clear () {
-		~btree ();
+		if (_root) {
+			if (_root->left)deleteNodes (_root->left);
+			if (_root->right)deleteNodes (_root->right);
+			delete _root;
+		}
 	}
 	void buildFromPreIn (T* pre_head_in, T* in_head_in, int length_in) {
 		_root = _makeNodeFromPreIn (pre_head_in, in_head_in, length_in);
@@ -97,5 +135,50 @@ public:
 			return out;
 		}
 
+	}
+	ostream& postOut (ostream& out) {
+		if (_root == nullptr) {
+			return out;
+		} else {
+			_postOut (out, _root->left);
+			_postOut (out, _root->right);
+			out << _root->data << " ";
+			return out;
+		}
+
+	}
+	ostream& midOut (ostream& out) {
+		if (_root == nullptr) {
+			return out;
+		} else {
+			_midOut (out, _root->left);
+			out << _root->data << " ";
+			_midOut (out, _root->right);
+			return out;
+		}
+
+	}
+	ostream& levelOut (ostream& out) {
+		queue<node* > q;
+		node* t = _root;
+		q.push (t);
+		//通过队列存储待打印元素，这样一层的数据会相邻在一起
+		while (!q.empty ()) {
+			t = q.front ();
+			q.pop ();
+			out << t->data << " ";
+			if (t->left != nullptr) {
+				q.push (t->left);
+			}
+			if (t->right != nullptr) {
+				q.push (t->right);
+			}
+		}
+		return out;
+	}
+	void setRoot (node* rootin) {
+		clear ();
+		_root = rootin;
+		return;
 	}
 };
