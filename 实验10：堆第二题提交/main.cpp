@@ -121,7 +121,7 @@ int calHlen (char* si) {
 	return sum;
 }
 int main () {
-	char str[1000000];
+	char str[10000];
 	cin >> str;
 	cout << calHlen (str);
 }

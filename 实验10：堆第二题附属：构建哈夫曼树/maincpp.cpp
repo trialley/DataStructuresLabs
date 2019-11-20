@@ -5,23 +5,6 @@ using namespace std;
 #define max(a,b) (a<b ? b:a)//用于获取左右子树中最大的那个层数
 using namespace std;
 
-/*queue
-public:
-	enum queue_err { queue_empty };  //常见的错误
-private:
-	struct node;					//结点类型
-	node* _head;					//头结点指针
-	node* _end;						//尾结点指针，指向NULL
-	int _length;					//元素个数
-public:
-	queue ();						//构造函数
-	~queue ();						//析构函数
-	void push ( const T& in );		//入队列
-	T front ();						//获得首元素
-	void pop ();					//弹出首元素
-	bool empty ()const;			//是否为空
-	int size ()const;				//获取元素个数
-*/
 template<typename T>
 class queue {
 public:
@@ -81,28 +64,6 @@ public:
 	int size ()const { return _length; }
 };
 
-/*class btree
-public:
-	enum err;			常见错误
-	struct node			节点结构体
-protected:
-	node* _root;		树根指针
-	int _size;			树节点数量
-
-	void deleteNodes (node* root)							删除以传入节点为根的树
-	node* _makeNodeFromPreIn (T* pre, T* in, int in_length)	以输入的前序与中序序列递归生成一颗树
-	ostream& _preOut (ostream& out, node* rootin)			前序遍历
-	ostream& _postOut (ostream& out, node* rootin)			后续遍历
-public:
-	btree ()												构造函数
-	~btree ()												析构函数，递归删除所有节点
-	void clear ()											清空此树，根节点置为空
-	void buildFromPreIn (T* pre_head_in, T* in_head_in, int length_in)暴露给外部的根据前序与中序序列生成树的函数
-	ostream& preOut (ostream& out)							暴露给外界的前序遍历接口
-	ostream& postOut (ostream& out)							暴露给外界的后序遍历接口
-	ostream& levelOut (ostream& out)						暴露给外界的层次遍历接口
-	void setRoot (node* rootin)								设置根节点
-*/
 template<class T>
 class btree {
 public:
@@ -214,13 +175,13 @@ public:
 		_root = rootin;
 		return;
 	}
-	void makeTree (T datai,btree* lefttreei,btree* righttreei) {
+	void makeTree (T datai, btree& lefttreei, btree& righttreei) {
 		_root = new node;
 		_root->data = datai;
-		_root->left = lefttreei->_root;
-		_root->right = righttreei->_root;
-		lefttreei->_root = nullptr;
-		righttreei->_root = nullptr;
+		_root->left = lefttreei._root;
+		_root->right = righttreei._root;
+		lefttreei._root = nullptr;
+		righttreei._root = nullptr;
 	}
 };
 template<class T>
@@ -247,6 +208,12 @@ public:
 		_length = lengthi + 1;
 		_head = new T[_length];
 		_size = 0;
+	}
+	void initialize (T* arri,int sizei) {
+		_clearAndInit ();
+		for (int i = 0; i < sizei; i++) {
+			push (arri[i]);
+		}
 	}
 	~minHeap () { _clear (); }
 	void _clearAndInit () {
@@ -308,60 +275,58 @@ public:
 	bool empty () const { return _size == 0; }
 	int size () const { return _size; }
 };
+
 template<class T>
 struct huffmanNode {
 	btree<int>* tree;
 	T weight;
 
 	operator T () const { return weight; }
+	bool operator <(huffmanNode& b) const { return weight < b.weight; }
+	bool operator >(huffmanNode& b) const { return weight > b.weight; }
 };
 
+
 template <class T>
-btree<int>* huffmanTree(T weight[], int n)
-{// Generate Huffman tree with weights weight[1:n], n >= 1.
-   // create an array of single node trees
-   huffmanNode<T> *hNode = new huffmanNode<T> [n + 1];
-   btree<int> emptyTree;
-   for (int i = 1; i <= n; i++)
-   {
-      hNode[i].weight = weight[i];
-      hNode[i].tree = new btree<int>;
-      hNode[i].tree->makeTree(i, emptyTree, emptyTree);
-   }
+btree<int>* huffmanTree (T weight[], int n) {
+	huffmanNode<T>* hNode = new huffmanNode<T>[n + 1];
+	btree<int> emptyTree;
+	for (int i = 1; i <= n; i++) {
+		hNode[i].weight = weight[i];
+		hNode[i].tree = new btree<int>;
+		hNode[i].tree->makeTree (i, emptyTree, emptyTree);
+	}
 
-   // make node array into a min heap
-   minHeap<huffmanNode<T> > heap;
-   heap.initialize(hNode, n);
+	// make node array into a min heap
+	minHeap<huffmanNode<T> > heap (1);
+	heap.initialize (hNode+1, n);
 
-   // repeatedly combine trees from min heap
-   // until only one tree remains
-   huffmanNode<T> w, x, y;
-   linkedBinaryTree<int> *z;
-   for (i = 1; i < n; i++){
-      // remove two lightest trees from the min heap
-      x = heap.top(); heap.pop();
-      y = heap.top(); heap.pop();
+	// repeatedly combine trees from min heap
+	// until only one tree remains
+	huffmanNode<T> w, x, y;
+	btree<int>* z;
+	for (int i = 1; i < n; i++) {
+		// remove two lightest trees from the min heap
+		x = heap.top (); heap.pop ();
+		y = heap.top (); heap.pop ();
 
-      // combine into a single tree
-      z = new linkedBinaryTree<int>;
-      z->makeTree(0, *x.tree, *y.tree);
-      w.weight = x.weight + y.weight;
-      w.tree = z;
-      heap.push(w);
-      delete x.tree;
-      delete y.tree;
-   }
+		// combine into a single tree
+		z = new btree<int>;
+		z->makeTree (0, *x.tree, *y.tree);
+		w.weight = x.weight + y.weight;
+		w.tree = z;
+		heap.push (w);
+		delete x.tree;
+		delete y.tree;
+	}
 
-   // destructor for min heap deletes hNode
-   return heap.top().tree;
+	// destructor for min heap deletes hNode
+	return heap.top ().tree;
 }
 
-int main(void){
-   int a[11];
-   int n = 10;
-   for (int i = 1; i <= n; i++)
-      a[i] = 2 * i;
-   linkedBinaryTree<int> *x = huffmanTree(a, n);
-   x->postOrderOutput();
-   return 0;
+int main (void) {
+	int str[10] = {9,9,9,9,9,9,9};
+	btree<int>* x = huffmanTree (str, 2);
+	x->levelOut (cout);
+	return 0;
 }
