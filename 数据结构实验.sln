@@ -81,6 +81,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验10：堆第二题附�
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验10：堆第二题附属：构建哈夫曼树2", "实验10：堆第二题附属：构建哈夫曼树2\实验10：堆第二题附属：构建哈夫曼树2.vcxproj", "{75425FD5-F6BC-40E4-B656-CC43D87A7473}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "作业cp14", "作业cp14\作业cp14.vcxproj", "{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -401,6 +403,14 @@ Global
 		{75425FD5-F6BC-40E4-B656-CC43D87A7473}.Release|x64.Build.0 = Release|x64
 		{75425FD5-F6BC-40E4-B656-CC43D87A7473}.Release|x86.ActiveCfg = Release|Win32
 		{75425FD5-F6BC-40E4-B656-CC43D87A7473}.Release|x86.Build.0 = Release|Win32
+		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Debug|x64.ActiveCfg = Debug|x64
+		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Debug|x64.Build.0 = Debug|x64
+		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Debug|x86.ActiveCfg = Debug|Win32
+		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Debug|x86.Build.0 = Debug|Win32
+		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Release|x64.ActiveCfg = Release|x64
+		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Release|x64.Build.0 = Release|x64
+		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Release|x86.ActiveCfg = Release|Win32
+		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
