@@ -21,11 +21,13 @@ public:
 	btree ()												构造函数
 	~btree ()												析构函数，递归删除所有节点
 	void clear ()											清空此树，根节点置为空
+	void setRoot (node* rootin)								设置根节点
+
+	以下函数为重点
 	void buildFromPreIn (T* pre_head_in, T* in_head_in, int length_in)暴露给外部的根据前序与中序序列生成树的函数
 	ostream& preOut (ostream& out)							暴露给外界的前序遍历接口
 	ostream& postOut (ostream& out)							暴露给外界的后序遍历接口
 	ostream& levelOut (ostream& out)						暴露给外界的层次遍历接口
-	void setRoot (node* rootin)								设置根节点
 */
 template<class T>
 class btree {

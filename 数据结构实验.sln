@@ -83,6 +83,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验10：堆第二题附�
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "作业cp14", "作业cp14\作业cp14.vcxproj", "{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验11：搜索树验收", "实验11：搜索树验收\实验11：搜索树验收.vcxproj", "{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -411,6 +413,14 @@ Global
 		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Release|x64.Build.0 = Release|x64
 		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Release|x86.ActiveCfg = Release|Win32
 		{D12EC76D-DFB2-466B-88E3-662F87CB7BBC}.Release|x86.Build.0 = Release|Win32
+		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Debug|x64.ActiveCfg = Debug|x64
+		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Debug|x64.Build.0 = Debug|x64
+		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Debug|x86.ActiveCfg = Debug|Win32
+		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Debug|x86.Build.0 = Debug|Win32
+		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Release|x64.ActiveCfg = Release|x64
+		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Release|x64.Build.0 = Release|x64
+		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Release|x86.ActiveCfg = Release|Win32
+		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
