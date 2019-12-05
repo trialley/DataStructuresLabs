@@ -164,6 +164,7 @@ public:
 		queue<node* > q;
 		node* t = _root;
 		q.push (t);
+
 		//通过队列存储待打印元素，这样一层的数据会相邻在一起
 		while (!q.empty ()) {
 			t = q.front ();

@@ -77,10 +77,10 @@ int calHlen (char* si) {
 
 	//不断选择集合中权值最小的两个点，计算和 再插入
 	while (q.size () > 1) {
-		int v1 = q.top (); q.pop ();
-		v1 += q.top (); q.pop ();
-		sum += v1;
-		q.push (v1);
+		int temp_node_weight = q.top (); q.pop ();
+		temp_node_weight += q.top (); q.pop ();
+		sum += temp_node_weight;
+		q.push (temp_node_weight);
 	}
 	return sum;
 }

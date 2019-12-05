@@ -86,7 +86,42 @@ public:
 
 		_head[insert_index] = datai;
 	}
+	void pushShow (const T& datai) {
+		//进行越界检查
+		if (_size == _length - 1) {
+			_extLength ();
+		}
 
+		int insert_index = ++_size;
+		_head[insert_index] = datai;
+		for (int i = 1; i <= _size; i++) {
+			cout << _head[i] << " ";
+		}
+		cout << "\n";
+
+		while (insert_index != 1 && _head[insert_index / 2] > datai) {//插入元素的父元素不小于插入元素，说明需要调整
+			_head[insert_index] = _head[insert_index / 2]; //该父元素放到子节点位置
+			insert_index /= 2;//子节点位置指向原父节点那里去，也即发生父子交换，只不过子元素还没有插入
+			_head[insert_index] = datai;
+
+			//继续循环查看新的父节点
+			for (int i = 1; i <= _size;i++) {
+				cout << _head[i] << " ";
+			}
+			cout << "\n";
+		}
+
+
+
+		_head[insert_index] = datai;
+	}
+	ostream& out (ostream& out) {
+		for (int i = 1; i <= _size; i++) {
+			out << _head[i]<<" ";
+		}
+
+		return out;
+	}
 	bool empty () const { return _size == 0; }
 	int size () const { return _size; }
 };

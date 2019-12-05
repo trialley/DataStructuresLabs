@@ -1,10 +1,11 @@
 #include"huffManTree.h"
 #include<iostream>
 using namespace std;
+#define LGRAND(min,max) ((rand()%(max-min+(int)1))+(int)min )
 
 
-
-/*1、创建最小堆类。最小堆的存储结构使用数组。提供操作:插入、删除、初始化。
+/*
+1、创建最小堆类。最小堆的存储结构使用数组。提供操作:插入、删除、初始化。
 2、接收键盘录入的一系列整数，以文本形式输出其对应的最小堆；
 3、对建立好的最小堆，键盘输入插入元素，输出插入操作完成后的堆（可以文本形式表示）；键盘输入删除元素，输出删除操作完成后的堆；
 4、键盘输入n, 随机生成n个0~1000之间的整数；输出堆排序的排序过程。
@@ -13,49 +14,50 @@ using namespace std;
 int main (void) {
 	/*这里是OJ上第一个题目*/
 #pragma warning(disable:4996)
-	freopen ("input.txt", "r", stdin);
+	//freopen ("input.txt", "r", stdin);
 
 	minHeap<int> h;
 
-	int size;
-	cin >> size;
-	for (int i = 0; i < size; i++) {
-		int temp;
-		cin >> temp;
-		h.push (temp);
-	}
-	cout << h.top () << "\n";
+	//int size;
+	//cin >> size;
+	//for (int i = 0; i < size; i++) {
+	//	int temp;
+	//	cin >> temp;
+	//	h.push (temp);
+	//}
+	//h.out (cout);
 
-	int times;
-	cin >> times;
-	for (int i = 0; i < times; i++) {
-		int func_num;
-		cin >> func_num;
-		if (func_num == 1) {
-			int temp;
-			cin >> temp;
-			h.push (temp);
-			cout << h.top () << "\n";
-		} else if (func_num == 2) {
-			h.pop ();
-			cout << h.top () << "\n";
-		} else if (func_num == 3) {
-			h._clearAndInit ();
-			int size;
-			cin >> size;
-			for (int i = 0; i < size; i++) {
-				int temp;
-				cin >> temp;
-				h.push (temp);
-			}
-			for (int i = 0; i < size; i++) {
-				cout << h.top () << " ";
-				h.pop ();
-			}
-		}
-	}
+	int temp;
+	//cout << "\n请输入要插入的元素：";
+	//cin >> temp;
+	//h.push (temp);
+	//h.out (cout);
 
+	//cout << "\n请输入要插入的元素：";
+	//cin >> temp;
+	//h.push (temp);
+	//h.out (cout);
+
+	//cout << "\n\npop:\n";
+	//h.pop ();
+	//h.out (cout);
+
+	//cout << "\npop:\n";
+	//h.pop ();
+	//h.out (cout);
+	//cout << "\n";
+
+
+	cout << "\n请输入要初始化的元素个数：";
+	cin >> temp;
+	for (int i = 0; i < temp;i++) {
+		h.pushShow (LGRAND(0,1000));
+		cout << "\n";
+	}
+	h.out (cout);
 	cout << "\n";
+	cout << "\n";
+
 
 	/*这里是构建哈夫曼树*/
 	cout << "输出霍夫曼树结构：\n";

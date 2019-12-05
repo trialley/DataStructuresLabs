@@ -15,7 +15,7 @@ public:
 		node (T data, node* left, node* right)
 			:data (data), left (left), right (right) {}
 		node ()
-			:left (nullptr), right (nullptr) {}
+			:data(),left (nullptr), right (nullptr) {}
 
 	} node;
 protected:
