@@ -71,45 +71,87 @@ public:
 		mypair<K, E> temp (keyi, datai);
 		insert (temp);
 	}
-	void insert (const  mypair<K, E>& thePair) {
+	/*查找对比路径中的异或值，找不到返回0*/
+	int findGetXor (const  K& keyin) {
+		int xor_result=0;
 		node* p = btree< mypair<K, E> >::_root;
 		node* pp = nullptr;
 		while (p != nullptr) {
 			pp = p;
-			if (thePair.key < p->data.key)
+			if (keyin < p->data.key) {
+				xor_result ^= p->data.key;
 				p = p->left;
-			else
-				if (thePair.key > p->data.key)
+			}else {
+				if (keyin > p->data.key) {
+					xor_result ^= p->data.key;
 					p = p->right;
-				else {
-					p->data.data = thePair.data;
-					return;
+				}else {//key相等
+					return xor_result;
 				}
+			}
+		}
+
+		//找不到返回0
+		return 0;
+	}
+	/*插入返回对比路径中的异或值*/
+	int insertGetXor (const  mypair<K, E>& thePair) {
+		int xor_result = 0;
+		node* p = btree< mypair<K, E> >::_root;
+		node* pp = nullptr;
+		while (p != nullptr) {
+			pp = p;
+			if (thePair.key < p->data.key) {
+				xor_result ^= p->data.key;
+				p = p->left;
+
+			} else {
+				if (thePair.key > p->data.key) {
+					xor_result ^= p->data.key;
+					p = p->right;
+
+				} else {
+					p->data.data = thePair.data;
+					return 0;
+				}
+			}
+
 		}
 
 		node* newNode = new node (thePair);
-		if (btree< mypair<K, E>>::_root != nullptr)
-			if (thePair.key < pp->data.key)
+		if (btree< mypair<K, E>>::_root != nullptr) {
+			if (thePair.key < pp->data.key) {
+				xor_result ^= pp->data.key;
+
 				pp->left = newNode;
-			else
+			} else {
 				pp->right = newNode;
-		else
+			}
+		} else {
 			btree< mypair<K, E>>::_root = newNode;
+		}
 		btree< mypair<K, E>>::_size++;
+		return xor_result;
 	}
-	void erase (const K& theKey) {
+	void eraseGetXor (const K& theKey) {
+		int xor_result = 0;
 		node* p = btree< mypair<K, E>>::_root;
 		node* pp = nullptr;
 		while (p != nullptr && p->data.key != theKey) {
+			xor_result ^= pp->data.key;
 			pp = p;
-			if (theKey < p->data.key)
+			if (theKey < p->data.key) {
+				xor_result ^= pp->data.key;
 				p = p->left;
-			else
+			}else {
 				p = p->right;
+			}
 		}
-		if (p == nullptr)
-			return;
+		if (p == nullptr) {
+			return 0;
+		}
 
+		/*删除操作的替换过程不计算*/
 		if (p->left != nullptr && p->right != nullptr) {
 
 			node* s = p->left,
@@ -130,23 +172,96 @@ public:
 			else pp = ps;
 			delete p;
 			p = s;
+
+
 		}
 
 		node* c;
-		if (p->left != nullptr)
+		if (p->left != nullptr) {
 			c = p->left;
-		else
+		}else {
 			c = p->right;
+		}
 
-		if (p == btree< mypair<K, E>>::_root)
+		/*要删除的元素是根节点否？*/
+		if (p == btree< mypair<K, E>>::_root) {
 			btree< mypair<K, E>>::_root = c;
-		else {
+		}else {
+			/*要删除的元素是父节点的哪个子节点？*/
 			if (p == pp->left)
 				pp->left = c;
 			else pp->right = c;
 		}
+		
 		btree< mypair<K, E>>::_size--;
 		delete p;
+
+		return xor_result;
+	}
+	void eraseByThGetXor (const K& theKey) {
+		int xor_result = 0;
+		node* p = btree< mypair<K, E>>::_root;
+		node* pp = nullptr;
+		while (p != nullptr && p->data.key != theKey) {
+			xor_result ^= pp->data.key;
+			pp = p;
+			if (theKey < p->data.key) {
+				xor_result ^= pp->data.key;
+				p = p->left;
+			} else {
+				p = p->right;
+			}
+		}
+		if (p == nullptr) {
+			return 0;
+		}
+
+		/*删除操作的替换过程不计算*/
+		if (p->left != nullptr && p->right != nullptr) {
+
+			node* s = p->left,
+				* ps = p;
+			while (s->right != nullptr) {
+				ps = s;
+				s = s->right;
+			}
+
+			node* q = new node (s->data, p->left, p->right);
+			if (pp == nullptr)
+				btree< mypair<K, E>>::_root = q;
+			else if (p == pp->left)
+				pp->left = q;
+			else
+				pp->right = q;
+			if (ps == p) pp = q;
+			else pp = ps;
+			delete p;
+			p = s;
+
+
+		}
+
+		node* c;
+		if (p->left != nullptr) {
+			c = p->left;
+		} else {
+			c = p->right;
+		}
+
+		/*要删除的元素是根节点否？*/
+		if (p == btree< mypair<K, E>>::_root) {
+			btree< mypair<K, E>>::_root = c;
+		} else {
+			/*要删除的元素是父节点的哪个子节点？*/
+			if (p == pp->left)
+				pp->left = c;
+			else pp->right = c;
+		}
+
+		btree< mypair<K, E>>::_size--;
+		delete p;
+
+		return xor_result;
 	}
 
 	void ascend () { btree< mypair<K, E>>::inOrderOutput (); }

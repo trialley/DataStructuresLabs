@@ -11,16 +11,53 @@
 #include<iostream>
 #include"bstree.h"
 
+#define debug
+#ifndef debug
+#define dprintf /\
+/
+#else
+#define dprintf printf
+#endif
+
 int main () {
-	bstree<int, string> bst;
-	string a= string("a");
-	for (int i = 0; i < 10; i++) {
-		a+="a";
-		bst.insertKE (i,a);
+#pragma warning(disable:4996)
+	//freopen ("input.txt", "r", stdin);
+	bstree<int, int> bst;
+
+	int m= 0;
+	cin >> m;
+	for (int i = 0; i < m; i++) {
+		int a, b;
+		int result;
+		cin >> a >> b;
+		switch (a) {
+		case 0://插入b，已存在返回0，插入返回异或值
+			dprintf ("f0;\n");
+			result = bst.insertGetXor (mypair<int, int> (b, b));;
+			printf ("%d\n", result);
+			break;
+		case 1://查找b,找到返回异或，找不到返回0
+			dprintf ("f1;\n");
+			result = bst.findGetXor (b);;
+			printf ("%d\n", result);
+			break;
+		case 2://删除b
+			dprintf ("f2;\n");
+
+			break;
+		case 3://搜索第b名
+			dprintf ("f3;\n");
+
+			break;
+		case 4://删除第b名
+			dprintf ("f4;\n");
+
+			break;
+		default:
+			dprintf ("no func;\n");
+			break;
+		}
 	}
-	cout << bst<<"\n";
-	cout << *bst.find (1)<<"\n";
-	cout << bst.getHeight ();
 
 
 	return 0;
