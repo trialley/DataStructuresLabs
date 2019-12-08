@@ -89,6 +89,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：图", "实验12�
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验11：搜索树提交", "实验11：搜索树提交\实验11：搜索树提交.vcxproj", "{251BEE34-E38D-4D79-8D6A-8D04366B3E31}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验11：搜索树验收mxl", "实验11：搜索树验收mxl\实验11：搜索树验收mxl.vcxproj", "{347C2636-E667-4C81-B497-D446406E595F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -441,6 +443,14 @@ Global
 		{251BEE34-E38D-4D79-8D6A-8D04366B3E31}.Release|x64.Build.0 = Release|x64
 		{251BEE34-E38D-4D79-8D6A-8D04366B3E31}.Release|x86.ActiveCfg = Release|Win32
 		{251BEE34-E38D-4D79-8D6A-8D04366B3E31}.Release|x86.Build.0 = Release|Win32
+		{347C2636-E667-4C81-B497-D446406E595F}.Debug|x64.ActiveCfg = Debug|x64
+		{347C2636-E667-4C81-B497-D446406E595F}.Debug|x64.Build.0 = Debug|x64
+		{347C2636-E667-4C81-B497-D446406E595F}.Debug|x86.ActiveCfg = Debug|Win32
+		{347C2636-E667-4C81-B497-D446406E595F}.Debug|x86.Build.0 = Debug|Win32
+		{347C2636-E667-4C81-B497-D446406E595F}.Release|x64.ActiveCfg = Release|x64
+		{347C2636-E667-4C81-B497-D446406E595F}.Release|x64.Build.0 = Release|x64
+		{347C2636-E667-4C81-B497-D446406E595F}.Release|x86.ActiveCfg = Release|Win32
+		{347C2636-E667-4C81-B497-D446406E595F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
