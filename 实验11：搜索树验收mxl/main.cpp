@@ -1,6 +1,5 @@
 #include<iostream>
 using namespace std;
-
 #define fori(i,n) for(int i=0;i<(int)(n);i++)
 
 
@@ -20,7 +19,8 @@ struct node {
 	//有数据构造函数
 	node (const T& data_in) 
 		:data (data_in),left (nullptr),right ( nullptr), left_size (0) { }
-
+	node (const node* node_in)
+		:data (node_in->data), left (node_in->left), right (node_in->right), left_size (node_in->left_size) {}
 };
 
 template<class T>
@@ -34,7 +34,7 @@ public:
 	bsTree ():_root(nullptr), _size(0){ }
 	bool push (T data_in);
 	node<T>* search (T data_in);
-	node<T>* getByIndex (int index);//索引从零开始
+	node<T>* getPByIndex (int index);//索引从零开始
 	bool erase (T data_in);
 	bool eraseByIndes (int index);
 	ostream& preOrder (ostream& out);
@@ -102,7 +102,7 @@ node<T>* bsTree<T>::search (T data_in) {
 }
 
 template<class T>
-node<T>* bsTree<T>::getByIndex (int index) {
+node<T>* bsTree<T>::getPByIndex (int index) {
 	if (index < 0 || index >= _size){
 		return nullptr;
 	}
@@ -125,31 +125,15 @@ node<T>* bsTree<T>::getByIndex (int index) {
 
 	return nullptr;
 }
-
-/*前序遍历两函数*/
 template<class T>
-void bsTree<T>::_preOrder (node<T>* t,ostream& out){
-	if (t == nullptr) {
-		return;
-	}
-	out << t->data << " " << t->left_size << endl;
-	_preOrder (t->left);
-	_preOrder (t->right);
-}
-template<class T>
-ostream& bsTree<T>::preOrder (ostream& out) {
-	_preOrder (_root, out);
-}
-
-
-template<class T>
-bool bsTree<T>::erase (T data_in){
-	/*寻找元素*/
+bool bsTree<T>::erase (T data_in) {
 	node<T>* temp = search (data_in);
-	if (temp == nullptr){
+	if (temp == nullptr) {
 		return false;
 	}
 
+
+	//p是目标元素，pp是其父元素
 	xor_result = 0;
 	node<T>* p = _root;
 	node<T>* pp = nullptr;
@@ -166,33 +150,41 @@ bool bsTree<T>::erase (T data_in){
 	}
 	xor_result = xor_result ^ data_in;
 	if (p == nullptr) {
-		return false;             //不存在与关键字匹配的数对
+		return false;
 	}
 
+	//寻找可代替p的s结点
 	if (p->left != nullptr && p->right != nullptr) {
-		node<T>* s = p->right,
-			* ps = p;  // parent of s
-		while (s->left != nullptr) {// move to larger data
-
+		node<T>* s = p->right;
+		node <T>* ps = p;
+		while (s->left != nullptr) {
 			ps = s;
 			s->left_size--;
 			s = s->left;
 		}
-		node<T>* q = new node<T> (s->data, p->left, p->right);
-		q->left_size = p->left_size;//将s元素的值赋给p，后将s元素删除 
-		if (pp == nullptr)
+		node<T>* q = new node<T> (p);
+		q->data=s->data;
+		if (pp == nullptr) {
 			_root = q;
-		else if (p == pp->left)
+		} else if (p == pp->left) {
 			pp->left = q;
-		else
+		} else {
 			pp->right = q;
-		if (ps == p) pp = q;
-		else pp = ps;
+		}
+		if (ps == p) {
+			pp = q;
+		} else {
+			pp = ps;
+		}
 		delete p;
 		p = s;
 	}
 	node<T>* c = nullptr;
-	if (p->left != nullptr) { c = p->left; } else { c = p->right; }
+	if (p->left != nullptr) {
+		c = p->left;
+	} else {
+		c = p->right;
+	}
 	if (p == _root) { _root = c; } else {
 		if (p == pp->left) {
 			pp->left = c;
@@ -207,14 +199,11 @@ bool bsTree<T>::erase (T data_in){
 
 template<class T>
 bool bsTree<T>::eraseByIndes (int index) {
-	//xor_result = 0;
-	if (index < 0 || index >= _size)//索引越界
-	{
-		//cout << "0" << endl;
+	if (index < 0 || index >= _size) {
 		return false;
 	}
 	xor_result = 0;
-	node<T>* temp = getByIndex (index);
+	node<T>* temp = getPByIndex (index);
 	if (temp == nullptr) {
 		return false;
 	}
@@ -224,7 +213,7 @@ bool bsTree<T>::eraseByIndes (int index) {
 
 int main () {
 #pragma warning(disable:4996)
-	freopen ("input.txt", "r", stdin);
+	//freopen ("input.txt", "r", stdin);
 	int n;
 	cin >> n;
 
@@ -232,10 +221,9 @@ int main () {
 	bsTree<int> m;
 	node<int>* x;
 	fori (i, n) {
-		cin >> a;
+		cin >> a>>b;
 		switch (a) {
 		case 0:
-			cin >> b;
 			if (m.push (b)) {
 				cout << m.xor_result << endl;
 			} else {
@@ -244,19 +232,14 @@ int main () {
 
 			break;
 		case 1:
-
-			cin >> b;
 			x = m.search (b);
 			if (x != nullptr) {
-				//确实存在
 				cout << m.xor_result << endl;
 			} else {
 				cout << "0" << endl;
 			}
 			break;
 		case 2:
-
-			cin >> b;
 			if (m.erase (b)) {
 				cout << m.xor_result << endl;
 			} else {
@@ -264,9 +247,8 @@ int main () {
 			}
 			break;
 		case 3:
-			cin >> b;
 			b--;
-			x = m.getByIndex (b);
+			x = m.getPByIndex (b);
 			if (x != nullptr) {
 				cout << m.xor_result << endl;
 			} else {
@@ -275,7 +257,6 @@ int main () {
 
 			break;
 		case 4:
-			cin >> b;
 			b--;
 			if (m.eraseByIndes (b)) {
 				cout << m.xor_result << endl;
