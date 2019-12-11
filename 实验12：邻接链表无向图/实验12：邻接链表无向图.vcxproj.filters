@@ -3,4 +3,12 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="graph.h" />
+    <ClInclude Include="chain.h" />
+    <ClInclude Include="queue.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input.txt" />
+  </ItemGroup>
 </Project>

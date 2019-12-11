@@ -18,25 +18,12 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="adjacencyWGraph.h" />
-    <ClInclude Include="chain.h" />
-    <ClInclude Include="queue.h" />
-    <ClInclude Include="edge.h" />
-    <ClInclude Include="stack.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="input.txt" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{310BE18F-E81F-40FE-990C-08DCE079FC28}</ProjectGuid>
-    <RootNamespace>实验12邻接矩阵无向图</RootNamespace>
+    <ProjectGuid>{3A523D24-611C-4E06-BC4E-0014B8CEAB07}</ProjectGuid>
+    <RootNamespace>实验13：链表-贪婪算法</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>实验12：邻接矩阵无向图验收</ProjectName>
+    <ProjectName>实验13：链表-贪婪算法</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -151,6 +138,21 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="chain.h" />
+    <ClInclude Include="edge.h" />
+    <ClInclude Include="fastUnionFind.h" />
+    <ClInclude Include="linkedWGraph.h" />
+    <ClInclude Include="minHeap.h" />
+    <ClInclude Include="queue.h" />
+    <ClInclude Include="stack.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

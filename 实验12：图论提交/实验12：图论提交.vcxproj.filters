@@ -2,6 +2,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="linkedWGraph.h" />
+    <ClInclude Include="queue.h" />
+    <ClInclude Include="stack.h" />
+    <ClInclude Include="chain.h" />
+    <ClInclude Include="edge.h" />
+    <ClInclude Include="fastUnionFind.h" />
+    <ClInclude Include="minHeap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

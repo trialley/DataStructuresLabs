@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+#define until(re) while(!(re))
 
 template <class T>
 struct node {
@@ -13,192 +14,164 @@ struct node {
 template<class T>
 class chain {
 public:
-    chain (int initialCapacity = 10);
+    typedef enum err{ chain_index_out_of_range }err;
+    chain ();
     chain (const chain<T>&);
     ~chain ();
 
-    bool empty () const { return listSize == 0; }
-    int size () const { return listSize; }
-    T& get (int indexi) const;
-    int indexOf (const T& datai) const;
-    void erase (int indexi);
-    void insert (const T& datai);
-    void insert (int indexi, const T& datai);
+    bool empty () const { return _list_size == 0; }
+    int size () const { return _list_size; }
+    T& getByIndex (int indexi) const;
+    int getIndexByData (const T& datai) const;
+    void eraseByIndex (int indexi);
+    void insert (const T& weighti);
     void output (ostream& out) const;
     node<T>* getfirst () {
-        return firstNode;
+        return _head;
     }
-    T* eraseElement (int theVertex);
+    T* eraseByData(int theVertex);
 protected:
-    void checkIndex (int indexi) const;
-    node<T>* firstNode;
-    int listSize;
+    void _checkIndex (int indexi) const;
+    node<T>* _head;
+    int _list_size;
 };
 
 template<class T>
-chain<T>::chain (int initialCapacity) {// Constructor.
-    if (initialCapacity < 1)
-        return;
-    firstNode = NULL;
-    listSize = 0;
-}
+chain<T>::chain ():_head(nullptr), _list_size(0){}
 
 template<class T>
-chain<T>::chain (const chain<T>& theList) {// Copy constructor.
-    listSize = theList.listSize;
+chain<T>::chain (const chain<T>& theList) {
+    _list_size = theList._list_size;
 
-    if (listSize == 0) {// theList is empty
-        firstNode = NULL;
+    if (_list_size == 0) {
+        _head = nullptr;
         return;
     }
 
-    // non-empty list
-    node<T>* sourceNode = theList.firstNode;
-    // node in theList to copy from
-    firstNode = new node<T> (sourceNode->data);
-    // copy first data of theList
-    sourceNode = sourceNode->next;
-    node<T>* targetNode = firstNode;
-    // current last node in *this
-    while (sourceNode != NULL) {// copy remaining datas
-        targetNode->next = new node<T> (sourceNode->data);
-        targetNode = targetNode->next;
-        sourceNode = sourceNode->next;
+    node<T>* sorce_node = theList._head;
+
+    _head = new node<T> (sorce_node->data);
+
+    sorce_node = sorce_node->next;
+    node<T>* target_node = _head;
+
+    until (sorce_node == nullptr) {
+        target_node->next = new node<T> (sorce_node->data);
+        target_node = target_node->next;
+        sorce_node = sorce_node->next;
     }
-    targetNode->next = NULL; // end the chain
+    target_node->next = nullptr;
 }
 
 template<class T>
-chain<T>::~chain () {// Chain destructor. Delete all nodes in chain.
-    while (firstNode != NULL) {// delete firstNode
-        node<T>* nextNode = firstNode->next;
-        delete firstNode;
-        firstNode = nextNode;
+chain<T>::~chain () {
+    until (_head == nullptr) {
+        node<T>* next_node = _head->next;
+        delete _head;
+        _head = next_node;
     }
 }
 
 template<class T>
-void chain<T>::checkIndex (int indexi) const {// Verify that indexi is between 0 and listSize - 1.
-    if (indexi < 0 || indexi >= listSize)
-        return;
+void chain<T>::_checkIndex (int indexi) const {
+    if (indexi < 0 || indexi >= _list_size)
+        throw chain_index_out_of_range;
 }
 
 template<class T>
-T& chain<T>::get (int indexi) const {// Return data whose index is indexi.
- // Throw illegalIndex exception if no such data.
-    checkIndex (indexi);
+T& chain<T>::getByIndex (int indexi) const {
+    _checkIndex (indexi);
 
-    // move to desired node
-    node<T>* currentNode = firstNode;
+    node<T>* current_node = _head;
     for (int i = 0; i < indexi; i++)
-        currentNode = currentNode->next;
+        current_node = current_node->next;
 
-    return currentNode->data;
+    return current_node->data;
 }
 
 template<class T>
-int chain<T>::indexOf (const T& datai) const {// Return index of first occurrence of datai.
- // Return -1 if datai not in list.
-
-   // search the chain for datai
-    node<T>* currentNode = firstNode;
-    int index = 0;  // index of currentNode
-    while (currentNode != NULL && currentNode->data != datai) {
-        // move to next node
-        currentNode = currentNode->next;
+int chain<T>::getIndexByData (const T& datai) const {
+    node<T>* current_node = _head;
+    int index = 0;
+    until (current_node == nullptr || current_node->data == datai) {
+        current_node = current_node->next;
         index++;
     }
 
-    // make sure we found matching data
-    if (currentNode == NULL)
+    if (current_node == nullptr) {
         return -1;
-    else
+    }else {
         return index;
+    }
 }
 template<class T>
-T* chain<T>::eraseElement (int theVertex) {
-    node<T>* current = firstNode, * trail = NULL;
+T* chain<T>::eraseByData (int theVertex) {
+    node<T>* current = _head, * trail = nullptr;
 
-    while (current != NULL && current->data != theVertex) {
+    until (current == nullptr || current->data == theVertex) {
         trail = current;
         current = current->next;
     }
-    if (current == NULL)
-        return NULL;
-
+    if (current == nullptr) {
+        return nullptr;
+    }
 
     T* datai = &current->data;
 
-    if (trail != NULL)
+    if (trail != nullptr) {
         trail->next = current->next;
-    else
-        firstNode = current->next;
+    } else {
+        _head = current->next;
+    }
 
     delete current;
-    listSize--;
+    _list_size--;
     return datai;
 }
 template<class T>
-void chain<T>::erase (int indexi) {
-    checkIndex (indexi);
+void chain<T>::eraseByIndex (int indexi) {
+    _checkIndex (indexi);
 
     node<T>* deleteNode;
     if (indexi == 0) {
-        deleteNode = firstNode;
-        firstNode = firstNode->next;
+        deleteNode = _head;
+        _head = _head->next;
     } else {
-        node<T>* p = firstNode;
+        node<T>* p = _head;
         for (int i = 0; i < indexi - 1; i++)
             p = p->next;
 
         deleteNode = p->next;
         p->next = p->next->next;
     }
-    listSize--;
+    _list_size--;
     delete deleteNode;
 }
 template<class T>
-void chain<T>::insert (const T& datai) {
-    int a = this->indexOf (datai);
+void chain<T>::insert (const T& weighti) {
+    int a = this->getIndexByData (weighti);
     if (a == -1) {
-        node<int>* p = firstNode, * q = firstNode;
-        if (firstNode == NULL || datai <= firstNode->data)
-            firstNode = new node<T> (datai, firstNode);
+        node<int>* p = _head, * q = _head;
+        if (_head == nullptr || weighti <= _head->data)
+            _head = new node<T> (weighti, _head);
         else {
-            while (datai > p->data) {
+            while (weighti > p->data) {
                 q = p;
                 p = p->next;
-                if (p == NULL)
+                if (p == nullptr)
                     break;
             }
-            p = new node<T> (datai, q->next);
+            p = new node<T> (weighti, q->next);
             q->next = p;
         }
     }
 }
-template<class T>
-void chain<T>::insert (int indexi, const T& datai) {
-    if (indexi < 0 || indexi > listSize) {
-        return;
-    }
 
-    if (indexi == 0)
-        firstNode = new node<T> (datai, firstNode);
-    else {  // find predecessor of new data
-        node<T>* p = firstNode;
-        for (int i = 0; i < indexi - 1; i++)
-            p = p->next;
-
-        // insert after p
-        p->next = new node<T> (datai, p->next);
-    }
-    listSize++;
-}
 
 template<class T>
-void chain<T>::output (ostream& out) const {// Put the list into the stream out.
-    for (node<T>* currentNode = firstNode; currentNode != NULL; currentNode = currentNode->next)
-        out << currentNode->data << "  ";
+void chain<T>::output (ostream& out) const {
+    for (node<T>* current_node = _head; current_node != nullptr; current_node = current_node->next)
+        out << current_node->data << "  ";
     out << endl;
 }
 
@@ -207,23 +180,15 @@ class edge {
 public:
     ~edge () {}
     edge (int a, int b, T weight) {
-        v1 = a;
-        v2 = b;
-        w = weight;
+        from = a;
+        to = b;
     }
-    int vertex1 () const {
-        return v1;
-    }
-    int vertex2 () const {
-        return v2;
-    }
-    T weight () const {
-        return w;
-    }
+    int vertex1 () const {return from;}
+    int vertex2 () const {return to;}
 private:
-    int v1;
-    int v2;
-    T w;
+    int from;
+    int to;
+    //T w;
 };
 
 /*****************************************************************************
@@ -232,16 +197,13 @@ private:
 *  @brief    链表队列的实现                                                   *
 *  @license  GNU General Public License (GPL)                                *
 *****************************************************************************/
-#pragma once
-
-
 /*queue
 public:
     enum queue_err { queue_empty };  //常见的错误
 private:
     struct node;					//结点类型
     node* _head;					//头结点指针
-    node* _end;						//尾结点指针，指向NULL
+    node* _end;						//尾结点指针，指向nullptr
     int _length;					//元素个数
 public:
     queue ();						//构造函数
@@ -272,7 +234,7 @@ public:
         _length = 0;
     }
     ~queue () {
-        while (_head->next != NULL) {
+        until (_head->next == nullptr) {
             node* temp = _head;
             _head = _head->next;
             delete temp;
@@ -284,7 +246,7 @@ public:
         _length++;
         node* n_end = new node;
         n_end->data = in;
-        n_end->next = NULL;
+        n_end->next = nullptr;
 
         _end->next = n_end;
         _end = n_end;
@@ -317,20 +279,20 @@ public:
             return;
         n = numberOfVertices;
         e = 0;
-        aList = new chain<int>[n + 1];
+        _chain_heads = new chain<int>[n + 1];
     }
-    ~linkedgraph () { delete[] aList; }
+    ~linkedgraph () { delete[] _chain_heads; }
     int numberOfVertices () const { return n; }
     int numberOfEdges () const { return e; }
     bool directed () const { return true; }
     bool weighted () const { return false; }
     bool existsEdge (int i, int j) const {
-        if (i < 1 || j < 1 || i > n || j > n || aList[i].indexOf (j) == -1)
+        if (i < 1 || j < 1 || i > n || j > n || _chain_heads[i].getIndexByData (j) == -1)
             return false;
         else
             return true;
     }
-    void insertEdge (edge<bool>* theEdge);
+    void insertEdge (int from,int to);
     void eraseEdge (int i, int j);
     void checkVertex (int theVertex) const {
         if (theVertex < 1 || theVertex > n)
@@ -338,38 +300,37 @@ public:
     }
     int Degree (int theVertex) const {
         checkVertex (theVertex);
-        return aList[theVertex].size ();
+        return _chain_heads[theVertex].size ();
     }
-    void bfs (int v, int* reach, int* path, int label, int& length);
-    void dfs (int v, int* reach, int* path, int label, int& length);
+    void _bfs (int v, int* reach, int* path, int label, int& length);
+    void _dfs (int v, int* reach, int* path, int label, int& length);
     void printBFS (int s);
     void printDFS (int s);
     void printCCs ();
-    void printPath (int s, int t);
-    void shortestPaths (int v, int* reach, int* path, int label, int& length);
+    int getShortestDis (int v, int t);
 protected:
     int n;
     int e;
-    chain<int>* aList;
+    chain<int>* _chain_heads;
 };
-void linkedgraph::dfs (int v, int* reach, int* path, int label, int& length) {
+void linkedgraph::_dfs (int v, int* reach, int* path, int label, int& length) {
     reach[v] = label;
     path[++length] = v;
-    for (node<int>* u = aList[v].getfirst (); u != NULL; u = u->next) {
+    for (node<int>* u = _chain_heads[v].getfirst (); u != nullptr; u = u->next) {
         if (reach[u->data] == 0)
-            dfs (u->data, reach, path, label, length);
+            _dfs (u->data, reach, path, label, length);
     }
 }
-void linkedgraph::bfs (int v, int* reach, int* path, int label, int& length) {
+void linkedgraph::_bfs (int v, int* reach, int* path, int label, int& length) {
     queue<int> q;
     reach[v] = label;
     q.push (v);
     length = 0;
-    while (!q.isempty ()) {
+    until (q.isempty ()) {
         int w = q.front ();
         q.pop ();
         path[++length] = w;
-        for (node<int>* u = aList[w].getfirst (); u != NULL; u = u->next)
+        for (node<int>* u = _chain_heads[w].getfirst (); u != nullptr; u = u->next)
             if (reach[u->data] == 0) {
                 q.push (u->data);
                 reach[u->data] = label;
@@ -378,20 +339,18 @@ void linkedgraph::bfs (int v, int* reach, int* path, int label, int& length) {
 }
 void linkedgraph::eraseEdge (int i, int j) {
     if (i >= 1 && j >= 1 && i <= n && j <= n) {
-        int* v = aList[i].eraseElement (j);
-        int* t = aList[j].eraseElement (i);
-        if (v != NULL)
+        int* v = _chain_heads[i].eraseByData (j);
+        int* t = _chain_heads[j].eraseByData (i);
+        if (v != nullptr)
             e--;
     }
 }
-void linkedgraph::insertEdge (edge<bool>* theEdge) {
-    int v1 = theEdge->vertex1 ();
-    int v2 = theEdge->vertex2 ();
-    if (v1 < 1 || v2 < 1 || v1 > n || v2 > n || v1 == v2)
+void linkedgraph::insertEdge (int from,int to) {
+    if (from < 1 || to < 1 || from > n || to > n || from == to)
         return;
-    if (aList[v1].indexOf (v2) == -1) {
-        aList[v1].insert (v2);
-        aList[v2].insert (v1);
+    if (_chain_heads[from].getIndexByData (to) == -1) {
+        _chain_heads[from].insert (to);
+        _chain_heads[to].insert (from);
         e++;
     }
 }
@@ -402,7 +361,7 @@ void linkedgraph::printDFS (int s) {
     int length = 0;
     for (int i = 1; i <= n; i++)
         reach[i] = 0;
-    dfs (s, reach, path, label, length);
+    _dfs (s, reach, path, label, length);
     cout << length << endl;
     for (int i = 1; i <= length; i++)
         cout << path[i] << " ";
@@ -415,7 +374,7 @@ void linkedgraph::printBFS (int s) {
     int length = 0;
     for (int i = 1; i <= n; i++)
         reach[i] = 0;
-    bfs (s, reach, path, label, length);
+    _bfs (s, reach, path, label, length);
     cout << length << endl;
     for (int i = 1; i <= length; i++)
         cout << path[i] << " ";
@@ -433,7 +392,7 @@ void linkedgraph::printCCs () {
         if (reach[i] == 0) {
             length = 0;
             label++;
-            dfs (i, reach, path, label, length);
+            _dfs (i, reach, path, label, length);
             weight[label] = path[1];
         }
     }
@@ -445,51 +404,47 @@ void linkedgraph::printCCs () {
     cout << endl;
 }
 
-void linkedgraph::shortestPaths (int v, int* reach, int* path, int label, int& length) {
+int linkedgraph::getShortestDis (int v,int t) {
+    int* dis = new int[n];
+    fill (dis, dis + n, 0);
+int* path = new int[n];
+fill (path, path+ n, 0);
+
     queue<int> q;
     q.push (v);
-    length = 0;
-    while (!q.isempty ()) {
+   int  length = 0;
+    until (q.isempty ()) {
         int w = q.front ();
         q.pop ();
         path[++length] = w;
-        for (node<int>* u = aList[w].getfirst (); u != NULL; u = u->next)
-            if (reach[u->data] == 0 && (u->data != v)) {
+        for (node<int>* u = _chain_heads[w].getfirst (); u != nullptr; u = u->next)
+            if (dis[u->data] == 0 && (u->data != v)) {
                 q.push (u->data);
-                reach[u->data] = reach[w] + 1;
+                dis[u->data] = dis[w] + 1;
+                if (u->data == t) {
+                    return dis[u->data];
+                }
             }
     }
+    return -1;
 }
-void linkedgraph::printPath (int s, int t) {
-    int* reach = new int[n + 1];
-    int* path = new int[n + 1];
-    int label = 1;
-    int length = 0;
-    for (int i = 1; i <= n; i++)
-        reach[i] = 0;
-    shortestPaths (s, reach, path, label, length);
-    if (reach[t] != 0)
-        cout << reach[t] << endl;
-    else
-        cout << "-1" << endl;
-}
+
 int main () {
 #pragma warning(disable:4996)
     freopen ("input.txt", "r", stdin);
 
     int n, m, s, t;
     cin >> n >> m >> s >> t;
-    linkedgraph map (n);
-    while (m != 0) {
+    linkedgraph g (n);
+    until (m == 0) {
         int a, b, c;
         cin >> a >> b >> c;
-        edge<bool>* theEdge = new edge<bool> (b, c, true);
         switch (a) {
         case 0:
-            map.insertEdge (theEdge);
+            g.insertEdge (b,c);
             break;
         case 1:
-            map.eraseEdge (b, c);
+            g.eraseEdge (b, c);
             break;
         }
         m--;
@@ -497,17 +452,18 @@ int main () {
 
     //第一行输出图中有多少个连通分量
     //第二行输出所有连通子图中最小点的编号（升序），编号间用空格分隔
-    map.printCCs ();
-    //第三行输出从s点开始的dfs序列长度
+    g.printCCs ();
+    //第三行输出从s点开始的_dfs序列长度
 
-    //第四行输出从s点开始的字典序最小的dfs序列
-    map.printDFS (s);
+    //第四行输出从s点开始的字典序最小的_dfs序列
+    g.printDFS (s);
 
-    //第五行输出从t点开始的bfs序列的长度
-    //第六行输出从t点开始字典序最小的bfs序列
-    map.printBFS (t);
+    //第五行输出从t点开始的_bfs序列的长度
+    //第六行输出从t点开始字典序最小的_bfs序列
+    g.printBFS (t);
 
     //第七行输出从s点到t点的最短路径，若是不存在路径则输出-1
-    map.printPath (s, t);
+ 
+    cout <<g.getShortestDis (s, t);
     return 0;
 }
