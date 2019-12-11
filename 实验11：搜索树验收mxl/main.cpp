@@ -6,7 +6,7 @@ using namespace std;
 template<class T>
 struct node {
 	T data;
-	int left_size;		//结点名次，实际上就是左子节点的元素数
+	int left_size;		//代表结点在以自己为根的树中的名次
 	node<T>* left;		//指向左子树的指针
 	node<T>* right;		//指向右子树的指针
 
@@ -24,15 +24,15 @@ struct node {
 };
 
 template<class T>
-class bsTree {
+class bstree {
 protected:
 	node<T>* _root;
 	T _size;
 	void _preOrder (node<T>* t, ostream& out);
 public:
 	int xor_result;
-	bsTree ():_root(nullptr), _size(0){ }
-	bool push (T data_in);
+	bstree ():_root(nullptr), _size(0){ }
+	bool insert (T data_in);
 	node<T>* search (T data_in);
 	node<T>* getPByIndex (int index);//索引从零开始
 	bool erase (T data_in);
@@ -40,7 +40,7 @@ public:
 	ostream& preOrder (ostream& out);
 };
 template<class T>
-bool bsTree<T>::push (T data_in) {
+bool bstree<T>::insert (T data_in) {
 
 	//检查目标结点是否存在
 	node<T>* temp = search (data_in);
@@ -49,7 +49,7 @@ bool bsTree<T>::push (T data_in) {
 		return false;
 	}
 
-	xor_result = 0;				//初始化异或值
+	xor_result = 0;			//初始化异或值
 	node<T>* p = _root;		//p是用来寻找目标位置的指针
 	node<T>* pp = nullptr;	//pp是为了避免p指向空叶子结点而造成目标丢失
 
@@ -81,7 +81,7 @@ bool bsTree<T>::push (T data_in) {
 
 /*寻找目标值元素，返回指针*/
 template<class T>
-node<T>* bsTree<T>::search (T data_in) {
+node<T>* bstree<T>::search (T data_in) {
 	xor_result = 0;
 	node<T>* p = _root;
 
@@ -102,7 +102,7 @@ node<T>* bsTree<T>::search (T data_in) {
 }
 
 template<class T>
-node<T>* bsTree<T>::getPByIndex (int index) {
+node<T>* bstree<T>::getPByIndex (int index) {
 	if (index < 0 || index >= _size){
 		return nullptr;
 	}
@@ -126,7 +126,7 @@ node<T>* bsTree<T>::getPByIndex (int index) {
 	return nullptr;
 }
 template<class T>
-bool bsTree<T>::erase (T data_in) {
+bool bstree<T>::erase (T data_in) {
 	node<T>* temp = search (data_in);
 	if (temp == nullptr) {
 		return false;
@@ -146,7 +146,6 @@ bool bsTree<T>::erase (T data_in) {
 		} else {
 			p = p->right;
 		}
-
 	}
 	xor_result = xor_result ^ data_in;
 	if (p == nullptr) {
@@ -198,7 +197,7 @@ bool bsTree<T>::erase (T data_in) {
 }
 
 template<class T>
-bool bsTree<T>::eraseByIndes (int index) {
+bool bstree<T>::eraseByIndes (int index) {
 	if (index < 0 || index >= _size) {
 		return false;
 	}
@@ -218,13 +217,13 @@ int main () {
 	cin >> n;
 
 	int a, b;
-	bsTree<int> m;
+	bstree<int> m;
 	node<int>* x;
 	fori (i, n) {
 		cin >> a>>b;
 		switch (a) {
 		case 0:
-			if (m.push (b)) {
+			if (m.insert (b)) {
 				cout << m.xor_result << endl;
 			} else {
 				cout << "0" << endl;

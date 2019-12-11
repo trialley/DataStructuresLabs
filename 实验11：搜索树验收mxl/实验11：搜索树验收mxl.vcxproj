@@ -23,7 +23,7 @@
     <ProjectGuid>{347C2636-E667-4C81-B497-D446406E595F}</ProjectGuid>
     <RootNamespace>实验11搜索树验收mxl</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>实验11：搜索树提交mxl</ProjectName>
+    <ProjectName>实验11：搜索树提交</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

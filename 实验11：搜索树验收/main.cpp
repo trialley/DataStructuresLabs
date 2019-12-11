@@ -1,27 +1,48 @@
-/*实验十一  搜索树
-一、实验目的
-掌握二叉搜索树结构的定义、描述方法、操作实现。
-二、实验内容
-1、创建带索引的二叉搜索树类。存储结构使用链表，提供操作:插入、删除、按名次删除、查找、按名次查找、升序输出所有元素。
-2、接收键盘录入的一系列整数，输出其对应的二叉搜索树（可使用文本形式输出），以及///二叉搜索树的高度。
-3、对建立好的二叉搜索树，执行上述各操作（插入操作除外），输出各操作的结果（插入、删除操作输出完成后的二叉搜索树；
-	查找操作输出查找过程中依次比较的元素）。
-*/
-#include<string>
 #include<iostream>
 #include"bstree.h"
+using namespace std;
+#define fori(i,n) for(int i=0;i<(int)(n);i++)
+#define LGRAND(min,max) ((rand()%(max-min+(int)1))+(int)min )
+
+
+
 
 int main () {
-	bstree<int, string> bst;
-	string a= string("a");
-	for (int i = 0; i < 10; i++) {
-		a+="a";
-		bst.insertKE (i,a);
+	ios::sync_with_stdio (false);
+	cin.tie (0);
+	cout.tie (0);
+
+	//#pragma warning(disable:4996)
+	//	freopen ("input.txt", "r", stdin);
+	bstree<int> b;
+	int num = 10;
+	int nums[] = { 6, 8, 9, 7,1, 5, 4,  3,11,15};
+	//初始化二叉搜索树，随机1-100
+	fori (i,num) {
+		b.insert (nums[i]);
 	}
-	cout << bst<<"\n";
-	cout << *bst.find (1)<<"\n";
-	cout << bst.getHeight ();
+	cout << "树内容为：" << b;
+	cout << "树高度为：" << calF (b)<<"\n";
 
 
-	return 0;
+	cout << "\n\n测试各种操作：插入、删除、按名次删除、查找、按名次查找\n";
+	cout << "\n\n测试插入 99\n";
+	b.insert (99);
+	cout << "树内容为：" << b;
+
+	cout << "\n\n测试删除 99\n";
+	b.erase (99);
+	cout << "树内容为：" << b;
+
+	cout << "\n\n测试按名次删除 1\n";
+	b.eraseByIndes (1);
+	cout << "树内容为：" << b;
+
+	cout << "\n\n测试查找 99 7\n";
+	cout << b.search (99)<<"\n\n";
+	cout << b.search (7);
+
+	cout << "\n\n测试按名次查找 b[4]==7\n";
+	cout<<b.getPByIndex (4);
+
 }

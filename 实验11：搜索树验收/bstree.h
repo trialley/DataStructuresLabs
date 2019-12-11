@@ -1,236 +1,297 @@
 #pragma once
 #include<iostream>
-#include"btree.h"
-#include"queue.h"
+using std::ostream;
+using std::cout;
 
 
-/*对应各种数据类型的哈希函数，此处只写int的哈希函数*/
-template <class K> class myhash;
-template<>
-class myhash<int> {
-public:
-	size_t operator()(const int keyin) const {
-		return size_t (keyin);
-	}
+template<class T>
+struct node {
+	T data;
+	int left_size;		//结点名次，实际上就是左子节点的元素数，一开始我想保存名次，但是名次一改俱该，比较麻烦
+	node<T>* left;		//指向左子树的指针
+	node<T>* right;		//指向右子树的指针
+
+	//空构造函数
+	node ()
+		:left (nullptr), right (nullptr), left_size (0) {}
+
+	//带子节点构造函数
+	node (const T& data_in, node<T>* left_in, node<T>* right_in)
+		:left_size (0), data (data_in), left (left_in), right (right_in) {}
+	
+	//有数据构造函数
+	node (const T& data_in)
+		:data (data_in), left (nullptr), right (nullptr), left_size (0) {}
+	
+	//拷贝构造函数
+	node (const node* node_in)
+		:data (node_in->data), left (node_in->left), right (node_in->right), left_size (node_in->left_size) {}
 };
 
-//template <class K>
-//bool operator < (K& inl, K& inr) {
-//	return myhash<K>(inl) < myhash<K> (inr);
-//}
-//template <class K>
-//bool operator > (K& inl, K& inr) {
-//	return myhash<K> (inl) > myhash<K> (inr);
-//}
-//template <class K>
-//bool operator == (K& inl, K& inr) {
-//	return myhash<K> (inl) == myhash<K> (inr);
-//}
-//template <class K>
-//bool operator <= (K& inl, K& inr) {
-//	return myhash<K> (inl) <= myhash<K> (inr);
-//}
-//template <class K>
-//bool operator >= (K& inl, K& inr) {
-//	return myhash<K> (inl) >= myhash<K> (inr);
-//}
+template<class T>
+class bstree {
+protected:
+	node<T>* _root;								//根节点
+	T _size;									//当前树的元素数目
+	void _inOrder (node<T>* t, ostream& out);	//中序遍历递归函数
+	void friend cal (node<int>* rootin, int* sizes, int* deepthes);
+	int friend calF (bstree<int>& bst);			//使用之前二叉树的层次计算函数
 
-template<class K, class E>
-struct  mypair {
-	const K key;
-	E data;
-	mypair (const K& keyi, E& datai) :key (keyi), data (datai) {};
-	mypair () {};
+public:
+	int xor_result;								//保存对比过程中的异或和
+	bstree () 
+		:_root (nullptr), _size (0), xor_result(0){}//默认构造函数
+	bool insert (T data_in);					//插入
+	node<T>* search (T data_in);				//搜索
+	bool erase (T data_in);						//删除
+	node<T>* getPByIndex (int index);			//按照名次查询
+	bool eraseByIndes (int index);				//按照名次删除
+	ostream& inOrder (ostream& out);			//中序遍历，可以按照升序打印内容
 };
 
 
-template<class K, class E>
-class bstree : public btree< mypair<K, E>> {
-public:
-	using node = btree< mypair<K, E> >::node;
-	//myhash<K> _myhash;//比大小其实不需要哈希函数获得哈希值，只需要让相应数据类型自己定义比较大小的操作即可
-public:
-	bool empty () const { return btree< mypair<K, E> >::_size == 0; }
-	int size () const { return btree< mypair<K, E> >::_size; }
-	mypair<K, E>* find (const K& theKey) const {
-		node* p = btree< mypair<K, E> >::_root;
-		while (p != nullptr) {
-			if (theKey < p->data.key) {
-				p = p->left;
-			} else {
-				if (theKey > p->data.key)
-					p = p->right;
-				else
-					return &p->data;
-			}
-		}
 
-		return nullptr;
-	}
-	void insertKE (const K& keyi, E& datai) {
-		mypair<K, E> temp (keyi, datai);
-		insert (temp);
-	}
-	void insert (const  mypair<K, E>& thePair) {
-		node* p = btree< mypair<K, E> >::_root;
-		node* pp = nullptr;
-		while (p != nullptr) {
-			pp = p;
-			if (thePair.key < p->data.key)
-				p = p->left;
-			else
-				if (thePair.key > p->data.key)
-					p = p->right;
-				else {
-					p->data.data = thePair.data;
-					return;
-				}
-		}
+template<class T>
+void bstree<T>::_inOrder (node<T>* t, ostream& out) {
+	if(t->left)_inOrder (t->left,out);
+	out << t->data<<" ";
+	if (t->right)_inOrder (t->right,out);
+}
 
-		node* newNode = new node (thePair);
-		if (btree< mypair<K, E>>::_root != nullptr)
-			if (thePair.key < pp->data.key)
-				pp->left = newNode;
-			else
-				pp->right = newNode;
-		else
-			btree< mypair<K, E>>::_root = newNode;
-		btree< mypair<K, E>>::_size++;
-	}
-	void erase (const K& theKey) {
-		node* p = btree< mypair<K, E>>::_root;
-		node* pp = nullptr;
-		while (p != nullptr && p->data.key != theKey) {
-			pp = p;
-			if (theKey < p->data.key)
-				p = p->left;
-			else
-				p = p->right;
-		}
-		if (p == nullptr)
-			return;
+template<class T>
+ostream& bstree<T>::inOrder (ostream& out) {
+	_inOrder (_root,out);
+	return out;
 
-		if (p->left != nullptr && p->right != nullptr) {
-
-			node* s = p->left,
-				* ps = p;
-			while (s->right != nullptr) {
-				ps = s;
-				s = s->right;
-			}
-
-			node* q = new node (s->data, p->left, p->right);
-			if (pp == nullptr)
-				btree< mypair<K, E>>::_root = q;
-			else if (p == pp->left)
-				pp->left = q;
-			else
-				pp->right = q;
-			if (ps == p) pp = q;
-			else pp = ps;
-			delete p;
-			p = s;
-		}
-
-		node* c;
-		if (p->left != nullptr)
-			c = p->left;
-		else
-			c = p->right;
-
-		if (p == btree< mypair<K, E>>::_root)
-			btree< mypair<K, E>>::_root = c;
-		else {
-			if (p == pp->left)
-				pp->left = c;
-			else pp->right = c;
-		}
-		btree< mypair<K, E>>::_size--;
-		delete p;
-	}
-
-	void ascend () { btree< mypair<K, E>>::inOrderOutput (); }
-
-	void deleteMax () {
-		node* troot = btree< mypair<K, E>>::_root;//指向要删除的节点
-		node* troot_f = btree< mypair<K, E>>::_root;//指向要删除的元素的父节点
-
-		//判断两种特殊情况
-		if (btree< mypair<K, E>>::_root == nullptr) {
-			return;
-		}
-		if (btree< mypair<K, E>>::_root->right == nullptr) {
-			troot = btree< mypair<K, E>>::_root;
-			btree< mypair<K, E>>::_root = btree< mypair<K, E>>::_root->left;
-			delete troot;
-			return;
-		}
-
-		//找到最右的右子树
-		while (troot->right != nullptr) {
-			troot_f = troot;
-			troot = troot->right;
-		}
-		//如果最右子节点还有左子树，则该左子树变成最右子节点的父节点的右子树
-		if (troot->left != nullptr) {
-			troot_f->right = troot->left;
-		}
-		//删除右子树
-		delete troot;
-		return;
-	}
-
-	void insertArray (E* arri, int len) {
-		btree< mypair<K, E>>::_root = new node;
-
-		for (int i = 0; i < len; i++) {
-			node* p = btree< mypair<K, E>>::_root;
-			node* pp = nullptr;
-			while (p != nullptr) {
-				pp = p;
-				if (i < p->data.key)
-					p = p->left;
-				else
-					p = p->right;
-			}
-
-			node* newNode = new node (i, arri[i]);
-			if (btree< mypair<K, E>>::_root != nullptr) {
-				if (i < pp->data.key)pp->left = newNode;
-				else pp->right = newNode;
-			} else {
-				btree< mypair<K, E>>::_root = newNode;
-			}
-
-			btree< mypair<K, E>>::_size++;
-		}
-	}
-
-	void inOrderToArr (node* t, E* position) {
-		if (t != nullptr) {
-			inOrderToArr (t->left, position);
-			position[0] = t->key;
-			position++;
-			inOrderToArr (t->left, position);
-			return;
-		} else {
-			return;
-		}
-	}
-
-	int getHight () {
-
-
-
-	}
-};
-template<class K, class E>
-ostream& operator << (ostream& out, bstree<K, E>& in) {
-	in.btree< mypair<K, E>>::levelOut (out);
+}
+template<class T>
+ostream& operator << (ostream& out, bstree<T> b) {
+	b.inOrder(out);
 	return out;
 }
-template<class K, class E>
-ostream& operator<<(ostream& out, mypair<K, E>& in) {
-	out << in.key << ':' << in.data;
-	return out;
+
+template<class T>
+bool bstree<T>::insert (T data_in) {
+
+	//检查目标结点是否存在
+	//node<T>* temp = search (data_in);
+	//if (temp != nullptr && temp->data == data_in) {
+	//	//找不到则返回false
+	//	return false;
+	//}
+
+	xor_result = 0;				//初始化异或值
+	node<T>* p = _root;		//p是用来寻找目标位置的指针
+	node<T>* pp = nullptr;	//pp是为了避免p指向空叶子结点而造成目标丢失
+
+	/*循环寻找目标位置*/
+	while (p != nullptr) {
+		pp = p;
+		xor_result = xor_result ^ p->data;
+		if (data_in < p->data) {
+			p->left_size++;
+			p = p->left;
+		} else if (data_in > p->data) {
+			p = p->right;
+		} else {
+			return false;
+		}
+	}
+
+	node<T>* new_node = new node<T> (data_in);	//构造新的结点
+	if (_root != nullptr) {						//若树不为空则插入到合适位置
+		if (data_in < pp->data) {
+			pp->left = new_node;
+		} else {
+			pp->right = new_node;
+		}
+	} else {									//若树为空则直接代替root
+		_root = new_node;
+	}
+	_size++;
+	return true;
+}
+
+/*寻找目标值元素，返回指针*/
+template<class T>
+node<T>* bstree<T>::search (T data_in) {
+	xor_result = 0;
+	node<T>* p = _root;
+
+	while (p != nullptr) {
+		xor_result = xor_result ^ p->data;
+		if (data_in < p->data) {
+			cout << "对比："<< data_in << " < " << p->data<<"\n";
+			p = p->left;
+		} else {
+			if (data_in > p->data) {
+				cout << "对比："<< data_in << " > " << p->data << "\n";
+				p = p->right;
+			} else {
+				return p;//找到目标便返回
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+template<class T>
+node<T>* bstree<T>::getPByIndex (int index) {
+	if (index < 0 || index >= _size) {
+		return nullptr;
+	}
+
+	xor_result = 0;
+	node<T>* p = _root;
+	while (p != nullptr) {
+		xor_result = xor_result ^ p->data;
+		if (p->left_size == index) {
+			cout << "对比名次：" << p->left_size << " == " << index << "\n";
+			return p;//直接返回
+		} else {
+			if (p->left_size > index) {
+				cout << "对比名次："<< p->left_size << " > " <<  index << "\n";
+				p = p->left;
+			} else {
+				index = index - p->left_size - 1;//这里注意，向右下方寻找时记得修改目标索引值
+				p = p->right;
+			}
+		}
+	}
+
+	return nullptr;
+}
+template<class T>
+bool bstree<T>::erase (T data_in) {
+	node<T>* temp = search (data_in);
+	if (temp == nullptr) {
+		return false;
+	}
+
+
+	//p是目标元素，pp是其父元素
+	xor_result = 0;
+	node<T>* p = _root;
+	node<T>* pp = nullptr;
+	while (p->data != data_in && p != nullptr) {
+		xor_result = xor_result ^ p->data;
+		pp = p;
+		if (data_in < p->data) {
+			p->left_size--;//沿途的结点的左节点数量都要减少
+			p = p->left;
+		} else {
+			p = p->right;
+		}
+
+	}
+	xor_result = xor_result ^ data_in;
+	if (p == nullptr) {
+		return false;
+	}
+
+	//寻找可代替p的s结点
+	if (p->left != nullptr && p->right != nullptr) {
+		node<T>* s = p->right;
+		node <T>* ps = p;
+		while (s->left != nullptr) {
+			ps = s;
+			s->left_size--;
+			s = s->left;
+		}
+		node<T>* q = new node<T> (p);
+		q->data = s->data;
+		if (pp == nullptr) {
+			_root = q;
+		} else if (p == pp->left) {
+			pp->left = q;
+		} else {
+			pp->right = q;
+		}
+		if (ps == p) {
+			pp = q;
+		} else {
+			pp = ps;
+		}
+		delete p;
+		p = s;
+	}
+	node<T>* c = nullptr;
+	if (p->left != nullptr) {
+		c = p->left;
+	} else {
+		c = p->right;
+	}
+	if (p == _root) { _root = c; } else {
+		if (p == pp->left) {
+			pp->left = c;
+		} else {
+			pp->right = c;
+		}
+	}
+	_size--;
+	delete p;
+	return true;
+}
+
+template<class T>
+bool bstree<T>::eraseByIndes (int index) {
+	if (index < 0 || index >= _size) {
+		return false;
+	}
+	xor_result = 0;
+	node<T>* temp = getPByIndex (index);
+	if (temp == nullptr) {
+		return false;
+	}
+	erase (temp->data);
+	return true;
+}
+/*本题目第二三个小任务的核心函数，计算每个节点为根的树的层数与节点数*/
+#define max(a,b) (a<b ? b:a)//用于获取左右子树中最大的那个层数
+void cal (node<int>* rootin, int* sizes, int* deepthes) {
+	//如果传入空则直接返回
+	if (rootin) {
+		//首先递归计算节点为根的树的节点数与层数，所有子节点全部计算完毕后再计算当前元素
+		cal (rootin->left, sizes, deepthes);
+		cal (rootin->right, sizes, deepthes);
+
+		//对于该节点
+		//若当前元素没有子节点，则以其为根的树的节点数与层数均为1
+		if (rootin->left == nullptr && rootin->right == nullptr) {
+			sizes[rootin->data] = 1;
+			deepthes[rootin->data] = 1;
+			//cout << deepthes[rootin->data] << " " << sizes[rootin->data] << "都无\n";
+
+		//若当前元素有左子树，则以其为根的树的节点数与层数为左子树相应数据加1
+		} else if (rootin->left != nullptr && rootin->right == nullptr) {
+			sizes[rootin->data] = sizes[rootin->left->data] + 1;
+			deepthes[rootin->data] = deepthes[rootin->left->data] + 1;
+			//cout << deepthes[rootin->data] << " " << sizes[rootin->data] << "左有\n";
+
+		//若当前元素有右子树，则以其为根的树的节点数与层数为右子树相应数据加1
+		} else if (rootin->left == nullptr && rootin->right != nullptr) {
+			sizes[rootin->data] = sizes[rootin->right->data] + 1;
+			deepthes[rootin->data] = deepthes[rootin->right->data] + 1;
+			//cout << deepthes[rootin->data] << " " << sizes[rootin->data] << "右都有\n";
+
+		//若当前元素有左右子树，则以其为根的树的节点数与层数为左右子树相应数据相加再加1
+		} else if (rootin->left != nullptr && rootin->right != nullptr) {
+			sizes[rootin->data] = sizes[rootin->right->data] + sizes[rootin->left->data] + 1;
+			deepthes[rootin->data] = max (deepthes[rootin->right->data], deepthes[rootin->left->data]) + 1;
+			//cout << deepthes[rootin->data] <<" "<< sizes[rootin->data] << "左右都有\n";
+		}
+	}
+	return;
+}
+
+int calF (bstree<int>& bst) {
+	/*初始化存储节点数与层数的数组*/
+	int* sizes = new int[100 + 1];
+	memset (sizes, 0, 100 + 1);
+	int* deepthes = new int[100 + 1];
+	memset (deepthes, 0, 100 + 1);
+	cal (bst._root,sizes,deepthes);
+
+	return deepthes[bst._root->data];
 }

@@ -3,10 +3,4 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="bstree.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="input.txt" />
-  </ItemGroup>
 </Project>
