@@ -85,17 +85,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "作业cp14", "作业cp14\�
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验11：搜索树验收", "实验11：搜索树验收\实验11：搜索树验收.vcxproj", "{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：图", "实验12：图\实验12：图.vcxproj", "{377F05A1-31AC-49B3-906D-847878E7243C}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验11：搜索树提交temp", "实验11：搜索树提交\实验11：搜索树提交.vcxproj", "{251BEE34-E38D-4D79-8D6A-8D04366B3E31}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验11：搜索树提交", "实验11：搜索树验收mxl\实验11：搜索树验收mxl.vcxproj", "{347C2636-E667-4C81-B497-D446406E595F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：邻接矩阵无向图", "实验12：邻接矩阵无向图\实验12：邻接矩阵无向图.vcxproj", "{310BE18F-E81F-40FE-990C-08DCE079FC28}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：邻接矩阵无向图验收", "实验12：邻接矩阵无向图\实验12：邻接矩阵无向图.vcxproj", "{310BE18F-E81F-40FE-990C-08DCE079FC28}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：邻接链表无向图", "实验12：邻接链表无向图\实验12：邻接链表无向图.vcxproj", "{2B6DE0E5-FA47-4713-BCAF-400BD2977800}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验10：邻接矩阵无向图-连通", "实验10：邻接矩阵无向图-连通\实验10：邻接矩阵无向图-连通.vcxproj", "{3906C80D-48D5-4EC2-AAB7-666863D5C57D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：图论提交", "实验12：图论提交\实验12：图论提交.vcxproj", "{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -433,14 +433,6 @@ Global
 		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Release|x64.Build.0 = Release|x64
 		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Release|x86.ActiveCfg = Release|Win32
 		{6BDE6968-FF1B-4A4A-AE68-5C2E6F28101F}.Release|x86.Build.0 = Release|Win32
-		{377F05A1-31AC-49B3-906D-847878E7243C}.Debug|x64.ActiveCfg = Debug|x64
-		{377F05A1-31AC-49B3-906D-847878E7243C}.Debug|x64.Build.0 = Debug|x64
-		{377F05A1-31AC-49B3-906D-847878E7243C}.Debug|x86.ActiveCfg = Debug|Win32
-		{377F05A1-31AC-49B3-906D-847878E7243C}.Debug|x86.Build.0 = Debug|Win32
-		{377F05A1-31AC-49B3-906D-847878E7243C}.Release|x64.ActiveCfg = Release|x64
-		{377F05A1-31AC-49B3-906D-847878E7243C}.Release|x64.Build.0 = Release|x64
-		{377F05A1-31AC-49B3-906D-847878E7243C}.Release|x86.ActiveCfg = Release|Win32
-		{377F05A1-31AC-49B3-906D-847878E7243C}.Release|x86.Build.0 = Release|Win32
 		{251BEE34-E38D-4D79-8D6A-8D04366B3E31}.Debug|x64.ActiveCfg = Debug|x64
 		{251BEE34-E38D-4D79-8D6A-8D04366B3E31}.Debug|x64.Build.0 = Debug|x64
 		{251BEE34-E38D-4D79-8D6A-8D04366B3E31}.Debug|x86.ActiveCfg = Debug|Win32
@@ -481,6 +473,14 @@ Global
 		{3906C80D-48D5-4EC2-AAB7-666863D5C57D}.Release|x64.Build.0 = Release|x64
 		{3906C80D-48D5-4EC2-AAB7-666863D5C57D}.Release|x86.ActiveCfg = Release|Win32
 		{3906C80D-48D5-4EC2-AAB7-666863D5C57D}.Release|x86.Build.0 = Release|Win32
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x64.ActiveCfg = Debug|x64
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x64.Build.0 = Debug|x64
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x86.ActiveCfg = Debug|Win32
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x86.Build.0 = Debug|Win32
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x64.ActiveCfg = Release|x64
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x64.Build.0 = Release|x64
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x86.ActiveCfg = Release|Win32
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
