@@ -39,7 +39,7 @@ int main(){
 		LWGraph.insertEdge(v1,v2,w);
 	}
 	cout<<"邻接链表各节点内容为："<<endl;
-	LWGraph.output();
+	LWGraph.output(cout);
 	if( LWGraph.connected() ==true) cout<<"本图是连通的。"<<endl;
 	else{
 		int* c=new int[n+1];

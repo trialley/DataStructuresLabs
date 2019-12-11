@@ -68,15 +68,15 @@ class queue {
 public:
 	queue (int initialCapacity = 10) {//构造函数 
 		if (initialCapacity < 0) {
-			//std::cerr << "队列长度必须大于0！" << std::endl;
+			////std::cerr << "队列长度必须大于0！" << std::endl;
 		}
 		else {
-			Queue = new T[initialCapacity];
+			_queue = new T[initialCapacity];
 			arrayLength = initialCapacity;
-			qFront = qBack = 0;     //这里是从Queue[1]开始插入元素 
+			qFront = qBack = 0;     //这里是从_queue[1]开始插入元素 
 		}
 	}
-	~queue () { delete[] Queue; }
+	~queue () { delete[] _queue; }
 	bool empty () const {
 		if (qFront == qBack) return true;
 		else return false;
@@ -86,16 +86,16 @@ public:
 	}
 	T& front () {
 		if (empty () != true)
-			return Queue[(qFront + 1) % arrayLength];
+			return _queue[(qFront + 1) % arrayLength];
 		else {
-			std::cerr << "队列为空" << std::endl;
+			//std::cerr << "队列为空" << std::endl;
 		}
 	}
 	T& back () {
 		if (empty () != true)
-			return Queue[qBack];
+			return _queue[qBack];
 		else {
-			std::cerr << "队列为空" << std::endl; exit (1);
+			//std::cerr << "队列为空" << std::endl; exit (1);
 		}
 	}
 	T pop () {//从队首删除元素 
@@ -107,54 +107,46 @@ public:
 	}
 	void push (const T& ele) {//从队尾添加元素 
 		if ((qBack + 1) % arrayLength == qFront) {//队列将满，加倍数组长度 
-			T* newQueue = new T[2 * arrayLength];
+			T* new_queue = new T[2 * arrayLength];
 			int start = (qFront + 1) % arrayLength;
 			if (start == 0 || start == 1) {//未形成环 
-				std::copy (Queue + start, Queue + qBack + 1, newQueue);
+				std::copy (_queue + start, _queue + qBack + 1, new_queue);
 			} else {//形成了环 
-				std::copy (Queue + start, Queue + arrayLength, newQueue);
+				std::copy (_queue + start, _queue + arrayLength, new_queue);
 				//复制第2段(start,队列末端，新队列起点） 
-				std::copy (Queue, Queue + qBack + 1, newQueue + (arrayLength - start));
+				std::copy (_queue, _queue + qBack + 1, new_queue + (arrayLength - start));
 				//复制第1段（原队列首端，qback,新队列第arraylength-start个位置） 
 			}
 			qFront = (arrayLength) * 2 - 1;
 			qBack = arrayLength - 1 - 1;   //重新设置首尾游标 
 			arrayLength = arrayLength * 2;
-			delete[] Queue;
-			Queue = newQueue;
+			delete[] _queue;
+			_queue = new_queue;
 		}
 		//把元素插入队列的尾部
 		qBack = (qBack + 1) % arrayLength;
-		Queue[qBack] = ele;
+		_queue[qBack] = ele;
 
 	}
 	void output () {
 		for (int i = qFront; i < qBack; i++)
-			std::cout << Queue[i];
+			std::cout << _queue[i];
 		std::cout << std::endl;
 	}
 private:
 	int qFront;  //队列中第一个元素的前一个未知 
 	int qBack;   //队列最后一个元素的位置 
 	int arrayLength;  //队列的容量 
-	T* Queue;	 //队列元素 
+	T* _queue;	 //队列元素 
 };
 
 template<class T>
 struct node {
 	T data;
 	T weight;
-	node* next = NULL;
+	node* next = nullptr;
 
-	node (T ele, T w, node* p) {
-		data = ele;
-		weight = w;
-		next = p;
-	}
-	node (T ele, T w) {
-		data = ele;
-		weight = w;
-	}
+	node (T ele, T w, node* p=nullptr):data (ele) ,weight(w),next(p){}
 	node () {}
 	node& operator=(node& A) {//结点赋值 
 		data = A.data;
@@ -168,7 +160,7 @@ template<class T>
 class chain {
 public:
 	chain () {
-		firstnode = NULL;
+		firstnode = nullptr;
 		listSize = 0;
 	}
 	chain (int initialCapacity, T A[]) {
@@ -204,7 +196,7 @@ public:
 	chain (const chain<T>& A) {
 		listSize = A.listSize;
 		if (listSize == 0) {//此表为空 
-			firstnode = NULL;
+			firstnode = nullptr;
 		} else {//TargetNode指向A的节点，SourceNode指向此链表的节点
 		//直接节点赋值会变成浅复制，ciao! 
 			node<T>* SourceNode = new node<T>;
@@ -225,7 +217,7 @@ public:
 
 	}
 	~chain () {
-		while (firstnode != NULL) {
+		while (firstnode != nullptr) {
 			node<T>* nextnode = firstnode->next;
 			delete firstnode;
 			firstnode = nextnode;
@@ -248,7 +240,7 @@ public:
 	T get_Weight (int ele) const {//返回元素是ele节点的weight
 		node<T>* cur_node;
 		cout << "vetrex=" << ele;
-		for (cur_node = firstnode; cur_node != NULL; cur_node = cur_node->next) {
+		for (cur_node = firstnode; cur_node != nullptr; cur_node = cur_node->next) {
 			if (cur_node->data == ele)
 				return cur_node->weight;
 		}
@@ -265,8 +257,8 @@ public:
 		return -1;
 	}
 	node<T>* eraseElement (int theVertex) {//搜索链表并查找顶点等于theVertex的元素，若找到则删除它并返回这个元素的指针 
-		node<T>* p = firstnode, * tp = NULL;
-		while (p != NULL) {
+		node<T>* p = firstnode, * tp = nullptr;
+		while (p != nullptr) {
 			if (p->data == theVertex) {
 				if (p == firstnode) //删头结点 
 					firstnode = firstnode->next;
@@ -280,7 +272,7 @@ public:
 				p = p->next;
 			}
 		}
-		return NULL;  //找不到的话返回NULL 
+		return nullptr;  //找不到的话返回nullptr 
 	}
 
 	void erase (int theIndex) {//从链表中删除索引为theIndex的节点 
@@ -344,7 +336,7 @@ public:
 			p = p->next;
 			delete deletenode;
 		}
-		firstnode = NULL;
+		firstnode = nullptr;
 		listSize = 0;
 	}
 	friend ostream& operator<<(ostream& out, const chain<T> A) {//这里要调用复制构造函数 
@@ -359,7 +351,7 @@ public:
 	}
 	class iterator {//构造函数、*&、前后自加、！=、== 
 	protected:
-		node<T>* _node = NULL;
+		node<T>* _node = nullptr;
 	public:
 		iterator (node<T>* theNode) {
 			_node = theNode;
@@ -398,13 +390,13 @@ public:
 	int listSize;                     //链表的元素个数 	               
 };
 
+//加权无向图,可称成为同权无向图 
 template<class T>
 class linkedWGraph {
-	//加权无向图 
 protected:
 	int n;                 //顶点数 
 	int e;                 //边数 
-	chain<T>* aList;  //邻接表 
+	chain<T>* _chain_heads;  //邻接表 
 	int* reach;  //数组指针 
 	int label = 1;
 
@@ -422,20 +414,19 @@ protected:
 	}
 
 public:
-	void output () {
+	void output (ostream& out) {
 		for (int i = 1; i <= n; i++) {
-			cout << "aList[" << i << "]="; aList[i].output ();
-			cout << endl;
+			out << "_chain_heads[" << i << "]="; _chain_heads[i].output ();
+			out << endl;
 		}
 	}
 	linkedWGraph (int v) {
-		if (v > 0)
-			n = v;
+		n = v;
 		e = 0;
-		aList = new chain<int>[n + 1];
+		_chain_heads = new chain<int>[n + 1];
 	}
 	~linkedWGraph () {
-		delete[] aList;  //这样就会自己调用chain的析构函数吗？ 
+		delete[] _chain_heads;  //这样就会自己调用chain的析构函数吗？ 
 	}
 	int numberOfVertices () const { return n; }
 	int numberOfEdges () const { return e; }
@@ -452,22 +443,22 @@ public:
 			cerr << "(" << v1 << "," << v2 << ") is not a permissible edge" << endl;
 			exit (1);
 		}
-		if (aList[v1].indexOf (v2) == -1) {//新边 
-			aList[v1].insert (0, v2, weight);
-			aList[v2].insert (0, v1, weight);
+		if (_chain_heads[v1].indexOf (v2) == -1) {//新边 
+			_chain_heads[v1].insert (0, v2, weight);
+			_chain_heads[v2].insert (0, v1, weight);
 			e++;
 		}
 	}
 	void eraseEdge (int i, int j) {
 		if (i > 1 && j > 1 && i <= n && j <= n) {
-			int* v = aList[i].eraseElement (j);
-			int* j = aList[j].eraseElement (i);  //v,j一定同时为空或者非空，不然说明一致性出了问题 
-			if (v != NULL && j != NULL)   e--;   //该边存在
+			int* v = _chain_heads[i].eraseElement (j);
+			int* j = _chain_heads[j].eraseElement (i);  //v,j一定同时为空或者非空，不然说明一致性出了问题 
+			if (v != nullptr && j != nullptr)   e--;   //该边存在
 		}
 	}
 	int Degree (int Vertex) {
 		checkVertex (Vertex);
-		return aList[Vertex].size ();
+		return _chain_heads[Vertex].size ();
 	}
 
 	class myIterator {
@@ -478,7 +469,7 @@ public:
 		}
 		~myIterator () {}
 		int next (T& theWeight) {//返回指定顶点的下一个邻接点的序号和它的的权值 
-			if (currentVertex != NULL) {
+			if (currentVertex != nullptr) {
 				theWeight = currentVertex->weight;
 				int vertex = currentVertex->data;
 				currentVertex = currentVertex->next;
@@ -488,7 +479,7 @@ public:
 		}
 		int next () {//返回指定顶点的下一个邻接点 
 
-			if (currentVertex != NULL) {
+			if (currentVertex != nullptr) {
 				int vertex = currentVertex->data;
 				currentVertex = currentVertex->next;
 				return vertex;
@@ -501,7 +492,7 @@ public:
 	};
 	myIterator* iterator (int theVertex) {
 		checkVertex (theVertex);
-		return new myIterator (&aList[theVertex]);
+		return new myIterator (&_chain_heads[theVertex]);
 	}
 
 	bool connected () {//判断无向图是否连通 
@@ -516,8 +507,9 @@ public:
 		dfs (1, reach, 1); //给邻接于顶点1的可达顶点做标记
 
 		for (int i = 1; i <= n; i++) {//检查所有顶点是否已做标记
-			if (reach[i] == 0)
+			if (reach[i] == 0) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -530,7 +522,7 @@ public:
 			int vertex = q.front ();
 			q.pop ();
 
-			for (node<int>* u = aList[vertex].firstnode; u != NULL; u = u->next) {
+			for (node<int>* u = _chain_heads[vertex].firstnode; u != nullptr; u = u->next) {
 				if (reach[u->data] == 0) {
 					q.push (u->data);	reach[u->data] = label;
 				}
@@ -547,7 +539,7 @@ public:
 		for (i = 0; i <= n; i++)
 			c[i] = 0;
 
-		int label = 0;  //最后一个构建的编号 
+		int label = 0;
 		for (i = 1; i <= n; i++) {
 			if (c[i] == 0) {//对所有未到达的顶点，都进行一次bfs标记 
 				label++;
@@ -567,7 +559,7 @@ public:
 			cout << vertex << " ";
 			q.pop ();
 
-			for (node<int>* u = aList[vertex].firstnode; u != NULL; u = u->next) {
+			for (node<int>* u = _chain_heads[vertex].firstnode; u != nullptr; u = u->next) {
 				if (reach[u->data] == 0) {
 					q.push (u->data);	reach[u->data] = label;
 				}
@@ -605,7 +597,7 @@ public:
 		for (int i = 1; i <= n; i++) {
 			L[i] = 100000;  predecessor[i] = -1;
 		}   L[start] = 0;
-		for (node<int>* u = aList[start].firstnode; u != NULL; u = u->next) {
+		for (node<int>* u = _chain_heads[start].firstnode; u != nullptr; u = u->next) {
 			L[u->data] = u->weight;
 			predecessor[u->data] = start;  //对于start邻接的点 
 		}
@@ -634,7 +626,7 @@ public:
 				}
 			}
 
-			for (node<int>* u = aList[tag].firstnode; u != NULL; u = u->next) {//遍历刚找到的点的邻接点,如果它没有被访问过，且距离可被更新
+			for (node<int>* u = _chain_heads[tag].firstnode; u != nullptr; u = u->next) {//遍历刚找到的点的邻接点,如果它没有被访问过，且距离可被更新
 			  //这样写，复杂度是O(链表长)，较好 
 				if (S[u->data] == false && L[tag] + (u->weight) < L[u->data]) {
 					L[u->data] = L[tag] + u->weight;
@@ -644,8 +636,4 @@ public:
 		}
 		return L[dest];
 	}
-
-
-
-
 };
