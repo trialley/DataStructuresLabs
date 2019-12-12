@@ -9,6 +9,8 @@
 #include<iostream>
 #include"adjacencyWGraph.h"
 #define noEdge 1000000
+#define until(re) while(!(re))
+
 using namespace std;
 
 int main () {
@@ -16,25 +18,26 @@ int main () {
 	freopen ("input.txt", "r", stdin);
 	cout << "请输入图的顶点数n和边数e" << endl;
 	int n, e;  cin >> n >> e;
-	adjacencyWGraph<int> AWGraph (n, noEdge);
+	adjacencyWGraph<int> g (n, noEdge);
 	cout << "请以顶点对(顶点1,顶点2，权值)的形式输入图的每一条边" << endl;
 
 	for (int i = 0; i < e; i++) {
-		int v1, v2, w;  cin >> v1 >> v2 >> w;
-		edge<int>* Edge = new edge<int> (v1, v2, w);
-		AWGraph.insertEdge (Edge);
+		int _from, _to, _w;  cin >> _from >> _to >> _w;
+		edge<int>* Edge = new edge<int> (_from, _to, _w);
+		g.insertEdge (Edge);
 	}
 
 	edge<int>* STE = new edge<int>[n - 1];
 	cout << "最小生成树中每条边(v1,v2,w)如下:" << endl;
-	if (AWGraph.kruskal (STE) == true) {
+	if (g.kruskal (STE) == true) {
 		for (int i = 0; i <= n - 2; i++)
 			cout << STE[i] << endl;
 	}
 	cout << "prim最小生成树中每条边(v1,v2,w)如下:" << endl;
-	if (AWGraph.Prim (STE) == true) {
-		for (int i = 0; i <= n - 2; i++)
+	if (g.prim (STE) == true) {
+		for (int i = 0; i <= n - 2; i++) {
 			cout << STE[i] << endl;
+		}
 	}
 	return 0;
 }

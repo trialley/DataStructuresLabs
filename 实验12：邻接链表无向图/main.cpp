@@ -1,42 +1,70 @@
+/*
+1.创建无向图类。存储结构分别使用邻接矩阵和邻接链表。提供操作：
+1.插入一条边
+2.删除一条边
+3.遍历：BFS、DFS。
+
+2.键盘输入图中顶点的个数n和边的数目e，以顶点对（i，j）形式
+依次输入图的每一条边或随机生成含e条边的图，其中（i,j）表示
+顶点i和顶点j之间有边相连，建立图。-
+
+3.判断图是否连通。若不连通，输出该图的连通分量的个数及每个
+连通分量中的顶点；-
+
+4.对建立好的连通图，键盘输入一顶点，输出从该顶点开始的一个
+DFS序列和BFS序列；一个DFS生成树和BFS生成树（树可以文本形式
+输出）
+
+5.键盘输入两顶点，输出两顶点之间的最短路径。-
+*/
+
 #include<iostream>
-#include"graph.h"
+#include"linkedWGraph.h"
+#define noEdge 1000000
 using namespace std;
 
-int main () {
+int main(){
 #pragma warning(disable:4996)
-    freopen ("input.txt", "r", stdin);
+	freopen ("input.txt", "r", stdin);
 
-    int n, m, s, t;
-    cin >> n >> m >> s >> t;
-    linkedgraph g (n);
-    until (m == 0) {
-        int a, b, c;
-        cin >> a >> b >> c;
-        switch (a) {
-        case 0:
-            g.insertEdge (b, c);
-            break;
-        case 1:
-            g.eraseEdge (b, c);
-            break;
-        }
-        m--;
-    }
+	cout<<"请输入图的顶点数n和边数e"<<endl;
+	int n,e;  
+	cin>>n>>e;
+	linkedWGraph<int> g(n);
+	cout<<"请以顶点对 顶点1 顶点2 权值 的形式输入图的每一条边"<<endl;
 
-    //第一行输出图中有多少个连通分量
-    //第二行输出所有连通子图中最小点的编号（升序），编号间用空格分隔
-    g.printCCs ();
-    //第三行输出从s点开始的_dfs序列长度
+	for(int i=0;i<e;i++){
+		int v1,v2,w; 
+		cin>>v1>>v2>>w;
+		g.insertEdge(v1,v2,w);
+	}
+	cout<<"邻接链表各节点内容为："<<endl;
+	g.output(cout);
+	if( g.connected() ==true) cout<<"本图是连通的。"<<endl;
+	else{
+		int* c=new int[n+1];
+		cout<<"连通分支数是："<<g.labelComponents(c)<<endl;
+		for(int i=1;i<=n;i++)
+		   cout<<"顶点"<<i<<"属于第"<<c[i]<<"连通分支"<<endl;
+		
+		delete[] c;
+	}
+	cout<<"请输入一个顶点序号："; int num; cin>>num;
+	int* reach=new int[n+1];
+	cout<<"BFS序列：";   g.print_bfs(num,reach);
+	cout<<"DFS序列：";   g.print_dfs(num,reach);  cout<<endl;
+	delete[] reach;
+	
+	int* predecessor=new int[n+1]; 
+	cout<<"请输入起始点和结束点：";  int start,dest;  cin>>start>>dest; 
+	cout<<endl<<"最短路："<<g.Dijkstra(start,dest,predecessor)<<endl;
+	cout<<"最短路径为："; 
+	n=dest;  cout<<dest<<" ";
+	while(predecessor[n]!=0){
+		cout<<predecessor[n]<<" ";
+		n=predecessor[n];
+	}
+	delete[] predecessor;
 
-    //第四行输出从s点开始的字典序最小的_dfs序列
-    g.printDFS (s);
-
-    //第五行输出从t点开始的_bfs序列的长度
-    //第六行输出从t点开始字典序最小的_bfs序列
-    g.printBFS (t);
-
-    //第七行输出从s点到t点的最短路径，若是不存在路径则输出-1
-
-    cout << g.getShortestDis (s, t);
-    return 0;
+	return 0;
 }

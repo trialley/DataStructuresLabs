@@ -25,6 +25,8 @@ public:
 private:
 	int* parent;
 };
+
+
 /************一下是应用了重量规则和路径紧缩优化的快速并查集算法**************/
 struct UnionFindNode {
 	UnionFindNode () {
@@ -35,7 +37,8 @@ struct UnionFindNode {
 
 };
 
-class fastUnionFind {//用重量规则和路径紧缩来优化并查集
+class fastUnionFind {
+	//用重量规则和路径紧缩来优化并查集
 public:
 	fastUnionFind (int n) {
 		initialize (n);

@@ -2,31 +2,26 @@
 #include<iostream>
 using namespace std;
 
-template <class T>
-class edge
-{
-   public:
-   	  edge() {	 }
-   	  edge(int V1,int V2,T weight)
-   	  {
-   	  	 v1=V1;  v2=V2;  w=weight;
-	  }
-      ~edge() {};
-      int vertex1() const { return v1; }
-      int vertex2() const { return v2; }
-      T weight() const  { return w; }
-      operator T() const { return w; }  //隐式转换，we'll see. 
-      friend ostream& operator<<(ostream& out,const edge<T> A)
-      {
-         out << "(" << A.v1 << ", " << A.v2 << ", " << A.w << ")";
-         return out;
-      }
-      
-      protected:
-      	int v1;
-      	int v2;
-      	T w;
-      	
+template <class W>
+class edge {
+public:
+    edge () {}
+    edge (int V1, int V2, W weight):_from(V1),_to(V2),_w(weight) {}
+    ~edge () {};
+    int getFrom () const { return _from; }
+    int getTo () const { return _to; }
+    W weight () const { return _w; }
+    operator W() const { return _w; }//否则报错
+    friend ostream& operator<<(ostream& out, const edge<W> A) {
+        out << "(" << A._from << ", " << A._to << ", " << A._w << ")";
+        return out;
+    }
+
+protected:
+    int _from;
+    int _to;
+    W _w;
+
 };
-      
+
 

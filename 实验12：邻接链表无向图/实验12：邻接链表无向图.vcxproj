@@ -20,10 +20,10 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{2B6DE0E5-FA47-4713-BCAF-400BD2977800}</ProjectGuid>
-    <RootNamespace>实验12邻接链表无向图</RootNamespace>
+    <ProjectGuid>{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}</ProjectGuid>
+    <RootNamespace>实验12：邻接链表无向图</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>实验12：邻接链表无向图验收2</ProjectName>
+    <ProjectName>实验12：邻接链表无向图</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -139,12 +139,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClInclude Include="chain.h" />
+    <ClInclude Include="edge.h" />
+    <ClInclude Include="fastUnionFind.h" />
+    <ClInclude Include="linkedWGraph.h" />
+    <ClInclude Include="minHeap.h" />
+    <ClInclude Include="queue.h" />
+    <ClInclude Include="stack.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="chain.h" />
-    <ClInclude Include="graph.h" />
-    <ClInclude Include="queue.h" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="input.txt" />

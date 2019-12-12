@@ -1,5 +1,5 @@
 #pragma once
-template<class T>
+template<class W>
 /*分布式排序*/
 class minHeap {
 public:
@@ -7,9 +7,9 @@ public:
 private:
 	int _size;
 	int _length;
-	T* _head;
+	W* _head;
 	void _extLength () {
-		T* temp = new T[_length * 2];
+		W* temp = new W[_length * 2];
 		copy (_head, _head + _length, temp);
 		delete[] _head;
 		_length *= 2;
@@ -21,10 +21,10 @@ private:
 public:
 	minHeap (int lengthi = 10) {
 		_length = lengthi + 1;
-		_head = new T[_length];
+		_head = new W[_length];
 		_size = 0;
 	}
-	void initialize (T* arri, int sizei) {
+	void initialize (W* arri, int sizei) {
 		_clearAndInit ();
 		for (int i = 1; i <= sizei; i++) {
 			push (arri[i]);
@@ -34,10 +34,10 @@ public:
 	void _clearAndInit () {
 		_clear ();
 		_length = 11;
-		_head = new T[11];
+		_head = new W[11];
 		_size = 0;
 	}
-	const T& top () {
+	const W& top () {
 		if (_size == 0)
 			throw min_head_empty;
 		return _head[1];
@@ -46,8 +46,8 @@ public:
 		if (_size == 0) {
 			throw min_head_empty;
 		}
-		_head[1].~T ();
-		T to_be_insert = _head[_size--];
+		_head[1].~W ();
+		W to_be_insert = _head[_size--];
 		int insert_index = 1,
 			child_index = 2;     // child_index of current_node
 
@@ -69,7 +69,7 @@ public:
 		}
 		_head[insert_index] = to_be_insert;
 	}
-	void push (const T& datai) {
+	void push (const W& datai) {
 		//进行越界检查
 		if (_size == _length - 1) {
 			_extLength ();
@@ -86,7 +86,7 @@ public:
 
 		_head[insert_index] = datai;
 	}
-	void pushShow (const T& datai) {
+	void pushShow (const W& datai) {
 		//进行越界检查
 		if (_size == _length - 1) {
 			_extLength ();

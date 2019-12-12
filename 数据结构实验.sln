@@ -91,8 +91,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验11：搜索树提交"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验10：邻接矩阵无向图-连通", "实验10：邻接矩阵无向图-连通\实验10：邻接矩阵无向图-连通.vcxproj", "{3906C80D-48D5-4EC2-AAB7-666863D5C57D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：邻接链表无向图验收", "实验12：图论提交\实验12：图论提交.vcxproj", "{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：图论提交", "实验12：图论提交mxl\实验12：图论提交mxl.vcxproj", "{90B9D25E-C54E-478D-BBD8-737231498138}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：邻接矩阵无向图验收", "实验12：邻接矩阵无向图\实验12：邻接矩阵无向图.vcxproj", "{310BE18F-E81F-40FE-990C-08DCE079FC28}"
@@ -100,6 +98,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验13：链表-贪婪算法", "实验13：链表-贪婪算法\实验13：链表-贪婪算法.vcxproj", "{3A523D24-611C-4E06-BC4E-0014B8CEAB07}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验13：矩阵-贪婪算法", "实验13：矩阵-贪婪算法\实验13：矩阵-贪婪算法.vcxproj", "{2C194C8E-8BBA-4121-B2DD-951E8BF010D3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：邻接链表无向图", "实验12：邻接链表无向图\实验12：邻接链表无向图.vcxproj", "{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -461,14 +461,6 @@ Global
 		{3906C80D-48D5-4EC2-AAB7-666863D5C57D}.Release|x64.Build.0 = Release|x64
 		{3906C80D-48D5-4EC2-AAB7-666863D5C57D}.Release|x86.ActiveCfg = Release|Win32
 		{3906C80D-48D5-4EC2-AAB7-666863D5C57D}.Release|x86.Build.0 = Release|Win32
-		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x64.ActiveCfg = Debug|x64
-		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x64.Build.0 = Debug|x64
-		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x86.ActiveCfg = Debug|Win32
-		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x86.Build.0 = Debug|Win32
-		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x64.ActiveCfg = Release|x64
-		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x64.Build.0 = Release|x64
-		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x86.ActiveCfg = Release|Win32
-		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x86.Build.0 = Release|Win32
 		{90B9D25E-C54E-478D-BBD8-737231498138}.Debug|x64.ActiveCfg = Debug|x64
 		{90B9D25E-C54E-478D-BBD8-737231498138}.Debug|x64.Build.0 = Debug|x64
 		{90B9D25E-C54E-478D-BBD8-737231498138}.Debug|x86.ActiveCfg = Debug|Win32
@@ -501,6 +493,14 @@ Global
 		{2C194C8E-8BBA-4121-B2DD-951E8BF010D3}.Release|x64.Build.0 = Release|x64
 		{2C194C8E-8BBA-4121-B2DD-951E8BF010D3}.Release|x86.ActiveCfg = Release|Win32
 		{2C194C8E-8BBA-4121-B2DD-951E8BF010D3}.Release|x86.Build.0 = Release|Win32
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x64.ActiveCfg = Debug|x64
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x64.Build.0 = Debug|x64
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x86.ActiveCfg = Debug|Win32
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Debug|x86.Build.0 = Debug|Win32
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x64.ActiveCfg = Release|x64
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x64.Build.0 = Release|x64
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x86.ActiveCfg = Release|Win32
+		{7E64563A-B2DB-42A0-B8FF-B212BB0B2B61}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -32,7 +32,7 @@ public:
 	int size () const { return stackTop + 1; }
 	T top () {
 		//判断是否为空
-		//有的实现版本中top输入引用，栈空则返回原数值，这样很不符合职责单一原则
+		//有的实现版本中getTop输入引用，栈空则返回原数值，这样很不符合职责单一原则
 		if (stackTop == -1) {
 			throw stack_empty;
 		}

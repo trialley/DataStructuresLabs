@@ -37,7 +37,7 @@ public:
 		_head = new T[11];
 		_size = 0;
 	}
-	const T& top () {
+	const T& getTop () {
 		if (_size == 0)
 			throw min_head_empty;
 		return _head[1];
@@ -47,7 +47,7 @@ public:
 			throw min_head_empty;
 		}
 		_head[1].~T ();
-		T to_be_insert = _head[_size--];
+		T getTo_be_insert = _head[_size--];
 		int insert_index = 1,
 			child_index = 2;     // child_index of current_node
 
@@ -60,14 +60,14 @@ public:
 				child_index++;
 			}
 			//如果根比两个子都小，那直接退出就行了，不必再交换
-			if (to_be_insert <= _head[child_index]) {
+			if (getTo_be_insert <= _head[child_index]) {
 				break;
 			}
 			_head[insert_index] = _head[child_index];
 			insert_index = child_index;
 			child_index *= 2;
 		}
-		_head[insert_index] = to_be_insert;
+		_head[insert_index] = getTo_be_insert;
 	}
 	void push (const T& datai) {
 		//进行越界检查
