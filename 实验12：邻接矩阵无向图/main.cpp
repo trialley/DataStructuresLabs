@@ -9,7 +9,7 @@ int main () {
 	cout << "请输入图的顶点数n和边数e" << endl;
 	int n, e;
 	cin >> n >> e;
-	adjacencyWGraph<int,int> AWGraph (n, noEdge);
+	adjacencyWGraph<int> AWGraph (n, noEdge);
 
 	cout << "请以 顶点1 顶点2 权值 的形式输入图的每一条边" << endl;
 	for (int i = 0; i < e; i++) {

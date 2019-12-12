@@ -1,7 +1,4 @@
-#include<cstring>//memcpy
-#include<cstdlib>//min
 #include<iostream>
-#include<algorithm>
 #include"stack.h"
 #include"queue.h"
 #include"chain.h"
@@ -21,14 +18,14 @@ protected:
 	int* _reach;  //数组指针 
 	int _label = 1;
 
-	void rDfs (int v) {//递归实现深度优先搜索
-		_reach[v] = _label;  int u;
+	void _dfs (int _head) {//递归实现深度优先搜索
+		_reach[_head] = _label;  int u;
 		//cout<<"当前走到顶点："<<v<<endl;
-		myIterator* iv = iterator (v);  //这里加<T>就会报错，为什么？？ 
+		myIterator* iv = iterator (_head);  //这里加<T>就会报错，为什么？？ 
 		while ((u = iv->next ()) != 0) {//以v的下一个邻接点u为新起点递归搜索 
 		//cout<<v<<"的下一个邻接点是："<<u<<" "<<endl;
 			if (_reach[u] != _label)
-				rDfs (u);  //u是一个没有到达过的顶点 
+				_dfs (u);  //u是一个没有到达过的顶点 
 		}
 		delete iv;
 		return;
@@ -41,8 +38,8 @@ public:
 			out << endl;
 		}
 	}
-	linkedWGraph (int v) {
-		_vertex_num = v;
+	linkedWGraph (int _head) {
+		_vertex_num = _head;
 		_edge_num = 0;
 		_chain_heads = new chain<int>[_vertex_num + 1];
 	}
@@ -53,7 +50,7 @@ public:
 	int numberOfEdges () const { return _edge_num; }
 	bool directed () const { return false; }
 	bool weight () const { return true; }
-	void checkVertex (int theVertex) const {//确认是有效顶点 
+	void _checkVertex (int theVertex) const {//确认是有效顶点 
 		if (theVertex<1 || theVertex>_vertex_num) {
 			cerr << "the vertex:" << theVertex << " is not permissible";
 			exit (1);
@@ -72,47 +69,47 @@ public:
 	}
 	void eraseEdge (int i, int j) {
 		if (i > 1 && j > 1 && i <= _vertex_num && j <= _vertex_num) {
-			int* v = _chain_heads[i].eraseElement (j);
+			int* _head = _chain_heads[i].eraseElement (j);
 			int* j = _chain_heads[j].eraseElement (i);  //v,j一定同时为空或者非空，不然说明一致性出了问题 
-			if (v != nullptr && j != nullptr)   _edge_num--;   //该边存在
+			if (_head != nullptr && j != nullptr)   _edge_num--;   //该边存在
 		}
 	}
-	int Degree (int Vertex) {
-		checkVertex (Vertex);
+	int degree (int Vertex) {
+		_checkVertex (Vertex);
 		return _chain_heads[Vertex].size ();
 	}
 
 	class myIterator {
 	public:
 		myIterator (chain<T>* theVertex) {
-			v = theVertex;
-			currentVertex = v->_head;
+			_head = theVertex;
+			_current_vertex = _head->_head;
 		}
 		~myIterator () {}
 		int next (T& theWeight) {//返回指定顶点的下一个邻接点的序号和它的的权值 
-			if (currentVertex != nullptr) {
-				theWeight = currentVertex->weight;
-				int vertex = currentVertex->data;
-				currentVertex = currentVertex->next;
+			if (_current_vertex != nullptr) {
+				theWeight = _current_vertex->weight;
+				int vertex = _current_vertex->data;
+				_current_vertex = _current_vertex->next;
 				return vertex;
 			} else
 				return 0;
 		}
 		int next () {//返回指定顶点的下一个邻接点 
 
-			if (currentVertex != nullptr) {
-				int vertex = currentVertex->data;
-				currentVertex = currentVertex->next;
+			if (_current_vertex != nullptr) {
+				int vertex = _current_vertex->data;
+				_current_vertex = _current_vertex->next;
 				return vertex;
 			}
 			return 0;
 		}
 	protected:
-		chain<T>* v;    //邻接表的点 
-		node<T>* currentVertex;   //当前搜索的顶点 
+		chain<T>* _head;    //邻接表的点 
+		node<T>* _current_vertex;   //当前搜索的顶点 
 	};
 	myIterator* iterator (int theVertex) {
-		checkVertex (theVertex);
+		_checkVertex (theVertex);
 		return new myIterator (&_chain_heads[theVertex]);
 	}
 
@@ -134,10 +131,11 @@ public:
 		}
 		return true;
 	}
-	void bfs (int v, int _reach[], int label) {//广度优先算法，_reach[i]用来标记所有邻接于顶点v的可到达的顶点 
+
+	void bfs (int _head, int _reach[], int label) {//广度优先算法，_reach[i]用来标记所有邻接于顶点v的可到达的顶点 
 		queue<int> q (10);
-		_reach[v] = label;
-		q.push (v);
+		_reach[_head] = label;
+		q.push (_head);
 
 		while (q.empty () != true) {
 			int vertex = q.front ();
@@ -150,10 +148,11 @@ public:
 			}
 		}
 	}
-	void dfs (int v, int _reach[], int label) {
+
+	void dfs (int _head, int _reach[], int label) {
 		_reach = _reach;
 		label = label;
-		rDfs (v);
+		_dfs (_head);
 	}
 	int labelComponents (int c[]) {//返回连通分支数，c[i]是顶点i所属的分支序号 
 		int i = 0;
@@ -169,11 +168,11 @@ public:
 		}
 		return label;
 	}
-	void print_bfs (int v, int _reach[]) {
+	void print_bfs (int _head, int _reach[]) {
 		memset (_reach, 0, sizeof (int) * (_vertex_num + 1));
-		int label = 1; _reach[v] = label;
+		int label = 1; _reach[_head] = label;
 		queue<int> q (10);
-		q.push (v);
+		q.push (_head);
 
 		while (q.empty () != true) {
 			int vertex = q.front ();
@@ -187,11 +186,11 @@ public:
 			}
 		}
 	}
-	void print_dfs (int v, int _reach[]) {//使用栈实现的DFS搜索算法 
+	void print_dfs (int _head, int _reach[]) {//使用栈实现的DFS搜索算法 
 		stack<int> s (10);  int u;
 		memset (_reach, 0, sizeof (int) * (_vertex_num + 1));
-		_reach[v] = _label;
-		s.push (v);  cout << v << " ";
+		_reach[_head] = _label;
+		s.push (_head);  cout << _head << " ";
 
 		while (!s.empty ()) //当栈不空时 
 		{

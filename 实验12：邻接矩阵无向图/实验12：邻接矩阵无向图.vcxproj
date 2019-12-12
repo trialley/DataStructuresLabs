@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="adjacencyWGraph.h" />
-    <ClInclude Include="chain.h" />
     <ClInclude Include="queue.h" />
     <ClInclude Include="edge.h" />
     <ClInclude Include="stack.h" />

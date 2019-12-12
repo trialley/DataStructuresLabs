@@ -4,6 +4,10 @@ using namespace std;
 
 template <class T>
 class edge {
+protected:
+    int from;
+    int to;
+    T w;
 public:
     edge () {}
     edge (int v1, int v2, T weight):from(v1),to(v2),w(weight){}
@@ -19,11 +23,6 @@ public:
         out << "(" << A.from << ", " << A.to << ", " << A.w << ")";
         return out;
     }
-
-protected:
-    int from;
-    int to;
-    T w;
 };
 
 

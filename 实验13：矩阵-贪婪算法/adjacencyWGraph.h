@@ -8,17 +8,6 @@
 using namespace std;
 #define until(re) while(!(re))
 
-
-int Minium (int L[], bool S[], int n) {
-	//在L[1:n]数组中返回不在顶点集S中最小的元素 
-	int min = 100000;
-	for (int i = 1; i <= n; i++) {
-		if (L[i] < min && S[i] == false)
-			min = L[i];
-	}
-	return min;
-}
-
 template<class W>
 class adjacencyWGraph {
 	//加权无向图 
@@ -185,7 +174,7 @@ public:
 	}
 	void bfs (int v, int reach[], int label) {
 		//广度优先算法，reach[i]用来标记所有邻接于顶点v的可到达的顶点 
-		queue<int> q (10);
+		queue<int> q;
 		reach[v] = label;
 		q.push (v);
 
@@ -268,33 +257,39 @@ public:
 			}
 		}
 	}
-	int Dijkstra (int start, int dest, int predecessor[]) {//返回最短路长，记录下最短路的路径，predecessor是从start到dest路径中dest前的那个顶点 
+	int Dijkstra (int start, int dest, int path[]) {
+		//返回最短路长，记录下最短路的路径，predecessor是从start到dest路径中dest前的那个顶点 
+		
 		int* L = new int[_vertex_num + 1];  //L[i]就是从start点到顶点i的距离 
 		for (int i = 1; i <= _vertex_num; i++)  L[i] = _weights[start][i];  L[start] = 0;
 		bool* S = new bool[_vertex_num + 1];
 		for (int i = 1; i <= _vertex_num; i++)  S[i] = false;  //S[i]表示start到顶点i的最短路已求得 
 		for (int i = 1; i <= _vertex_num; i++) {
-			if (L[i] == _no_edge)    //对不邻接的点 
-				predecessor[i] = -1;
-			else
-				predecessor[i] = start;  //邻接点的前驱就是start 
+			path[i] = (L[i] == _no_edge) ?-1 : start;
 		}
-		predecessor[start] = 0;    //源顶点没有前驱 
+		path[start] = 0;    //源顶点没有前驱 
+		for (int i = 1; i <= _vertex_num; i++) {
 
-		while (S[dest] != true) {/*下面找一个不在顶点集S中的u且L[u]标号最小，可以借助一下线性表吗？*/
-			int u;
-			for (u = 1; u <= _vertex_num; u++) {
-				if (S[u] == false && L[u] == Minium (L, S, _vertex_num))  //这里找一个不在顶点集S且标号最小的点，复杂度可以降到O(1)吗？ 
-				{//这里比较粗暴，直接扫描了所有顶点，其实可以用一个collected数组优化成扫描所有已收录顶点
-				 //按我的写法复杂度好像是O(n^3)，可以通过把两个循环判断条件糅合来降低复杂度嘛？不，你的复杂度是O(N^2) 
-					S[u] = true;  //把u加入顶点集S中
-					for (int v = 1; v <= _vertex_num; v++) {//对每一个不属于S的顶点v 
-						if (S[v] == false && L[u] + _weights[u][v] < L[v]) {
-							L[v] = L[u] + _weights[u][v];
-							predecessor[v] = u;   //顶点v的前驱是u 
-						}
+			auto Minium = [](int L[], bool S[], int n) {
+				//在L[1:n]数组中返回不在顶点集S中最小的元素 
+				int min = 100000;
+				for (int i = 1; i <= n; i++) {
+					if (L[i] < min && S[i] == false) {
+						min = L[i];
 					}
-					break;  //跳到最外层的while循环 
+				}
+				return min;
+			};
+
+			if (S[i] == false && L[i] == Minium (L, S, _vertex_num)) {
+				S[i] = true;  //把u加入顶点集S中
+
+				//重新计算路径长度
+				for (int j = 1; j <= _vertex_num; j++) {//对每一个不属于S的顶点v 
+					if (S[j] == false && L[i] + _weights[i][j] < L[j]) {
+						L[j] = L[i] + _weights[i][j];
+						path[j] = i;   //顶点v的前驱是u 
+					}
 				}
 			}
 		}
@@ -313,7 +308,7 @@ public:
 			myIterator* ii = iterator (i);
 			int j; W w;
 			while ((j = ii->next (w)) != 0) {
-				if (i < j){ //避免重复加边 
+				if (i < j) { //避免重复加边 
 					Edge[k++] = edge<int> (i, j, w);
 				}
 			}
@@ -351,6 +346,8 @@ public:
 		myIterator* i = iterator (1);
 		int j;
 		W w;
+
+		//对顶点距离进行排序，构建小根堆
 		while ((j = i->next (w)) != 0) {
 			edge<W> tem (1, j, w);
 			heap.push (tem);
@@ -369,7 +366,7 @@ public:
 			TV[b] = true;
 			i = iterator (b);
 			while ((j = i->next (w)) != 0) {
-				if (j > b){
+				if (j > b) {
 					//保证不重复加入边 
 					edge<W> tem (b, j, w);
 					heap.push (tem);
@@ -379,7 +376,6 @@ public:
 		delete[] TV;      //TV是已在树中的顶点集
 
 		return (k == _vertex_num - 1);
-
 	}
 
 };

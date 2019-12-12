@@ -11,9 +11,9 @@
 public:
 	enum queue_err { queue_empty };  //常见的错误
 private:
-	struct node;					//结点类型
-	node* _head;					//头结点指针
-	node* _end;						//尾结点指针，指向NULL
+	struct _nodes;					//结点类型
+	_nodes* _head;					//头结点指针
+	_nodes* _end;						//尾结点指针，指向NULL
 	int _length;					//元素个数
 public:
 	queue ();						//构造函数
@@ -29,23 +29,23 @@ class queue {
 public:
 	enum queue_err { queue_empty };
 private:
-	typedef struct node {
+	typedef struct _nodes {
 		W data;
-		node* next;
-		node () { next = nullptr; }
-	}node;
-	node* _head;
-	node* _end;
+		_nodes* next;
+		_nodes () { next = nullptr; }
+	}_nodes;
+	_nodes* _head;
+	_nodes* _end;
 	int _length;
 public:
 	queue () {
-		_head = new node;
+		_head = new _nodes;
 		_end = _head;
 		_length = 0;
 	}
 	~queue () {
 		while (_head->next != NULL) {
-			node* temp = _head;
+			_nodes* temp = _head;
 			_head = _head->next;
 			delete temp;
 		}
@@ -54,7 +54,7 @@ public:
 
 	void push (const W& in) {
 		_length++;
-		node* n_end = new node;
+		_nodes* n_end = new _nodes;
 		n_end->data = in;
 		n_end->next = NULL;
 
@@ -71,7 +71,7 @@ public:
 		if (empty ()) {
 			throw queue_empty;
 		}
-		node* n_head = _head->next;
+		_nodes* n_head = _head->next;
 		delete _head;
 
 		_head = n_head;
