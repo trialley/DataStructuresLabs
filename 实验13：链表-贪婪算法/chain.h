@@ -15,7 +15,29 @@ struct node {
 		return *this;
 	}
 };
-
+/*template<class T>
+class chain {
+protected:
+	void _checkIndex (int theIndex) const;
+public:
+	chain ();
+	chain (int initialCapacity, T A[]);
+	chain (const chain<T>& A);
+	~chain ();
+	bool empty () const;
+	int size () const;
+	T& get (int theIndex) const;
+	T get_Weight (int ele) const;
+	int indexOf (T& theElement) const;
+	node<T>* eraseByElement (int theVertex);
+	void eraseByIndex (int theIndex);
+	void insertAfterIndex (int theIndex, const T& ele, T weight);
+	void output () const;
+	void i_print () const;
+	void clear ();
+	friend ostream& operator<<(ostream& out, const chain<T> A);
+	class iterator;
+*/
 template<class T>
 class chain {
 public:
@@ -68,14 +90,14 @@ public:
 	bool empty () const {return _size == 0;}
 	int size () const {return _size;}
 	T& get (int theIndex) const {//返回索引是theIndex节点的data内容 
-		checkIndex (theIndex);
+		_checkIndex (theIndex);
 		node<T>* cur_node = _head;
 		for (int i = 0; i < theIndex; i++) {
 			cur_node = cur_node->next;
 		}
 		return cur_node->data;
 	}
-	T get_Weight (int ele) const {//返回元素是ele节点的weight
+	T getWeight (int ele) const {//返回元素是ele节点的weight
 		node<T>* cur_node;
 		cout << "vetrex=" << ele;
 		for (cur_node = _head; cur_node != nullptr; cur_node = cur_node->next) {
@@ -94,7 +116,7 @@ public:
 		}
 		return -1;
 	}
-	node<T>* eraseElement (int theVertex) {//搜索链表并查找顶点等于theVertex的元素，若找到则删除它并返回这个元素的指针 
+	node<T>* eraseByElement (int theVertex) {//搜索链表并查找顶点等于theVertex的元素，若找到则删除它并返回这个元素的指针 
 		node<T>* p = _head, * tp = nullptr;
 		while (p != nullptr) {
 			if (p->data == theVertex) {
@@ -113,8 +135,8 @@ public:
 		return nullptr;  //找不到的话返回nullptr 
 	}
 
-	void erase (int theIndex) {//从链表中删除索引为theIndex的节点 
-		checkIndex (theIndex);
+	void eraseByIndex (int theIndex) {//从链表中删除索引为theIndex的节点 
+		_checkIndex (theIndex);
 		node<T>* deletenode;
 		if (theIndex == 0) {//删除头结点 
 			deletenode = _head;
@@ -131,8 +153,8 @@ public:
 		_size--;
 		delete deletenode;
 	}
-	void insert (int theIndex, const T& ele, T weight) {//将ele元素插入索引为theIndex位置的新节点 
-		checkIndex (theIndex);
+	void insertAfterIndex (int theIndex, const T& ele, T weight) {//将ele元素插入索引为theIndex位置的新节点 
+		_checkIndex (theIndex);
 		if (theIndex == 0) {//插入头节点 
 			node<T>* p = new node<T> (ele, weight, _head);
 			_head = p;
@@ -152,17 +174,8 @@ public:
 		if (_size == 0) { cout << "null" << endl;  return; } else {
 			node<T>* p = _head;
 			for (int i = 0; i < _size; i++) {
-				cout << "vertex=" << p->data << ",weight=" << p->weight << "   ";
+				cout << "vertex=" << p->data << ",weight=" << p->weight << "";
 				p = p->next;
-			}
-		}
-	}
-	void i_print () const {//使用迭代器输出 
-		if (_size == 0) { cout << "null" << endl;  return; } else {
-			iteragetTor I (_head);
-			for (int i = 0; i < _size; i++) {
-				cout << (*I) << " ";
-				I++;
 			}
 		}
 	}
@@ -187,31 +200,31 @@ public:
 			return out;
 		}
 	}
-	class iteragetTor {//构造函数、*&、前后自加、！=、== 
+	class iterator {//构造函数、*&、前后自加、！=、== 
 	protected:
 		node<T>* _node = nullptr;
 	public:
-		iteragetTor (node<T>* theNode) {
+		iterator (node<T>* theNode) {
 			_node = theNode;
 		}
-		iteragetTor () {}
+		iterator () {}
 
 		T& operator*() { return _node->data; }  //取内容运算符，作为引用返回 
 		T* operator->() { return &(_node->data); }  //取地址运算符，作为指针返回 
-		iteragetTor& operator++() {//前加 
+		iterator& operator++() {//前加 
 			_node = _node->next;
 			return *this;
 		}
-		iteragetTor operator++(int) {//后加 
-			iteragetTor temp = *this;
+		iterator operator++(int) {//后加 
+			iterator temp = *this;
 			_node = _node->next;
 			return temp;
 		}
-		bool operator!=(const iteragetTor I)const {
+		bool operator!=(const iterator I)const {
 			if (_node == I._node) return false;  //这里我没有定义_node的==，为什么没有报错？ 
 			else return true;
 		}
-		bool operator==(const iteragetTor I)const {
+		bool operator==(const iterator I)const {
 			if (_node == I._node) return true;
 			else return false;
 		}
@@ -219,11 +232,11 @@ public:
 	};
 
 	//protected:
-	void checkIndex (int theIndex) const {//确定索引的有效性，防止越界
+	void _checkIndex (int theIndex) const {//确定索引的有效性，防止越界
 		if (theIndex<0 || theIndex>_size) {
 			cerr << "index=" << theIndex << ",listSize=" << _size << "请检查索引的有效性！" << endl;
 		}
 	}
-	node<T>* _head;          //指向链表第一个元素的指针 
-	int _size;                     //链表的元素个数 	               
+	node<T>* _head; //指向链表第一个元素的指针 
+	int _size;//链表的元素个数 	
 };

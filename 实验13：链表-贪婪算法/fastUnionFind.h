@@ -26,8 +26,8 @@ private:
 };
 /************一下是应用了重量规则和路径紧缩优化的快速并查集算法**************/
 struct UnionFindNode {
-	int parent;   //若为根节点，则parent是树的重量，否则是父节点的模拟指针 
-	bool root;    //标志是否为根节点 
+	int parent;//若为根节点，则parent是树的重量，否则是父节点的模拟指针 
+	bool root; //标志是否为根节点 
 	UnionFindNode ():parent(1),root(true) {}
 };
 
@@ -38,15 +38,15 @@ public:
 	}
 
 	int find (int ele) {//路径紧缩增加了单个查找的操作时间，但它减少了此后查找操作的时间 
-		int theRoot = ele;   //theRoot是最终的根节点 
+		int theRoot = ele;//theRoot是最终的根节点 
 		while (!node[theRoot].root) {
 			theRoot = node[theRoot].parent;
 		}
 		//下面是紧缩路径
-		int currentNode = ele;     //从ele开始 
+		int currentNode = ele;  //从ele开始 
 		while (currentNode != theRoot) {
 			int k = node[currentNode].parent;
-			node[currentNode].parent = theRoot;   //让模拟指针直接指向根节点 
+			node[currentNode].parent = theRoot;//让模拟指针直接指向根节点 
 			currentNode = k;
 		}
 		return theRoot;

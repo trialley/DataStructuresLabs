@@ -49,7 +49,7 @@ public:
 		_head[1].~T ();
 		T getTo_be_insert = _head[_size--];
 		int insert_index = 1,
-			child_index = 2;     // child_index of current_node
+			child_index = 2;  // child_index of current_node
 
 		//将新的头部元素逐层向下移动，向下移动到左子还是右子？这里需要判断
 		//起码有一个左子树，所以要<=

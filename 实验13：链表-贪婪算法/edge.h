@@ -5,24 +5,24 @@ using namespace std;
 template <class T>
 class edge {
 protected:
-    int from;
-    int to;
-    T w;
+ int from;
+ int to;
+ T w;
 public:
-    edge () {}
-    edge (int v1, int v2, T weight):from(v1),to(v2),w(weight){}
-    ~edge () {};
+ edge () {}
+ edge (int v1, int v2, T weight):from(v1),to(v2),w(weight){}
+ ~edge () {};
 
-    int getFrom () const { return from; }
-    int getTo () const { return to; }
-    T getWeight () const { return w; }
-    operator T() const { return w; } 
+ int getFrom () const { return from; }
+ int getTo () const { return to; }
+ T getWeight () const { return w; }
+ operator T() const { return w; } 
 
 
-    friend ostream& operator<<(ostream& out, const edge<T> A) {
-        out << "(" << A.from << ", " << A.to << ", " << A.w << ")";
-        return out;
-    }
+ friend ostream& operator<<(ostream& out, const edge<T> A) {
+  out << "(" << A.from << ", " << A.to << ", " << A.w << ")";
+  return out;
+ }
 };
 
 

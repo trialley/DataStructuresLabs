@@ -20,26 +20,60 @@ int main(){
 	cout << "请输入图的顶点数n和边数e" << endl;
 	int n, e;
 	cin >> n >> e;
-	linkedWGraph<int> LWGraph (n);
+
+	//初始化邻接链表无向图
+	linkedWGraph<int> g (n);
 	cout << "请以顶点对(顶点1,顶点2，权值)的形式输入图的每一条边" << endl;
 
+	//初始化各边
 	for (int i = 0; i < e; i++) {
 		int v1, v2, w;  cin >> v1 >> v2 >> w;
 		edge<int>* Edge = new edge<int> (v1, v2, w);
-		LWGraph.insertEdge (v1,v2,w);
+		g.insertEdge (v1,v2,w);
 	}
 
-
+	//进行最小生成树的求解
 	edge<int>* STE = new edge<int>[n - 1];
-	cout << "最小生成树中每条边(v1,v2,w)如下:" << endl;
-	if (LWGraph.kruskal (STE) == true) {
+	cout << "kruskal最小生成树中每条边(v1,v2,w)如下:" << endl;
+	if (g.kruskal (STE) == true) {
 		for (int i = 0; i <= n - 2; i++)
 			cout << STE[i] << endl;
 	}
 	cout << "prim最小生成树中每条边(v1,v2,w)如下:" << endl;
-	if (LWGraph.Prim (STE) == true) {
+	if (g.prim (STE) == true) {
 		for (int i = 0; i <= n - 2; i++)
 			cout << STE[i] << endl;
 	}
+
+	cout << "邻接链表各节点内容为：" << endl;
+	g.output (cout);
+	if (g.connected () == true) cout << "本图是连通的。" << endl;
+	else {
+		int* lables = new int[n + 1];
+		cout << "连通分支数是：" << g.getCC (lables) << endl;
+		for (int i = 1; i <= n; i++)
+			cout << "顶点" << i << "属于第" << lables[i] << "连通分支" << endl;
+
+		delete[] lables;
+	}
+	int* reach = new int[n + 1];
+	fill (reach, reach + n + 1, 0);
+
+	cout << "BFS序列：";   g.printBfs (1);
+	cout << "DFS序列：";   g.printDfs (1);
+	cout << endl;
+	delete[] reach;
+
+	int* predecessor = new int[n + 1];
+	cout << "请输入起始点和结束点：";  int start, dest;  cin >> start >> dest;
+	cout << endl << "最短路：" << g.dijkstra (start, dest, predecessor) << endl;
+	cout << "最短路径为：";
+	n = dest;  cout << dest << " ";
+	while (predecessor[n] != 0) {
+		cout << predecessor[n] << " ";
+		n = predecessor[n];
+	}
+	delete[] predecessor;
+
 	return 0;
 }

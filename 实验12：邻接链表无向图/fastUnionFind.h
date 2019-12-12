@@ -4,14 +4,13 @@ using namespace std;
 
 class UnionFind {//用树的链表描述来表示并查集，用到模拟指针 
 public:
-	UnionFind (int n) {
-		initialize (n);
-	}
-	void initialize (int numberOfElements) {
+	UnionFind (int numberOfElements) {
 		parent = new int[numberOfElements + 1];
-		for (int e = 1; e <= numberOfElements; e++)
-			parent[e] = 0;
+		for (int i = 1; i <= numberOfElements; i++) {
+			parent[i] = 0;
+		}
 	}
+
 	int find (int ele) {//返回ele元素所在的树根 
 		while (parent[ele] != 0) {
 			ele = parent[ele];
@@ -27,38 +26,35 @@ private:
 };
 /************一下是应用了重量规则和路径紧缩优化的快速并查集算法**************/
 struct UnionFindNode {
-	UnionFindNode () {
-		parent = 1;  root = true;
-	}
-	int parent;   //若为根节点，则parent是树的重量，否则是父节点的模拟指针 
-	bool root;    //标志是否为根节点 
-
+	int parent;//若为根节点，则parent是树的重量，否则是父节点的模拟指针 
+	bool root; //标志是否为根节点 
+	UnionFindNode ():parent(1),root(true) {}
 };
 
 class fastUnionFind {//用重量规则和路径紧缩来优化并查集
 public:
-	fastUnionFind (int n) {
-		initialize (n);
-	}
-	void initialize (int numberOfElements) {
+	fastUnionFind (int numberOfElements) {
 		node = new UnionFindNode[numberOfElements + 1];
 	}
+
 	int find (int ele) {//路径紧缩增加了单个查找的操作时间，但它减少了此后查找操作的时间 
-		int theRoot = ele;   //theRoot是最终的根节点 
+		int theRoot = ele;//theRoot是最终的根节点 
 		while (!node[theRoot].root) {
 			theRoot = node[theRoot].parent;
 		}
 		//下面是紧缩路径
-		int currentNode = ele;     //从ele开始 
+		int currentNode = ele;  //从ele开始 
 		while (currentNode != theRoot) {
 			int k = node[currentNode].parent;
-			node[currentNode].parent = theRoot;   //让模拟指针直接指向根节点 
+			node[currentNode].parent = theRoot;//让模拟指针直接指向根节点 
 			currentNode = k;
 		}
 		return theRoot;
 	}
-	void unite (int rootA, int rootB) {//用重量规则合并根不同的数rootA和rootB
-		if (node[rootA].parent < node[rootB].parent) {//A比较轻，把A作为子树 
+	void unite (int rootA, int rootB) {
+		//用重量规则合并根不同的数rootA和rootB
+		if (node[rootA].parent < node[rootB].parent) {
+			//A比较轻，把A作为子树 
 			node[rootB].parent += node[rootA].parent;
 			node[rootA].parent = rootB;
 			node[rootA].root = false;

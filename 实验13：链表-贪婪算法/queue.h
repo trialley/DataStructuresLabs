@@ -8,7 +8,7 @@ public:
 		} else {
 			_queue = new T[initialCapacity];
 			arrayLength = initialCapacity;
-			qFront = qBack = 0;     //这里是从_queue[1]开始插入元素 
+			qFront = qBack = 0;  //这里是从_queue[1]开始插入元素 
 		}
 	}
 	~queue () { delete[] _queue; }
@@ -53,7 +53,7 @@ public:
 				//复制第1段（原队列首端，qback,新队列第arraylength-start个位置） 
 			}
 			qFront = (arrayLength) * 2 - 1;
-			qBack = arrayLength - 1 - 1;   //重新设置首尾游标 
+			qBack = arrayLength - 1 - 1;//重新设置首尾游标 
 			arrayLength = arrayLength * 2;
 			delete[] _queue;
 			_queue = new_queue;
@@ -70,7 +70,7 @@ public:
 	}
 private:
 	int qFront;  //队列中第一个元素的前一个未知 
-	int qBack;   //队列最后一个元素的位置 
+	int qBack;//队列最后一个元素的位置 
 	int arrayLength;  //队列的容量 
 	T* _queue;	 //队列元素 
 };

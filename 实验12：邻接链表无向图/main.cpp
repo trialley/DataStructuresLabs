@@ -42,12 +42,12 @@ int main(){
 	g.output(cout);
 	if( g.connected() ==true) cout<<"本图是连通的。"<<endl;
 	else{
-		int* c=new int[n+1];
-		cout<<"连通分支数是："<<g.labelComponents(c)<<endl;
+		int* lables=new int[n+1];
+		cout<<"连通分支数是："<<g.labelComponents(lables)<<endl;
 		for(int i=1;i<=n;i++)
-		   cout<<"顶点"<<i<<"属于第"<<c[i]<<"连通分支"<<endl;
+		   cout<<"顶点"<<i<<"属于第"<<lables[i]<<"连通分支"<<endl;
 		
-		delete[] c;
+		delete[] lables;
 	}
 	cout<<"请输入一个顶点序号："; int num; cin>>num;
 	int* reach=new int[n+1];
