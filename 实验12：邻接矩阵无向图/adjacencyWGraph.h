@@ -8,9 +8,9 @@
 using namespace std;
 #define until(re) while(!(re))
 
+	//加权无向图 
 template<class W>
 class adjacencyWGraph {
-	//加权无向图 
 protected:
 	int _vertex_num;       //顶点个数 
 	int _edge_num;       //边的个数 
@@ -212,6 +212,7 @@ public:
 		}
 		return label;
 	}
+
 	void print_bfs (int v, int reach[]) {
 		fill (reach, reach + _vertex_num + 1, 0);
 		int label = 1;
@@ -257,8 +258,9 @@ public:
 			}
 		}
 	}
+	/*到每个点的最短路长与路径*/
 	int Dijkstra (int start, int dest, int path[]) {
-		//返回最短路长，记录下最短路的路径，predecessor是从start到dest路径中dest前的那个顶点 
+		//返回最短路长，记录下最短路的路径，path是从start到dest路径中dest前的那个顶点 
 		
 		int* L = new int[_vertex_num + 1];  //L[i]就是从start点到顶点i的距离 
 		for (int i = 1; i <= _vertex_num; i++)  L[i] = _weights[start][i];  L[start] = 0;

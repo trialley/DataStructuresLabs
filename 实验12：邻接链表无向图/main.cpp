@@ -25,7 +25,7 @@ using namespace std;
 
 int main(){
 #pragma warning(disable:4996)
-	freopen ("input.txt", "r", stdin);
+	//freopen ("input.txt", "r", stdin);
 
 	cout<<"请输入图的顶点数n和边数e"<<endl;
 	int n,e;  
@@ -38,33 +38,37 @@ int main(){
 		cin>>v1>>v2>>w;
 		g.insertEdge(v1,v2,w);
 	}
-	cout<<"邻接链表各节点内容为："<<endl;
-	g.output(cout);
-	if( g.connected() ==true) cout<<"本图是连通的。"<<endl;
-	else{
-		int* lables=new int[n+1];
-		cout<<"连通分支数是："<<g.labelComponents(lables)<<endl;
-		for(int i=1;i<=n;i++)
-		   cout<<"顶点"<<i<<"属于第"<<lables[i]<<"连通分支"<<endl;
-		
-		delete[] lables;
+	//cout<<"邻接链表各节点内容为："<<endl;
+	//g.output(cout);
+	if (g.connected () == true) {
+		cout << "本图是连通的。" << endl;
+	} else {
+		int* c = new int[n + 1];
+		int ltfzs = g.getCC (c);
+		cout << "连通分支数是：" << ltfzs << endl;
+		for (int i = 1; i <= ltfzs; i++) {
+			for (int j = 1; j <= n; j++)
+				if (c[j] == i)cout << j << " ";
+			cout << "\n";
+		}
+
+
+		delete[] c;
 	}
 	cout<<"请输入一个顶点序号："; int num; cin>>num;
-	int* reach=new int[n+1];
-	cout<<"BFS序列：";   g.print_bfs(num,reach);
-	cout<<"DFS序列：";   g.print_dfs(num,reach);  cout<<endl;
-	delete[] reach;
+	cout<<"BFS序列：";   g.printBfs (num);
+	cout<<"DFS序列：";   g.printDfs (num);  cout<<endl;
 	
-	int* predecessor=new int[n+1]; 
+	int* path=new int[n+1]; 
 	cout<<"请输入起始点和结束点：";  int start,dest;  cin>>start>>dest; 
-	cout<<endl<<"最短路："<<g.Dijkstra(start,dest,predecessor)<<endl;
+	cout<<endl<<"最短路："<<g.dijkstra(start,dest,path)<<endl;
 	cout<<"最短路径为："; 
 	n=dest;  cout<<dest<<" ";
-	while(predecessor[n]!=0){
-		cout<<predecessor[n]<<" ";
-		n=predecessor[n];
+	while(path[n]!=0){
+		cout<<path[n]<<" ";
+		n=path[n];
 	}
-	delete[] predecessor;
+	delete[] path;
 
 	return 0;
 }

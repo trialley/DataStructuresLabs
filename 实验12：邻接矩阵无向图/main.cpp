@@ -1,3 +1,22 @@
+/*
+1.创建无向图类。存储结构分别使用邻接矩阵和邻接链表。提供操作：
+1.插入一条边
+2.删除一条边
+3.遍历：BFS、DFS。
+
+2.键盘输入图中顶点的个数n和边的数目e，以顶点对（i，j）形式
+依次输入图的每一条边或随机生成含e条边的图，其中（i,j）表示
+顶点i和顶点j之间有边相连，建立图。-
+
+3.判断图是否连通。若不连通，输出该图的连通分量的个数及每个
+连通分量中的顶点；-
+
+4.对建立好的连通图，键盘输入一顶点，输出从该顶点开始的一个
+DFS序列和BFS序列；一个DFS生成树和BFS生成树（树可以文本形式
+输出）
+
+5.键盘输入两顶点，输出两顶点之间的最短路径。-
+*/
 #include<iostream>
 #include"adjacencyWGraph.h"
 #define noEdge 1000000
@@ -9,35 +28,43 @@ int main () {
 	cout << "请输入图的顶点数n和边数e" << endl;
 	int n, e;
 	cin >> n >> e;
-	adjacencyWGraph<int> AWGraph (n, noEdge);
+	adjacencyWGraph<int> g (n, noEdge);
 
 	cout << "请以 顶点1 顶点2 权值 的形式输入图的每一条边" << endl;
 	for (int i = 0; i < e; i++) {
 		int v1, v2, w;  cin >> v1 >> v2 >> w;
 		edge<int>* Edge = new edge<int> (v1, v2, w);
-		AWGraph.insertEdge (Edge);
+		g.insertEdge (Edge);
 	}
 
 
-	if (AWGraph.connected () == true) {
+	if (g.connected () == true) {
 		cout << "本图是连通的。" << endl;
 	}else {
 		int* c = new int[n + 1];
-		cout << "连通分支数是：" << AWGraph.labelComponents (c) << endl;
+		int ltfzs = g.labelComponents (c);
+		cout << "连通分支数是：" <<  ltfzs<< endl;
 		for (int i = 1; i <= n; i++)
 			cout << "顶点" << i << "属于第" << c[i] << "连通分支" << endl;
+		for (int i = 0; i < ltfzs; i++) {
+			for (int j = 1; j <= n; j++)
+				if (c[j] == i)cout << j << " ";
+			cout << "\n";
+		}
+
+
 		delete[] c;
 	}
 	cout << "请输入一个顶点序号："; int num; cin >> num;
 	int* reach = new int[n + 1];
-	cout << "BFS序列：";   AWGraph.print_bfs (num, reach);
-	cout << "DFS序列：";   AWGraph.print_dfs (num, reach);  cout << endl;
+	cout << "BFS序列：";   g.print_bfs (num, reach);
+	cout << "DFS序列：";   g.print_dfs (num, reach);  cout << endl;
 	delete[] reach;
 
 
 	int* predecessor = new int[n + 1];
 	cout << "请输入起始点和结束点：";  int start, dest;  cin >> start >> dest;
-	cout << endl << "最短路：" << AWGraph.Dijkstra (start, dest, predecessor) << endl;
+	cout << endl << "最短路：" << g.Dijkstra (start, dest, predecessor) << endl;
 	cout << "最短路径为：";
 	n = dest;  cout << dest << " ";
 	while (predecessor[n] != 0) {

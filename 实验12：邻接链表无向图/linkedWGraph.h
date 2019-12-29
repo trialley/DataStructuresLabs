@@ -176,19 +176,21 @@ public:
 		_dfs (_head);
 	}
 
-	//返回连通分支数，lables[i]是顶点i所属的分支序号 
-	int getCC (int* lables) {
+	int getCC (int c[]) {
+		//返回连通分支数，c[i]是顶点i所属的分支序号 
 		int i = 0;
-
-		//这里，lable不仅代表连通分支标记，还代表连通分支数
-		int label = 0;
-		for (i = 1; i <= _vertex_num; i++) {
-			if (lables[i] == 0) {//对所有未到达的顶点，都进行一次bfs标记 
-				label++;
-				bfs (i, lables, label);  //给新分支做标记 
-			}
+		for (i = 0; i <= _vertex_num; i++) {
+			c[i] = 0;
 		}
 
+		int label = 0;  //最后一个构建的编号 
+		for (i = 1; i <= _vertex_num; i++) {
+			if (c[i] == 0) {
+				//对所有未到达的顶点，都进行一次bfs标记 
+				label++;
+				bfs (i, c, label);  //给新分支做标记 
+			}
+		}
 		return label;
 	}
 	void printBfs (int start) {

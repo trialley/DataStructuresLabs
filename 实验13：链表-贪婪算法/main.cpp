@@ -45,35 +45,35 @@ int main(){
 			cout << STE[i] << endl;
 	}
 
-	cout << "邻接链表各节点内容为：" << endl;
-	g.output (cout);
-	if (g.connected () == true) cout << "本图是连通的。" << endl;
-	else {
-		int* lables = new int[n + 1];
-		cout << "连通分支数是：" << g.getCC (lables) << endl;
-		for (int i = 1; i <= n; i++)
-			cout << "顶点" << i << "属于第" << lables[i] << "连通分支" << endl;
+	//cout << "邻接链表各节点内容为：" << endl;
+	//g.output (cout);
+	//if (g.connected () == true) cout << "本图是连通的。" << endl;
+	//else {
+	//	int* lables = new int[n + 1];
+	//	cout << "连通分支数是：" << g.getCC (lables) << endl;
+	//	for (int i = 1; i <= n; i++)
+	//		cout << "顶点" << i << "属于第" << lables[i] << "连通分支" << endl;
 
-		delete[] lables;
-	}
-	int* reach = new int[n + 1];
-	fill (reach, reach + n + 1, 0);
+	//	delete[] lables;
+	//}
+	//int* reach = new int[n + 1];
+	//fill (reach, reach + n + 1, 0);
 
-	cout << "BFS序列：";   g.printBfs (1);
-	cout << "DFS序列：";   g.printDfs (1);
-	cout << endl;
-	delete[] reach;
+	//cout << "BFS序列：";   g.printBfs (1);
+	//cout << "DFS序列：";   g.printDfs (1);
+	//cout << endl;
+	//delete[] reach;
 
-	int* predecessor = new int[n + 1];
-	cout << "请输入起始点和结束点：";  int start, dest;  cin >> start >> dest;
-	cout << endl << "最短路：" << g.dijkstra (start, dest, predecessor) << endl;
-	cout << "最短路径为：";
-	n = dest;  cout << dest << " ";
-	while (predecessor[n] != 0) {
-		cout << predecessor[n] << " ";
-		n = predecessor[n];
-	}
-	delete[] predecessor;
+	//int* predecessor = new int[n + 1];
+	//cout << "请输入起始点和结束点：";  int start, dest;  cin >> start >> dest;
+	//cout << endl << "最短路：" << g.dijkstra (start, dest, predecessor) << endl;
+	//cout << "最短路径为：";
+	//n = dest;  cout << dest << " ";
+	//while (predecessor[n] != 0) {
+	//	cout << predecessor[n] << " ";
+	//	n = predecessor[n];
+	//}
+	//delete[] predecessor;
 
 	return 0;
 }

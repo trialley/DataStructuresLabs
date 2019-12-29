@@ -292,40 +292,47 @@ public:
 
 	//针对边，适用于稀疏矩阵的k算法
 	bool kruskal (edge<T>* spanningTreeEdges) {
-		//用小根堆表示边集的效率较好,此处初始化所有边集合
-		minHeap<edge<T> > heap;
+		//heap中包含了还未加入生成树的边
+		//fastUnionFind中包含了已经加入到生成树的点
+
+		//小根堆 表示边集的效率较好,此处初始化所有边集合
+		minHeap<edge<T>> heap;
 		for (int i = 1; i <= _vertex_num; i++) {
 			myIterator* ii = iterator (i);
 			int j;
 			T w;
 			while ((j = ii->moveNext (w)) != 0) {
-				if (i < j){//判断去重
+				//去重，无向图中一条边会出现两次
+				if (i < j){
 					heap.push (edge<int> (i, j, w));
 				}
 			}
 		}
 
-		//并查集避免环路，并查集，unite为列为集合，find查找集合的编号
-		fastUnionFind uf (_vertex_num);
+		//并查集 避免环路，并查集，unite为将点加入集合，find查找改点集合的编号
+		fastUnionFind S (_vertex_num);
 		int k = 0;  //索引
-		while (_edge_num > 0 && k < _vertex_num - 1) {//生成树没有完成并且还有边存在 
-			edge<T> x = heap.getTop ();
-			heap.pop ();
+		while (_edge_num > 0 && k < _vertex_num - 1) {//生成树没有完成并且还有边存在
+			edge<T> x = heap.getTop ();heap.pop ();
 			_edge_num--;
-			int seta = uf.find (x.getFrom ());
-			int setb = uf.find (x.getTo ());
-			if (seta != setb) {//保证在没有环路的情况下选取边x 
+			int seta = S.find (x.getFrom ());
+			int setb = S.find (x.getTo ());
+			//保证在没有环路的情况下选取边x 
+			//两边属于不同集合，代表两点之前没有相连过，也即选取当前边不会形成环路
+			if (seta != setb) {
 				spanningTreeEdges[k++] = x;
-				uf.unite (seta, setb);
+				S.unite (seta, setb);
 			}
 		}
+
+		//索引与节点数减一不相等，则说明该图不连通，无法形成完整的生成树
 		return (k == _vertex_num - 1);
 	}
 
 	//使用小根堆的prim算法，适用于边多的图
 	bool prim (edge<T>* spanningTreeEdges) { 
 		//初始化小根堆，注意跟k不同，这里堆里存的不是所有边，而是当前集合到另一个集合所有点的直接距离
-		minHeap< edge<T> > heap;
+		minHeap<edge<T>> heap;
 		myIterator* i = iterator (1);
 		int j;  T w;
 		while ((j = i->moveNext (w)) != 0) {
@@ -333,7 +340,7 @@ public:
 			heap.push (tem);
 		}
 
-		bool* S = new bool[_vertex_num + 1];//TV是已在树中的顶点集
+		bool* S = new bool[_vertex_num + 1];//S 已在树中的顶点集
 		fill (S,S+ _vertex_num + 1,false);
 		S[1] = true;
 		
