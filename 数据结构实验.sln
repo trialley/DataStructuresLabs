@@ -103,7 +103,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验12：邻接链表无�
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验13：链表提交", "实验13：链表提交\实验13：链表提交.vcxproj", "{208990FC-A661-4AC7-9F8F-5ADFF8E2E856}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验13：m提交", "实验13：m提交\实验13：m提交.vcxproj", "{29B8F4FC-D978-4126-BD65-7B778A22509C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验13：m提交kruskal", "实验13：m提交\实验13：m提交.vcxproj", "{29B8F4FC-D978-4126-BD65-7B778A22509C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "实验13：prim提交", "实验10：prim提交\实验10：prim提交.vcxproj", "{697C01ED-467E-4673-AB9F-CB5B8CA8A7DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -521,6 +523,14 @@ Global
 		{29B8F4FC-D978-4126-BD65-7B778A22509C}.Release|x64.Build.0 = Release|x64
 		{29B8F4FC-D978-4126-BD65-7B778A22509C}.Release|x86.ActiveCfg = Release|Win32
 		{29B8F4FC-D978-4126-BD65-7B778A22509C}.Release|x86.Build.0 = Release|Win32
+		{697C01ED-467E-4673-AB9F-CB5B8CA8A7DF}.Debug|x64.ActiveCfg = Debug|x64
+		{697C01ED-467E-4673-AB9F-CB5B8CA8A7DF}.Debug|x64.Build.0 = Debug|x64
+		{697C01ED-467E-4673-AB9F-CB5B8CA8A7DF}.Debug|x86.ActiveCfg = Debug|Win32
+		{697C01ED-467E-4673-AB9F-CB5B8CA8A7DF}.Debug|x86.Build.0 = Debug|Win32
+		{697C01ED-467E-4673-AB9F-CB5B8CA8A7DF}.Release|x64.ActiveCfg = Release|x64
+		{697C01ED-467E-4673-AB9F-CB5B8CA8A7DF}.Release|x64.Build.0 = Release|x64
+		{697C01ED-467E-4673-AB9F-CB5B8CA8A7DF}.Release|x86.ActiveCfg = Release|Win32
+		{697C01ED-467E-4673-AB9F-CB5B8CA8A7DF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

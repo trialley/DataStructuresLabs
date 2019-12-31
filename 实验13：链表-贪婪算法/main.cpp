@@ -34,12 +34,12 @@ int main(){
 
 	//进行最小生成树的求解
 	edge<int>* STE = new edge<int>[n - 1];
-	cout << "kruskal最小生成树中每条边(v1,v2,w)如下:" << endl;
-	if (g.kruskal (STE) == true) {
-		for (int i = 0; i <= n - 2; i++)
-			cout << STE[i] << endl;
-	}
-	cout << "prim最小生成树中每条边(v1,v2,w)如下:" << endl;
+	//cout << "kruskal最小生成树中每条边(v1,v2,w)如下:" << endl;
+	//if (g.kruskal (STE) == true) {
+	//	for (int i = 0; i <= n - 2; i++)
+	//		cout << STE[i] << endl;
+	//}
+	//cout << "prim最小生成树中每条边(v1,v2,w)如下:" << endl;
 	if (g.prim (STE) == true) {
 		for (int i = 0; i <= n - 2; i++)
 			cout << STE[i] << endl;

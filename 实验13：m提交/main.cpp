@@ -1,161 +1,236 @@
-#include <iostream>
+ï»¿#include<iostream>
 using namespace std;
-
 template<class T>
 class minHeap {
-protected:
-	T* heap;
-	int heapSize;
-	int arrayLength;
-	void doubleLength () {
-		T* newHeap = new T[2 * arrayLength];
-		arrayLength *= 2;
-		for (int i = 1; i <= heapSize; i++) {
-			newHeap[i] = heap[i];
-		}
-		delete[]heap;
-		heap = newHeap;
-	}
 public:
-	minHeap (int initialCapacity = 10) {
-		arrayLength = initialCapacity + 1;
-		heap = new T[arrayLength];
-		heapSize = 0;
-	}
-	~minHeap () { delete[] heap; }
-	void push (T theElement) {
-		if (heapSize == arrayLength - 1) {
-			doubleLength ();
-		}
-		int currentNode = ++heapSize;//ÏÈ·Åµ½Ä©Î²£¬È»ºó±£Ö¤ÊÇ×ÓÊ÷
-		while (currentNode != 1 && theElement < heap[currentNode / 2])//Ö»ÒªÃ»µ½¶¥¶øÇÒÃ»ÕÒµ½Î»ÖÃ£¨ÔªËØĞ¡ÓÚ×Ó½Úµã£©
-		{
-			heap[currentNode] = heap[currentNode / 2];
-			currentNode /= 2;
-		}
-		heap[currentNode] = theElement;
-	}
-	void pop () {
-		if (heapSize == 0) return;
-
-		T theLast = heap[heapSize--];//Ä©Î²ÔªËØÄÃ³öÀ´
-		heap[1].~T ();
-		int currentNode = 1;//µ±Ç°½Úµã
-		int child = 2;//×Ó½Úµã
-		while (child <= heapSize)//×ÔÉÏ¶øÏÂÕÒÎ»ÖÃ
-		{
-			if (child<heapSize && heap[child]>heap[child + 1]) {
-				child++;
-			}
-			if (theLast <= heap[child]) { break; }//ÔªËØ¿ÉÒÔ·ÅÔÚµ±Ç°Î»ÖÃ
-			heap[currentNode] = heap[child];
-			currentNode = child;
-			child *= 2;
-		}
-		heap[currentNode] = theLast;
-	}
-	bool empty () { return heapSize == 0; }
-	T top () { if (heapSize != 0) { return heap[1]; } }
-};
-
-template<class T>
-class arrayQueue {
-public:
-	arrayQueue (int initialCapacity = 10) {
-		if (initialCapacity < 1)
-			return;
-		arrayLength = initialCapacity;
-		queue = new T[arrayLength];
-		theFront = 0;
-		theBack = 0;
-	}
-	~arrayQueue () { delete[] queue; }
-	bool empty () const { return theFront == theBack; }
-	int size () const {
-		return (theBack - theFront + arrayLength) % arrayLength;
-	}
-	T& front () {
-		if (theFront == theBack)
-			throw empty ();
-		return queue[(theFront + 1) % arrayLength];
-	}
-	T& back () {
-		if (theFront == theBack)
-			throw empty ();
-		return queue[theBack];
-	}
-	void pop () {
-		if (theFront == theBack)
-			return;
-		theFront = (theFront + 1) % arrayLength;
-		queue[theFront].~T ();
-	}
-	void push (const T& theElement) {
-		if ((theBack + 1) % arrayLength == theFront) {
-			T* newQueue = new T[2 * arrayLength];
-
-			int start = (theFront + 1) % arrayLength;
-			if (start < 2)
-				copy (queue + start, queue + start + arrayLength - 1, newQueue);
-			else {
-				copy (queue + start, queue + arrayLength, newQueue);
-				copy (queue, queue + theBack + 1, newQueue + arrayLength - start);
-			}
-			theFront = 2 * arrayLength - 1;
-			theBack = arrayLength - 2;   // queue size arrayLength - 1
-			arrayLength *= 2;
-			queue = newQueue;
-		}
-		theBack = (theBack + 1) % arrayLength;
-		queue[theBack] = theElement;
-	}
+	typedef enum { min_head_empty } err;
 private:
-	int theFront;
-	int theBack;
-	int arrayLength;
-	T* queue;
+	int _size;
+	int _length;
+	T* _head;
+	void _extLength () {
+		T* temp = new T[_length * 2];
+		copy (_head, _head + _length, temp);
+		delete[] _head;
+		_length *= 2;
+		_head = temp;
+	}
+	void _clear () {
+		/*delete[] _head;*/
+	}
+public:
+	minHeap (int lengthi = 10) {
+		_length = lengthi + 1;
+		_head = new T[_length];
+		_size = 0;
+	}
+	~minHeap () {
+		_clear ();
+	}
+	void _clearAndInit () {
+		_clear ();
+		_length = 11;
+		_head = new T[11];
+		_size = 0;
+	}
+	const T& top () {
+		if (_size == 0)
+			throw min_head_empty;
+		return _head[1];
+	}
+	void pop () {
+		if (_size == 0) {
+			throw min_head_empty;
+		}
+		_head[1].~T ();
+		T to_be_insert = _head[_size--];
+		int insert_index = 1,
+			child_index = 2;     // child_index of current_node
+
+		//Â½Â«ÃÃ‚ÂµÃ„ÃÂ·Â²Â¿Ã”ÂªÃ‹Ã˜Ã–Ã°Â²Ã£ÃÃ²ÃÃ‚Ã’Ã†Â¶Â¯Â£Â¬ÃÃ²ÃÃ‚Ã’Ã†Â¶Â¯ÂµÂ½Ã—Ã³Ã—Ã“Â»Â¹ÃŠÃ‡Ã“Ã’Ã—Ã“Â£Â¿Ã•Ã¢Ã€Ã¯ÃÃ¨Ã’ÂªÃ…ÃÂ¶Ã
+		//Ã†Ã°Ã‚Ã«Ã“ÃÃ’Â»Â¸Ã¶Ã—Ã³Ã—Ã“ÃŠÃ·Â£Â¬Ã‹Ã¹Ã’Ã”Ã’Âª<=
+		while (child_index <= _size) {
+			//ÃˆÃ§Â¹Ã»Ã—Ã³Ã—Ã“Â±ÃˆÃ“Ã’Ã—Ã“Â´Ã³Â£Â¬Ã”Ã²Â¸Ã¹Ã“Â¦ÂµÂ±Ã“Ã«Ã“Ã’Ã—Ã“Â½Â»Â»Â»Â£Â¬ÃŠÂ¹ÃÃ‚Â¸Ã¹ÃÂ¡Â£Â¬Ã•Ã¢Ã‘Ã¹Â¿Ã‰Ã’Ã”Â±Â£Â³Ã–Ã—Ã®ÃÂ¡Â¶Ã‘ÃŒÃ˜ÃÃ”
+			//ÃˆÃ§Â¹Ã»Ã—Ã³Ã—Ã“ÃŠÃ·Â¿Â¨ÂµÂ½ÃÃ‹sizeÃÂ»Ã–ÃƒÂ£Â¬Ã‹ÂµÃƒÃ·ÃƒÂ»Ã“ÃÃ“Ã’Ã—Ã“ÃŠÃ·Â£Â¬Â²Â»Â±Ã˜Ã‘Â°Ã•Ã’Ã—Ã³Ã“Ã’Ã–ÃÃ—Ã®ÃÂ¡ÂµÃ„Ã”ÂªÃ‹Ã˜
+			if (child_index < _size && _head[child_index] > _head[child_index + 1]) {
+				child_index++;
+			}
+			//ÃˆÃ§Â¹Ã»Â¸Ã¹Â±ÃˆÃÂ½Â¸Ã¶Ã—Ã“Â¶Â¼ÃÂ¡Â£Â¬Ã„Ã‡Ã–Â±Â½Ã“ÃÃ‹Â³Ã¶Â¾ÃÃÃÃÃ‹Â£Â¬Â²Â»Â±Ã˜Ã”Ã™Â½Â»Â»Â»
+			if (to_be_insert <= _head[child_index]) {
+				break;
+			}
+			_head[insert_index] = _head[child_index];
+			insert_index = child_index;
+			child_index *= 2;
+		}
+		_head[insert_index] = to_be_insert;
+	}
+	void push (const T& datai) {
+		//Â½Ã¸ÃÃÃ”Â½Â½Ã§Â¼Ã¬Â²Ã©
+		if (_size == _length - 1) {
+			_extLength ();
+		}
+
+		int insert_index = ++_size;
+
+		while (insert_index != 1 && _head[insert_index / 2] > datai) {//Â²Ã¥ÃˆÃ«Ã”ÂªÃ‹Ã˜ÂµÃ„Â¸Â¸Ã”ÂªÃ‹Ã˜Â²Â»ÃÂ¡Ã“ÃšÂ²Ã¥ÃˆÃ«Ã”ÂªÃ‹Ã˜Â£Â¬Ã‹ÂµÃƒÃ·ÃÃ¨Ã’ÂªÂµÃ·Ã•Ã»
+			_head[insert_index] = _head[insert_index / 2]; //Â¸ÃƒÂ¸Â¸Ã”ÂªÃ‹Ã˜Â·Ã…ÂµÂ½Ã—Ã“Â½ÃšÂµÃ£ÃÂ»Ã–Ãƒ
+			insert_index /= 2;//Ã—Ã“Â½ÃšÂµÃ£ÃÂ»Ã–ÃƒÃ–Â¸ÃÃ²Ã”Â­Â¸Â¸Â½ÃšÂµÃ£Ã„Ã‡Ã€Ã¯ÃˆÂ¥Â£Â¬Ã’Â²Â¼Â´Â·Â¢Ã‰ÃºÂ¸Â¸Ã—Ã“Â½Â»Â»Â»Â£Â¬Ã–Â»Â²Â»Â¹Ã½Ã—Ã“Ã”ÂªÃ‹Ã˜Â»Â¹ÃƒÂ»Ã“ÃÂ²Ã¥ÃˆÃ«
+
+			//Â¼ÃŒÃÃ¸Ã‘Â­Â»Â·Â²Ã©Â¿Â´ÃÃ‚ÂµÃ„Â¸Â¸Â½ÃšÂµÃ£
+		}
+
+		_head[insert_index] = datai;
+	}
+
+	bool empty () const {
+		return _size == 0;
+	}
+	int size () const {
+		return _size;
+	}
 };
 
-struct Edge {//ÊµÏÖµÄ±ßÀà
+template<typename T>
+class queue {
+public:
+	enum queue_err { queue_empty };
+private:
+	typedef struct node {
+		T data;
+		node* next;
+		node () {
+			next = nullptr;
+		}
+	} node;
+	node* _head;
+	node* _end;
+	int _length;
+public:
+	queue () {
+		_head = new node;
+		_end = _head;
+		_length = 0;
+	}
+	~queue () {
+		while (_head->next != nullptr) {
+			node* temp = _head;
+			_head = _head->next;
+			delete temp;
+		}
+		delete _head;
+	}
+
+	void push (const T& in) {
+		_length++;
+		node* n_end = new node;
+		n_end->data = in;
+		n_end->next = nullptr;
+
+		_end->next = n_end;
+		_end = n_end;
+	}
+	T front () {
+		if (isempty ()) {
+			throw queue_empty;
+		}
+		return _head->next->data;
+	}
+	void pop () {
+		if (isempty ()) {
+			throw queue_empty;
+		}
+		node* n_head = _head->next;
+		delete _head;
+
+		_head = n_head;
+
+		_length--;
+		return;
+	}
+	bool isempty ()const {
+		return _head == _end;
+	}
+	int size ()const {
+		return _length;
+	}
+};
+
+class edge {
+public:
 	int v1;
 	int v2;
 	int w;
-	~Edge () {}
-	Edge () {}
-	Edge (int a, int b, int weight) {
-		v1 = a;
-		v2 = b;
-		w = weight;
+	edge () {}
+	edge (int v1, int v2, int weight) :v1 (v1), v2 (v2), w (weight) {}
+	~edge () {};
+
+	int getFrom () const {
+		return v1;
+	}
+	int getTo () const {
+		return v2;
+	}
+	int getWeight () const {
+		return w;
+	}
+	operator int () const {
+		return w;
 	}
 
-	bool operator > (const Edge& x) { return (this->w > x.w); }
-	bool operator < (const Edge& x) { return (this->w < x.w); }
-	bool operator >= (const Edge& x) { return (this->w >= x.w); }
-	bool operator <= (const Edge& x) { return (this->w <= x.w); }
-	void operator = (const Edge& x) {
-		this->v1 = x.v1;
-		this->v2 = x.v2;
-		this->w = x.w;
+
+	friend ostream& operator<<(ostream& out, const edge A) {
+		out << "(" << A.v1 << ", " << A.v2 << ", " << A.w << ")";
+		return out;
+	}
+
+	bool operator > (const edge& x) {
+		return (this->w > x.w);
+	}
+	bool operator < (const edge& x) {
+		return (this->w < x.w);
 	}
 };
 
 template<class T>
-struct graphNode//ÊµÏÖµÄ¶¥µãÀà
-{
+struct node { //ÃŠÂµÃÃ–ÂµÃ„Â¶Â¥ÂµÃ£Ã€Ã 
 	T vertex;
 	int weight;
-	graphNode<T>* next;
+	node<T>* next;
 
-	graphNode () { next = NULL; }
-	graphNode (T v, int w) { vertex = v; weight = w; next = NULL; }
-	graphNode (T v, int w, graphNode<T>* theNext) { vertex = v;  weight = w; next = theNext; }
-	void push (T v) { vertex = v; }
-	void push (graphNode<T>* theNode) { vertex = theNode->vertex; next = theNode->next; }
+	node () {
+		next = nullptr;
+	}
+	node (T v, int w) {
+		vertex = v;
+		weight = w;
+		next = nullptr;
+	}
+	node (T v, int w, node<T>* theNext) {
+		vertex = v;
+		weight = w;
+		next = theNext;
+	}
+	void push (T v) {
+		vertex = v;
+	}
+	void push (node<T>* theNode) {
+		vertex = theNode->vertex;
+		next = theNode->next;
+	}
 
-	bool operator<= (graphNode<T>& GNode) { return (this->weight <= GNode.weight); }
-	bool operator>= (graphNode<T>& GNode) { return (this->weight >= GNode.weight); }
-	bool operator> (graphNode<T>& GNode) { return (this->weight > GNode.weight); }
-	bool operator< (graphNode<T>& GNode) { return (this->weight < GNode.weight); }
+	bool operator<= (node<T>& GNode) {
+		return (this->weight <= GNode.weight);
+	}
+	bool operator>= (node<T>& GNode) {
+		return (this->weight >= GNode.weight);
+	}
+	bool operator> (node<T>& GNode) {
+		return (this->weight > GNode.weight);
+	}
+	bool operator< (node<T>& GNode) {
+		return (this->weight < GNode.weight);
+	}
 	void set (T element) {
 		weight = element;
 	}
@@ -163,272 +238,235 @@ struct graphNode//ÊµÏÖµÄ¶¥µãÀà
 		return weight;
 	}
 };
-struct unionFindNode {
-	int parent;  // if true then tree weight
-	// otherwise pointer to parent in tree
-	bool root;   // true iff root
 
-	unionFindNode () {
-		parent = 1;
-		root = true;
+class UnionFind {
+public:
+	UnionFind (int numberOfElements) {
+		parent = new int[numberOfElements + 1];
+		for (int i = 1; i <= numberOfElements; i++) {
+			parent[i] = 0;
+		}
 	}
+
+	int find (int ele) {
+		while (parent[ele] != 0) {
+			ele = parent[ele];
+		}
+		return ele;
+	}
+	void unite (int rootA, int rootB) {
+		parent[rootB] = rootA;
+	}
+
+private:
+	int* parent;
 };
+
+struct UnionFindNode {
+	int parent;
+	bool root;
+	UnionFindNode () :parent (1), root (true) {}
+};
+
 class fastUnionFind {
 public:
 	fastUnionFind (int numberOfElements) {
-		// Initialize numberOfElements trees, 1 element per set/class/tree.
-		node = new unionFindNode[numberOfElements + 1];
+		node = new UnionFindNode[numberOfElements + 1];
 	}
-	~fastUnionFind () {
-		delete[] node;
-	}
-	void unite (int rootA, int rootB) {
-		// Combine trees with different roots rootA and rootB.
-		// Use the weighting rule.
-		if (node[rootA].parent < node[rootB].parent) {
-			// rootA becomes subtree of rootB
-			node[rootB].parent += node[rootA].parent;
-			node[rootA].root = false;
-			node[rootA].parent = rootB;
-		} else {
-			// rootB becomes subtree of rootA
-			node[rootA].parent += node[rootB].parent;
-			node[rootB].root = false;
-			node[rootB].parent = rootA;
-		}
-	}
-	int find (int theElement) {
-		// Return root of tree containing theElement.
-		// Compact path from theElement to root.
 
-		// theRoot will eventually be the root of the tree
-		int theRoot = theElement;
-		while (!node[theRoot].root)
+	int find (int ele) {
+		int theRoot = ele;
+		while (!node[theRoot].root) {
 			theRoot = node[theRoot].parent;
-
-		// compact pathe from theElement to theRoot
-		int currentNode = theElement;  // start at theElement
+		}
+		int currentNode = ele;
 		while (currentNode != theRoot) {
-			int parentNode = node[currentNode].parent;
-			node[currentNode].parent = theRoot;  // move to level 2
-			currentNode = parentNode;            // moves to old parent
+			int k = node[currentNode].parent;
+			node[currentNode].parent = theRoot;
+			currentNode = k;
 		}
 		return theRoot;
 	}
+	void unite (int rootA, int rootB) {
+		if (node[rootA].parent < node[rootB].parent) {
+			node[rootB].parent += node[rootA].parent;
+			node[rootA].parent = rootB;
+			node[rootA].root = false;
+		}
+		else {
+			node[rootA].parent += node[rootB].parent;
+			node[rootB].parent = rootA;
+			node[rootB].root = false;
+		}
+	}
 
-protected:
-	unionFindNode* node;
+
+private:
+	UnionFindNode* node;
 };
 
-template <class T>//ÎŞÏòÍ¼
+template <class T>//ÃÃÃÃ²ÃÂ¼
 class graph {
 protected:
-	graphNode<T>** aList;//
-	Edge* edge_list;
-	//T** weight;//ÓÃÀ´´æÈ¨ÖØµÄ¶şÎ»Êı×é
-	int num_ver;//Í¼¶¥µã¸öÊı
-	int num_edge;//Í¼±ß¸öÊı
-	int label;//µ½´ï±ê¼Ç
-	int* reach;//±ê¼ÇÊÇ·ñµ½´ïµÄÊı×é
-	void rDfs (int v);
-	void rBfs (int v);
-	int* the_dfs;//¸ÃÊı×éµÄÊ×Î»ÓÃÀ´³äµ±¼ÆÊıÆ÷µÄ¹¦ÄÜ
-	int* the_bfs;
-	int* sum_w;//ÓÃÀ´´æÈ¨ÖØÊı×é
-	void get_sum_w (int s);
+	node<T>** _chain_head;//
+	edge* _edge_list;
+	int* _reached;				//Â±ÃªÂ¼Ã‡ÃŠÃ‡Â·Ã±ÂµÂ½Â´Ã¯ÂµÃ„ÃŠÃ½Ã—Ã©
+	int* _dfs_lables;
+	int* _prim_sum_w;//Ã“ÃƒÃ€Â´Â´Ã¦ÃˆÂ¨Ã–Ã˜ÃŠÃ½Ã—Ã©
+	int _v_num;				//Â¶Â¥ÂµÃ£Â¸Ã¶ÃŠÃ½
+	int _e_num;				//Â±ÃŸÂ¸Ã¶ÃŠÃ½
+	int _lable;				//ÂµÂ½Â´Ã¯Â±ÃªÂ¼Ã‡
+
 public:
-	graph (int initialize_v, int initialize_e);
-	~graph () {
-		for (int i = 0; i <= num_ver; i++) {
-			delete[]aList[i];
+	graph (int initialize_v, int initialize_e) {
+		_v_num = initialize_v;
+		_e_num = initialize_e;
+		_chain_head = new node<T> * [initialize_v + 1];
+		_reached = new int[initialize_v + 1];
+		_prim_sum_w = new int[initialize_v + 1];
+		for (int i = 0; i <= initialize_v; i++) {
+			_reached[i] = 0;
+			_prim_sum_w[i] = 0;
 		}
-		delete[]aList;
-		delete[]reach;
-		delete[]the_dfs;
-		delete[]the_bfs;
-		delete[]edge_list;
+		for (int i = 1; i <= initialize_v; i++) {
+			node<T>* head = new node<T>;
+			_chain_head[i] = head;//Â²Â»Ã’ÂªÃÃ¼Â¼Ã‡Â¸Ã¸Ã•Ã¢Ã€Ã¯Â¸Â³Ã–Âµ
+		}
+		_lable = 1;
+		_dfs_lables = new int[_v_num + 1];
 	}
-	void add (T v1, T v2, int TheWeight);
-	void erase (T v1, T v2);
-	void get_sum (int s) {
-		if (sum_w[s] == 0) {
-			get_sum_w (s);
-			cout << sum_w[s] << endl;
-		} else {
-			cout << sum_w[s] << endl;
+
+	void init (edge* edgesi) {
+		_edge_list = edgesi;
+		for (int i = 1; i <= _e_num; i++) {
+			_insertEdeg (_edge_list[i].v1, _edge_list[i].v2, _edge_list[i].w);
 		}
 	}
-	void get_edge_list (Edge* a) {
-		edge_list = a;
-		for (int i = 1; i <= num_edge; i++) {
-			add (edge_list[i].v1, edge_list[i].v2, edge_list[i].w);
+	void _insertEdeg (T v1, T v2, int TheWeight) {
+		node<T>* p = _chain_head[v1];
+		node<T>* newNode1 = new node<T> (v2, TheWeight);
+		node<T>* temp;
+		if (p->next == nullptr) {
+			p->next = newNode1;
 		}
+		else {
+			while (p->next != nullptr && v2 > p->next->vertex) {
+				p = p->next;
+			}
+			temp = p->next;
+			p->next = newNode1;
+			newNode1->next = temp;
+		}
+		node<T>* q = _chain_head[v2];
+		node<T>* newNode2 = new node<T> (v1, TheWeight);
+		if (q->next == nullptr) {
+			q->next = newNode2;
+		}
+		else {
+			while (q->next != nullptr && v1 > q->next->vertex) {
+				q = q->next;
+			}
+			temp = q->next;
+			q->next = newNode2;
+			newNode2->next = temp;
+		}
+	}
+
+	void _dfs_lable (int v) {
+		int x = ++_dfs_lables[0];
+		_dfs_lables[x] = v;
+		_reached[v] = _lable;
+		node<T>* p = _chain_head[v];
+		while ((p = p->next) != nullptr) {
+			int u = p->vertex;
+			if (_reached[u] == 0) {
+				_dfs_lable (u);
+			}
+		}
+		return;
+	}
+
+
+	//Â½ÂµÂµÃÃŠÂ±Â¼Ã¤Â¸Â´Ã”Ã“Â¶Ãˆ Â¶Ã”ÃÃ¢Â±Â©Ã‚Â¶ÂµÃ„ÂºÂ¯ÃŠÃ½
+	int getMinW (int indexi) {
+		if (_prim_sum_w[indexi] != 0) {
+
+			return _prim_sum_w[indexi];
+		}
+		else {
+			prim (indexi);
+			return _prim_sum_w[indexi];
+		}
+	}
+
+	void prim (int s) {
+
+		int j;
+		T w;
+
+		bool* S = new bool[_v_num + 1];
+		fill (S, S + _v_num + 1, false);
+		S[s] = true;
+
+		int sum_weight = 0;
+		int k = 0;
+		while ( k < _v_num - 1) {
+			edge min_edge (0, 0, 9999);
+			for (int i = 1; i <= _v_num; i++) {
+				if (S[i] == true) {
+					node<T>* p = _chain_head[i];
+					p = p->next;
+					min_edge.v1 =i;
+
+					while (p != nullptr) {
+						if (S[p->vertex]==false && p->weight <= min_edge.w) {
+							min_edge.v2 = p->vertex;
+							min_edge.w = p->weight;
+						}
+						p = p->next;
+					}
+				}
+			}
+
+			int b = min_edge.v2;
+			if (S[b] == false) {
+				sum_weight += min_edge.w;
+				k++;
+			}
+			S[b] = true;
+
+		}
+		_reached[s] = true;
+		for (int i = 1; i <= _v_num; i++) {
+			if (_reached[i] != 0) {
+				_prim_sum_w[i] = sum_weight;
+			}
+		}
+		delete[] S;
 	}
 };
 
-template<class T>
-graph<T>::graph (int initialize_v, int initialize_e) {
-	num_ver = initialize_v;
-	num_edge = initialize_e;
-	aList = new graphNode<T> * [initialize_v + 1];
-	reach = new int[initialize_v + 1];
-	sum_w = new int[initialize_v + 1];
-	for (int i = 0; i <= initialize_v; i++) {
-		reach[i] = 0;
-		sum_w[i] = 0;
-	}
-	for (int i = 1; i <= initialize_v; i++) {
-		graphNode<T>* head = new graphNode<T>;
-		aList[i] = head;//²»ÒªÍü¼Ç¸øÕâÀï¸³Öµ
-	}
-	label = 1;
-	the_dfs = new int[num_ver + 1];
-	the_bfs = new int[num_ver + 1];
-}
-template<class T>
-void graph<T>::erase (T v1, T v2) {
-	graphNode<T>* p = aList[v1];
-	graphNode<T>* pp = NULL;
-	while (p->next != NULL && p->vertex != v2) {
-		pp = p;
-		p = p->next;
-	}
-	if (p->vertex == v2)//ÕÒµ½ÁË±ß
-	{
-		pp->next = p->next;
-		delete p;
-	}
-	graphNode<T>* q = aList[v2];
-	graphNode<T>* pq = NULL;
-	while (q->next != NULL && q->vertex != v1) {
-		pq = q;
-		q = q->next;
-	}
-	if (q->vertex == v1)//ÕÒµ½ÁË±ß
-	{
-		pq->next = q->next;
-		delete q;
-	}
-}
-template<class T>
-void graph<T>::add (T v1, T v2, int TheWeight) {
-	graphNode<T>* p = aList[v1];
-	graphNode<T>* newNode1 = new graphNode<T> (v2, TheWeight);
-	graphNode<T>* temp;
-	if (p->next == NULL) {
-		p->next = newNode1;
-	} else {
-		while (p->next != NULL && v2 > p->next->vertex)//??²»ÄÜ½»»»????
-		{
-			p = p->next;
-		}
-		temp = p->next;
-		p->next = newNode1;
-		newNode1->next = temp;
-	}
-	graphNode<T>* q = aList[v2];
-	graphNode<T>* newNode2 = new graphNode<T> (v1, TheWeight);
-	if (q->next == NULL) {
-		q->next = newNode2;
-	} else {
-		while (q->next != NULL && v1 > q->next->vertex) {
-			q = q->next;
-		}
-		temp = q->next;
-		q->next = newNode2;
-		newNode2->next = temp;
-	}
-}
-
-template<class T>
-void graph<T>::rDfs (int v) {
-	//if (v <= min_ver) { min_ver = v; }
-	int x = ++the_dfs[0];
-	the_dfs[x] = v;
-	reach[v] = label;
-	graphNode<T>* p = aList[v];
-	while ((p = p->next) != NULL) {
-		int u = p->vertex;
-		if (reach[u] == 0) {
-			rDfs (u);
-		}
-	}
-	return;
-}
-template<class T>
-void graph<T>::rBfs (int v) {
-	arrayQueue<int> q (10);
-	reach[v] = label;
-	q.push (v);
-	while (!q.empty ()) {
-		int x = ++the_bfs[0];
-		int w = q.front ();
-		the_bfs[x] = w;
-		q.pop ();
-		for (graphNode<T>* u = aList[w]->next; u != NULL; u = u->next) {//·ÃÎÊ¶¥µãwµÄÒ»¸ö¹ØÁª¶¥µã
-			if (reach[u->vertex] == 0)//ËµÃ÷uÊÇÒ»¸öÎ´µ½´ïµÄ¶¥µã
-			{
-				q.push (u->vertex);
-				reach[u->vertex] = label;//µ½´ï±ê¼Ç
-			}
-		}
-	}
-	return;
-}
-
-template<class T>
-void graph<T>::get_sum_w (int s)//Çó½âÈ¨ÖØ×îÖØÒªµÄÒ»¸öº¯Êı
-{
-	for (int i = 0; i <= num_ver; i++) { reach[i] = 0; the_dfs[i] = 0; }//reachÊı×éÓÃÀ´¼ÇÂ¼µãÊÇ·ñµ½´ï£¬the_bfsÊÇ±£´æ¾­¹ıµÄÂ·¾¶
-	int sum_weight = 0;
-	rDfs (s);
-	int len = the_dfs[0];//dfsºÍbfsºó£¬Á¬Í¨·ÖÁ¿µÄµã¸öÊı±£´æÔÚÁËÊı×éµÚÒ»¸öÔªËØ
-	fastUnionFind uf (num_ver + 1);//²¢²é¼¯ÔªËØ¸öÊıÉèÎª¶¥µã¸öÊı
-	int num_e = 1;//ÒÑ¾­¼ÓÈëÍ¼µÄ±ßµÄÌõÊı
-	minHeap<Edge> theHeap (10);//ÓÃ¶ÑÅÅĞòÀ´Ñ¡×îĞ¡µÄ±ß,ÓÃµÄÊÇĞ¡¸ù¶Ñ£¬¶Ñ¶¥Îª×îĞ¡ÔªËØ
-	for (int i = 1; i <= num_edge; i++) {
-		int a = edge_list[i].v1;
-		int b = edge_list[i].v2;
-		if (reach[a] != 0 && reach[b] != 0)//±ØĞëÊÇÔÚÍ¬Ò»¸öÁ¬Í¨·ÖÁ¿µÄ±ß²Å¿ÉÒÔ¼ÓÈë
-		{
-			theHeap.push (edge_list[i]);
-		}
-	}
-	while (num_e < len) {
-		Edge temp = theHeap.top ();
-		theHeap.pop ();
-		int a = uf.find (temp.v1);//ÕÒµ½Ò»Ìõ±ßµÄÁ½¸ö¶¥µãµÄ¸ù½Úµã
-		int b = uf.find (temp.v2);
-		if (a != b)//¸ù½Úµã²»Í¬£¬ËµÃ÷¼ÓÈëºó²»»áĞÎ³É»·
-		{
-			uf.unite (a, b);//°Ñ¶şÕßºÏ²¢
-			sum_weight = sum_weight + temp.w;
-			num_e++;
-		}
-	}
-	for (int i = 1; i <= num_ver; i++) {
-		if (reach[i] != 0) {
-			sum_w[i] = sum_weight;
-		}
-	}
-}
-
 int main () {
+#pragma warning(disable:4996)
 
-	int n, m, q;//nÎª¶¥µã¸öÊı£¬mÎª±ßÊı£¬qÎª²éÑ¯¸öÊı
-	int* s;
+	freopen ("input.txt", "r", stdin);
+	int n, m, q;//ÂµÃ£ Â±ÃŸ Â²Ã©Ã‘Â¯Â´ÃÃŠÃ½
 	cin >> n >> m >> q;
-	s = new int[q];//Ã¿´ÎÒª²éÑ¯µÄÆğÊ¼¶¥µã
-	graph<int> theGraph (n, m);
-	Edge* theEdge = new Edge[m + 1];
-	for (int i = 1; i <= m; i++) {
-		cin >> theEdge[i].v1 >> theEdge[i].v2 >> theEdge[i].w;
-	}
-	for (int i = 0; i < q; i++) { cin >> s[i]; }
-	theGraph.get_edge_list (theEdge);
 
+	//Â³ÃµÃŠÂ¼Â»Â¯Ã•Ã»Â¸Ã¶ÃÂ¼
+	graph<int> g (n, m);
+	edge* edges = new edge[m + 1];
+	for (int i = 1; i <= m; i++) {
+		cin >> edges[i].v1 >> edges[i].v2 >> edges[i].w;
+	}
+	g.init (edges);
+
+
+	//Â»Ã±ÃˆÂ¡Ã–Ã–Ã—Ã“Â½ÃšÂµÃ£Â²Â¢ÃŠÃ¤Â³Ã¶Ã—Ã®ÃÂ¡Â³Â¤Â¶Ãˆ
 	for (int i = 0; i < q; i++) {
-		theGraph.get_sum (s[i]);
+		int temp;
+		cin >> temp;
+		cout << g.getMinW (temp) << "\n";
 	}
 
 

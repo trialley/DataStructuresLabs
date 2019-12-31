@@ -1,115 +1,236 @@
-#include <iostream>
-#include<climits>
+#include<iostream>
 using namespace std;
-
 template<class T>
-class arrayQueue
-{
-public:
-	arrayQueue(int initialCapacity = 10)
-	{
-		if (initialCapacity < 1)
-			return;
-		arrayLength = initialCapacity;
-		queue = new T[arrayLength];
-		theFront = 0;
-		theBack = 0;
-	}
-	~arrayQueue() { delete[] queue; }
-	bool empty() const { return theFront == theBack; }
-	int size() const
-	{
-		return (theBack - theFront + arrayLength) % arrayLength;
-	}
-	T& front()
-	{
-		if (theFront == theBack)
-			throw empty();
-		return queue[(theFront + 1) % arrayLength];
-	}
-	T& back()
-	{
-		if (theFront == theBack)
-			throw empty();
-		return queue[theBack];
-	}
-	void pop()
-	{
-		if (theFront == theBack)
-			return;
-		theFront = (theFront + 1) % arrayLength;
-		queue[theFront].~T();
-	}
-	void push(const T& theElement)
-	{
-		if ((theBack + 1) % arrayLength == theFront)
-		{
-			T* newQueue = new T[2 * arrayLength];
-
-			int start = (theFront + 1) % arrayLength;
-			if (start < 2)
-				copy(queue + start, queue + start + arrayLength - 1, newQueue);
-			else
-			{
-				copy(queue + start, queue + arrayLength, newQueue);
-				copy(queue, queue + theBack + 1, newQueue + arrayLength - start);
-			}
-			theFront = 2 * arrayLength - 1;
-			theBack = arrayLength - 2;   // queue size arrayLength - 1
-			arrayLength *= 2;
-			queue = newQueue;
+class minHeap {
+	public:
+		typedef enum { min_head_empty } err;
+	private:
+		int _size;
+		int _length;
+		T* _head;
+		void _extLength () {
+			T* temp = new T[_length * 2];
+			copy (_head, _head + _length, temp);
+			delete[] _head;
+			_length *= 2;
+			_head = temp;
 		}
-		theBack = (theBack + 1) % arrayLength;
-		queue[theBack] = theElement;
-	}
-private:
-	int theFront;
-	int theBack;
-	int arrayLength;
-	T* queue;
+		void _clear () {
+			/*delete[] _head;*/
+		}
+	public:
+		minHeap (int lengthi = 10) {
+			_length = lengthi + 1;
+			_head = new T[_length];
+			_size = 0;
+		}
+		~minHeap () {
+			_clear ();
+		}
+		void _clearAndInit () {
+			_clear ();
+			_length = 11;
+			_head = new T[11];
+			_size = 0;
+		}
+		const T& top () {
+			if (_size == 0)
+				throw min_head_empty;
+			return _head[1];
+		}
+		void pop () {
+			if (_size == 0) {
+				throw min_head_empty;
+			}
+			_head[1].~T ();
+			T to_be_insert = _head[_size--];
+			int insert_index = 1,
+			    child_index = 2;     // child_index of current_node
+
+			//将新的头部元素逐层向下移动，向下移动到左子还是右子？这里需要判断
+			//起码有一个左子树，所以要<=
+			while (child_index <= _size) {
+				//如果左子比右子大，则根应当与右子交换，使新根小，这样可以保持最小堆特性
+				//如果左子树卡到了size位置，说明没有右子树，不必寻找左右中最小的元素
+				if (child_index < _size && _head[child_index] > _head[child_index + 1]) {
+					child_index++;
+				}
+				//如果根比两个子都小，那直接退出就行了，不必再交换
+				if (to_be_insert <= _head[child_index]) {
+					break;
+				}
+				_head[insert_index] = _head[child_index];
+				insert_index = child_index;
+				child_index *= 2;
+			}
+			_head[insert_index] = to_be_insert;
+		}
+		void push (const T& datai) {
+			//进行越界检查
+			if (_size == _length - 1) {
+				_extLength ();
+			}
+
+			int insert_index = ++_size;
+
+			while (insert_index != 1 && _head[insert_index / 2] > datai) {//插入元素的父元素不小于插入元素，说明需要调整
+				_head[insert_index] = _head[insert_index / 2]; //该父元素放到子节点位置
+				insert_index /= 2;//子节点位置指向原父节点那里去，也即发生父子交换，只不过子元素还没有插入
+
+				//继续循环查看新的父节点
+			}
+
+			_head[insert_index] = datai;
+		}
+
+		bool empty () const {
+			return _size == 0;
+		}
+		int size () const {
+			return _size;
+		}
 };
 
-struct Edge {//实现的边类
-	int v1;
-	int v2;
-	int w;
-	~Edge() {}
-	Edge() {}
-	Edge(int a, int b, int weight) {
-		v1 = a;
-		v2 = b;
-		w = weight;
-	}
+template<typename T>
+class queue {
+	public:
+		enum queue_err { queue_empty };
+	private:
+		typedef struct node {
+			T data;
+			node* next;
+			node () {
+				next = nullptr;
+			}
+		} node;
+		node* _head;
+		node* _end;
+		int _length;
+	public:
+		queue () {
+			_head = new node;
+			_end = _head;
+			_length = 0;
+		}
+		~queue () {
+			while ( _head->next != nullptr ) {
+				node* temp = _head;
+				_head = _head->next;
+				delete temp;
+			}
+			delete _head;
+		}
 
-	bool operator > (const Edge& x) { return (this->w > x.w); }
-	bool operator < (const Edge& x) { return (this->w < x.w); }
-	bool operator >= (const Edge& x) { return (this->w >= x.w); }
-	bool operator <= (const Edge& x) { return (this->w <= x.w); }
-	void operator = (const Edge& x)
-	{
-		this->v1 = x.v1;
-		this->v2 = x.v2;
-		this->w = x.w;
-	}
+		void push ( const T& in ) {
+			_length++;
+			node* n_end = new node;
+			n_end->data = in;
+			n_end->next = nullptr;
+
+			_end->next = n_end;
+			_end = n_end;
+		}
+		T front () {
+			if ( isempty () ) {
+				throw queue_empty;
+			}
+			return _head->next->data;
+		}
+		void pop () {
+			if ( isempty () ) {
+				throw queue_empty;
+			}
+			node* n_head = _head->next;
+			delete _head;
+
+			_head = n_head;
+
+			_length--;
+			return;
+		}
+		bool isempty ()const {
+			return _head == _end;
+		}
+		int size ()const {
+			return _length;
+		}
+};
+
+class edge {
+	public:
+		int v1;
+		int v2;
+		int w;
+		edge () {}
+		edge (int v1, int v2, int weight):v1(v1),v2(v2),w(weight) {}
+		~edge () {};
+
+		int getFrom () const {
+			return v1;
+		}
+		int getTo () const {
+			return v2;
+		}
+		int getWeight () const {
+			return w;
+		}
+		operator int() const {
+			return w;
+		}
+
+
+		friend ostream& operator<<(ostream& out, const edge A) {
+			out << "(" << A.v1 << ", " << A.v2 << ", " << A.w << ")";
+			return out;
+		}
+
+		bool operator > (const edge& x) {
+			return (this->w > x.w);
+		}
+		bool operator < (const edge& x) {
+			return (this->w < x.w);
+		}
 };
 
 template<class T>
-struct graphNode//实现的顶点类
-{
+struct node { //实现的顶点类
 	T vertex;
 	int weight;
-	graphNode<T>* next;
+	node<T>* next;
 
-	graphNode() { next = NULL; }
-	graphNode(T v, int w) { vertex = v; weight = w; next = NULL; }
-	graphNode(T v, int w, graphNode<T>* theNext) { vertex = v;  weight = w; next = theNext; }
-	void push(T v) { vertex = v; }
-	void push(graphNode<T>* theNode) { vertex = theNode->vertex; next = theNode->next; }
+	node() {
+		next = nullptr;
+	}
+	node(T v, int w) {
+		vertex = v;
+		weight = w;
+		next = nullptr;
+	}
+	node(T v, int w, node<T>* theNext) {
+		vertex = v;
+		weight = w;
+		next = theNext;
+	}
+	void push(T v) {
+		vertex = v;
+	}
+	void push(node<T>* theNode) {
+		vertex = theNode->vertex;
+		next = theNode->next;
+	}
 
-	bool operator<= (graphNode<T>& GNode) { return (this->weight <= GNode.weight); }
-	bool operator>= (graphNode<T>& GNode) { return (this->weight >= GNode.weight); }
-	bool operator> (graphNode<T>& GNode) { return (this->weight > GNode.weight); }
-	bool operator< (graphNode<T>& GNode) { return (this->weight < GNode.weight); }
+	bool operator<= (node<T>& GNode) {
+		return (this->weight <= GNode.weight);
+	}
+	bool operator>= (node<T>& GNode) {
+		return (this->weight >= GNode.weight);
+	}
+	bool operator> (node<T>& GNode) {
+		return (this->weight > GNode.weight);
+	}
+	bool operator< (node<T>& GNode) {
+		return (this->weight < GNode.weight);
+	}
 	void set(T element) {
 		weight = element;
 	}
@@ -117,410 +238,230 @@ struct graphNode//实现的顶点类
 		return weight;
 	}
 };
-struct unionFindNode
-{
-	int parent;  // if true then tree weight
-	// otherwise pointer to parent in tree
-	bool root;   // true iff root
 
-	unionFindNode()
-	{
-		parent = 1;
-		root = true;
-	}
+class UnionFind {
+	public:
+		UnionFind (int numberOfElements) {
+			parent = new int[numberOfElements + 1];
+			for (int i = 1; i <= numberOfElements; i++) {
+				parent[i] = 0;
+			}
+		}
+
+		int find (int ele) {
+			while (parent[ele] != 0) {
+				ele = parent[ele];
+			}
+			return ele;
+		}
+		void unite (int rootA, int rootB) {
+			parent[rootB] = rootA;
+		}
+
+	private:
+		int* parent;
 };
-class fastUnionFind
-{
-public:
-	fastUnionFind(int numberOfElements)
-	{
-		// Initialize numberOfElements trees, 1 element per set/class/tree.
-		node = new unionFindNode[numberOfElements + 1];
-	}
-	~fastUnionFind()
-	{
-		delete[] node;
-	}
-	void unite(int rootA, int rootB)
-	{
-		// Combine trees with different roots rootA and rootB.
-		// Use the weighting rule.
-		if (node[rootA].parent < node[rootB].parent)
-		{
-			// rootA becomes subtree of rootB
-			node[rootB].parent += node[rootA].parent;
-			node[rootA].root = false;
-			node[rootA].parent = rootB;
-		}
-		else
-		{
-			// rootB becomes subtree of rootA
-			node[rootA].parent += node[rootB].parent;
-			node[rootB].root = false;
-			node[rootB].parent = rootA;
-		}
-	}
 
-	int find(int theElement)
-	{
-		// Return root of tree containing theElement.
-		// Compact path from theElement to root.
+struct UnionFindNode {
+	int parent;
+	bool root;
+	UnionFindNode ():parent(1),root(true) {}
+};
 
-		// theRoot will eventually be the root of the tree
-		int theRoot = theElement;
-		while (!node[theRoot].root)
-			theRoot = node[theRoot].parent;
-
-		// compact pathe from theElement to theRoot
-		int currentNode = theElement;  // start at theElement
-		while (currentNode != theRoot)
-		{
-			int parentNode = node[currentNode].parent;
-			node[currentNode].parent = theRoot;  // move to level 2
-			currentNode = parentNode;            // moves to old parent
+class fastUnionFind {
+	public:
+		fastUnionFind (int numberOfElements) {
+			node = new UnionFindNode[numberOfElements + 1];
 		}
 
-		return theRoot;
-	}
+		int find (int ele) {
+			int theRoot = ele;
+			while (!node[theRoot].root) {
+				theRoot = node[theRoot].parent;
+			}
+			int currentNode = ele;
+			while (currentNode != theRoot) {
+				int k = node[currentNode].parent;
+				node[currentNode].parent = theRoot;
+				currentNode = k;
+			}
+			return theRoot;
+		}
+		void unite (int rootA, int rootB) {
+			if (node[rootA].parent < node[rootB].parent) {
+				node[rootB].parent += node[rootA].parent;
+				node[rootA].parent = rootB;
+				node[rootA].root = false;
+			} else {
+				node[rootA].parent += node[rootB].parent;
+				node[rootB].parent = rootA;
+				node[rootB].root = false;
+			}
+		}
 
-protected:
-	unionFindNode* node;
+
+	private:
+		UnionFindNode* node;
 };
 
 template <class T>//无向图
-class graph
-{
-protected:
-	graphNode<T>** aList;//
-	Edge* edge_list;
-	//T** weight;//用来存权重的二位数组
-	int num_ver;//图顶点个数
-	int num_edge;//图边个数
-	int label;//到达标记
-	int* reach;//标记是否到达的数组
-	void rDfs(int v);
-	void rBfs(int v);
-	int begin;//开始顶点
-	int end;//结束顶点
-	int* the_dfs;//该数组的首位用来充当计数器的功能
-	int* the_bfs;
-	int* sum_w;//用来存权重数组
-	//int cnctd_num;//连通分量个数
-	//int* min_ver_cnctd;//连通分支最小顶点
-	//int min_ver;
-	//int min_length;
-	int length_of_edges;//用于函数连通分量的求长度
-	int* TheSum, * father;
-	void get_sum_w(int s);
-	int** a;
-public:
-	graph(int** x,int initialize_v, int initialize_e);
-	~graph()
-	{
-		for (int i = 0; i <= num_ver; i++)
-		{
-			delete[]aList[i];
+class graph {
+	protected:
+		node<T>** _chain_head;//
+		edge*_edge_list;
+		int* _reached;				//标记是否到达的数组
+		int* _dfs_lables; 
+		int* _prim_sum_w;//用来存权重数组
+		int _v_num;				//顶点个数
+		int _e_num;				//边个数
+		int _lable;				//到达标记
+
+	public:
+		graph(int initialize_v, int initialize_e) {
+			_v_num = initialize_v;
+			_e_num = initialize_e;
+			_chain_head = new node<T> * [initialize_v + 1];
+			_reached = new int[initialize_v + 1];
+			_prim_sum_w = new int[initialize_v + 1];
+			for (int i = 0; i <= initialize_v; i++) {
+				_reached[i] = 0;
+				_prim_sum_w[i] = 0;
+			}
+			for (int i = 1; i <= initialize_v; i++) {
+				node<T>* head = new node<T>;
+				_chain_head[i] = head;//不要忘记给这里赋值
+			}
+			_lable = 1;
+			_dfs_lables = new int[_v_num + 1];
 		}
-		delete[]aList;
-		delete[]reach;
-		delete[]the_dfs;
-		delete[]the_bfs;
-	}
-	void add(T v1, T v2, int TheWeight);
-	void erase(T v1, T v2);
-	void test();
-	void output(int v);	//输出一个顶点的所有邻接顶点
-	bool connected()//用于判断图是否连通
-	{
-		for (int i = 0; i <= num_ver; i++) //在Prim算法中，调用判断函数我们就认为已经接近连通了,我们使用深度优先遍历
-		{
-			reach[i] = 0; the_dfs[i] = 0;
-		}
-		rDfs(1);
-		for (int i = 1; i <= num_ver; i++)
-		{
-			if (reach[i] == 0)
-			{
-				return false;
+
+		void init(edge* edgesi) {
+			_edge_list = edgesi;
+			for (int i = 1; i <= _e_num; i++) {
+				_insertEdeg(_edge_list[i].v1, _edge_list[i].v2, _edge_list[i].w);
 			}
 		}
-		return true;
-	}
-	//void test();
-	void get_sum(int s)
-	{
-		if (TheSum[s] == 0)
-		{
-			prim(s);
-			cout << TheSum[s] ;
+		void _insertEdeg(T v1, T v2, int TheWeight) {
+			node<T>* p = _chain_head[v1];
+			node<T>* newNode1 = new node<T>(v2, TheWeight);
+			node<T>* temp;
+			if (p->next == nullptr) {
+				p->next = newNode1;
+			} else {
+				while (p->next != nullptr && v2 > p->next->vertex) {
+					p = p->next;
+				}
+				temp = p->next;
+				p->next = newNode1;
+				newNode1->next = temp;
+			}
+			node<T>* q = _chain_head[v2];
+			node<T>* newNode2 = new node<T>(v1, TheWeight);
+			if (q->next == nullptr) {
+				q->next = newNode2;
+			} else {
+				while (q->next != nullptr && v1 > q->next->vertex) {
+					q = q->next;
+				}
+				temp = q->next;
+				q->next = newNode2;
+				newNode2->next = temp;
+			}
 		}
-		else
-		{
-			cout << TheSum[s] ;
+
+		void _dfs_lable(int v) {
+			int x = ++_dfs_lables[0];
+			_dfs_lables[x] = v;
+			_reached[v] = _lable;
+			node<T>* p = _chain_head[v];
+			while ((p = p->next) != nullptr) {
+				int u = p->vertex;
+				if (_reached[u] == 0) {
+					_dfs_lable(u);
+				}
+			}
+			return;
 		}
-	}
-	void clear();
-	void get_edge_list(Edge* a)
-	{
-		edge_list = a;
-		for (int i = 1; i <= num_edge; i++)
-		{
-			add(edge_list[i].v1, edge_list[i].v2, edge_list[i].w);
+
+
+		//降低时间复杂度 对外暴露的函数
+		int getMinW(int indexi) {
+			if (_prim_sum_w[indexi] != 0) {
+
+				return _prim_sum_w[indexi];
+			} else {
+								prim(indexi);
+				return _prim_sum_w[indexi];
+			}
 		}
-	}
-	void prim(int s);
-	void deal();
+
+		//求解权重最重要的一个函数
+		void prim(int s) {
+			for (int i = 0; i <= _v_num; i++) {
+				_reached[i] = 0;
+				_dfs_lables[i] = 0;
+			}
+
+
+			int sum_weight = 0;
+
+			fastUnionFind S(_v_num + 1);
+
+
+			//初始化边表
+			_dfs_lable(s);
+			minHeap<edge> theHeap;
+			for (int i = 1; i <= _e_num; i++) {
+				int a = _edge_list[i].v1;
+				int b = _edge_list[i].v2;
+				if (_reached[a] != 0 && _reached[b] != 0) {
+					theHeap.push(_edge_list[i]);
+				}
+			}
+
+
+			//循环进行计算，从小到大找出边，个数是本连通分量边数
+			int num_e = 1;
+			while (num_e < _dfs_lables[0]) {
+				edge temp = theHeap.top();
+				theHeap.pop();
+				int a = S.find(temp.v1);
+				int b = S.find(temp.v2);
+				if (a != b) {
+					S.unite(a, b);
+					sum_weight = sum_weight + temp.w;
+					num_e++;
+				}
+			}
+
+			for (int i = 1; i <= _v_num; i++) {
+				if (_reached[i] != 0) {
+					_prim_sum_w[i] = sum_weight;
+				}
+			}
+		}
 };
 
-template<class T>
-graph<T>::graph(int **x,int initialize_v, int initialize_e)
-{
-	aList = new graphNode<T> * [initialize_v + 1];
-
-	reach = new int[initialize_v + 1];
-	sum_w = new int[initialize_v + 1];
-	for (int i = 0; i <= initialize_v; i++)
-	{
-		reach[i] = 0;
-		sum_w[i] = 0;
-	}
-	for (int i = 1; i <= initialize_v; i++)
-	{
-		graphNode<T>* head = new graphNode<T>;
-		aList[i] = head;//不要忘记给这里赋值
-	}
-	num_ver = initialize_v;
-	num_edge = initialize_e;
-
-	label = 1;
-	//cnctd_num = 0;
-	//min_ver = 1;
-	the_dfs = new int[num_ver + 1];
-	the_bfs = new int[num_ver + 1];
-
-	a = x;
-	
-
-
-	TheSum = new int[num_ver + 1];
-	for (int i = 1; i <= num_ver; i++)
-		TheSum[i] = 0;
-	father = new int[num_ver + 1];
-	for (int i = 1; i <= num_ver; i++)
-		father[i] = -1;
-	//min_length = 0;
-}
-template<class T>
-void graph<T>::erase(T v1, T v2)
-{
-	graphNode<T>* p = aList[v1];
-	graphNode<T>* pp = NULL;
-	while (p->next != NULL && p->vertex != v2)
-	{
-		pp = p;
-		p = p->next;
-	}
-	if (p->vertex == v2)//找到了边
-	{
-		pp->next = p->next;
-		delete p;
-	}
-	graphNode<T>* q = aList[v2];
-	graphNode<T>* pq = NULL;
-	while (q->next != NULL && q->vertex != v1)
-	{
-		pq = q;
-		q = q->next;
-	}
-	if (q->vertex == v1)//找到了边
-	{
-		pq->next = q->next;
-		delete q;
-	}
-}
-template<class T>
-void graph<T>::add(T v1, T v2, int TheWeight)
-{
-	graphNode<T>* p = aList[v1];
-	graphNode<T>* newNode1 = new graphNode<T>(v2, TheWeight);
-	graphNode<T>* temp;
-	if (p->next == NULL)
-	{
-		p->next = newNode1;
-	}
-	else
-	{
-		while (p->next != NULL && v2 > p->next->vertex)//??不能交换????
-		{
-			p = p->next;
-		}
-		temp = p->next;
-		p->next = newNode1;
-		newNode1->next = temp;
-	}
-	graphNode<T>* q = aList[v2];
-	graphNode<T>* newNode2 = new graphNode<T>(v1, TheWeight);
-	if (q->next == NULL)
-	{
-		q->next = newNode2;
-	}
-	else
-	{
-		while (q->next != NULL && v1 > q->next->vertex)
-		{
-			q = q->next;
-		}
-		temp = q->next;
-		q->next = newNode2;
-		newNode2->next = temp;
-	}
-}
-
-template<class T>
-void graph<T>::rDfs(int v)
-{
-	//if (v <= min_ver) { min_ver = v; }
-	int x = ++the_dfs[0];
-	the_dfs[x] = v;
-	reach[v] = label;
-	graphNode<T>* p = aList[v];
-	while ((p = p->next) != NULL)
-	{
-		int u = p->vertex;
-		if (reach[u] == 0)
-		{
-			rDfs(u);
-		}
-	}
-	return;
-}
-template<class T>
-void graph<T>::rBfs(int v)
-{
-	arrayQueue<int> q(10);
-	reach[v] = label;
-	q.push(v);
-	while (!q.empty())
-	{
-		int x = ++the_bfs[0];
-		int w = q.front();
-		the_bfs[x] = w;
-		q.pop();
-		for (graphNode<T>* u = aList[w]->next; u != NULL; u = u->next)
-		{//访问顶点w的一个关联顶点
-			if (reach[u->vertex] == 0)//说明u是一个未到达的顶点
-			{
-				q.push(u->vertex);
-				reach[u->vertex] = label;//到达标记
-			}
-		}
-	}
-	return;
-}
-
-template<class T>
-void graph<T>::clear()
-{
-	for (int i = 0; i <= num_ver; i++)
-	{
-		delete[]aList[i];
-	}
-	delete[]aList;
-	aList = new graphNode<T> * [num_ver + 1];
-	for (int i = 1; i <= num_ver; i++)
-	{
-		graphNode<T>* head = new graphNode<T>;
-		aList[i] = head;//不要忘记给这里赋值
-	}
-
-}
-
-template<class T>
-void graph<T>::prim(int s)
-{
-	int* TheWeight = new int[num_ver + 1];
-	for (int i = 1; i <= num_ver; i++)//初始化数组
-		TheWeight[i] = a[s][i];
-	fastUnionFind uf(num_ver);
-	//father[s] = s;//设置成u表示已经加入u为根的树 
-	for (int i = 1; i < num_ver; i++)//此处只需要迭代n-1次即可
-	{
-		int min_edge = INT_MAX;
-		int v = -1;
-		//在TheWeight数组中寻找未加入u树的最小值
-		for (int j = 1; j <= num_ver; j++)
-			if (uf.find(j)!=uf.find(s) && TheWeight[j] < min_edge)
-			{
-				v = j;
-				min_edge = TheWeight[j];
-			}
-		if (v != -1)//v=-1表示未找到最小的边,
-		{
-			uf.unite(v, s);
-			//father[v] = s;
-			//cout << "break" << "i=" << i  << endl;
-			TheSum[s] += TheWeight[v];
-			for (int j = 1; j <= num_ver; j++)//更新最短边
-				if (father[j] != s && TheWeight[j] > a[v][j])
-					TheWeight[j] = a[v][j];
-		}
-		else return;
-	}
-	for (int i = 1; i <= num_ver; i++)
-	{
-		if (uf.find(i) == uf.find(s))
-		{
-			TheSum[i] = TheSum[s];
-		}
-	}
-
-}
-
-
-int main()
-{
-
-	int n, m, q;//n为顶点个数，m为边数，q为查询个数
-	int* s;
+int main() {
+	freopen ("input.txt", "r", stdin);
+	int n, m, q;//点 边 查询次数
 	cin >> n >> m >> q;
-	s = new int[q];//每次要查询的起始顶点
-	
-	int** x;
-	x = new int* [n + 1];
-	for (int i = 1; i <= n; i++)
-	{
-		x[i] = new int[n + 1];
+
+	//初始化整个图
+	graph<int> g(n, m);
+	edge* edges = new edge[m + 1];
+	for (int i = 1; i <= m; i++) {
+		cin >> edges[i].v1 >> edges[i].v2 >> edges[i].w;
+	}
+	g.init(edges);
+
+
+	//获取种子节点并输出最小长度
+	for (int i = 0; i < q; i++) {
+		int temp;
+		cin>>temp;
+		cout<<g.getMinW(temp)<<"\n";
 	}
 
-	for (int i = 1; i <= n; i++)
-		for (int j = 1; j <= n; j++)
-			if (i == j)
-				x[i][j] = 0;
-			else x[i][j] = INT_MAX;
-	int u, v, w;
-	for (int i = 0; i < m; i++)
-	{
-		cin >> u >> v >> w;
-		if (x[u][v] > w)
-		{
-			x[u][v] = w;
-			x[v][u] = w;
-		}
-	}
-	graph<int> theGraph(x, n, m);
-	//theGraph.deal();
-	for (int i = 0; i < q; i++)
-	{
-		cin >> s[i];
-	}
 
-	for (int i = 0; i < q; i++)
-	{
-		//cout<<"break"<<endl;
-		theGraph.get_sum(s[i]);
-		cout << endl;
-	}
-	cout << endl;
-	//cout << endl;
 }
-
